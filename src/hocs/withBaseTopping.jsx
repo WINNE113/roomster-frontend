@@ -1,13 +1,20 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
-import { useNavigate, useLocation } from 'react-router-dom'
+import React from "react"
+import { useDispatch } from "react-redux"
+import { useNavigate, useLocation } from "react-router-dom"
 
-const withBaseTopping = Component => props => {
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const location = useLocation()
+const WithBaseTopping = (Component) => (props) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-    return <Component {...props} location={location} dispatch={dispatch} navigate={navigate} />
+  return (
+    <Component
+      {...props}
+      location={location}
+      dispatch={dispatch}
+      navigate={navigate}
+    />
+  )
 }
 
-export default withBaseTopping 
+export default WithBaseTopping

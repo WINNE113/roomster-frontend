@@ -1,17 +1,18 @@
-import { Header } from '@/components'
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import React from "react"
+import { Navigation } from "@/components"
+import { Outlet } from "react-router-dom"
+import withBaseTopping from "@/hocs/WithBaseTopping"
 
-const Layout = () => {
-    return (
-        <>
-            <div className='w-full h-[100px]'></div>
-            <Header />
-            <div className='w-full'>
-                <Outlet />
-            </div>
-        </>
-    )
+const Layout = ({ location }) => {
+  return (
+    <div className="relative max-h-screen overflow-y-auto">
+      <Navigation />
+      <div className="w-full bg-white">
+        <Outlet />
+      </div>
+      {/* <Footer /> */}
+    </div>
+  )
 }
 
-export default Layout
+export default withBaseTopping(Layout)

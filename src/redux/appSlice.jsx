@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getProvinces } from "./actions";
 
 
 export const appSlice = createSlice({
@@ -8,6 +9,7 @@ export const appSlice = createSlice({
         isLoading: false,
         isShowModal: false,
         modalContent: null,
+        provinces: []
     },
     reducers: {
         toggleLoading: (state, action) => {
@@ -19,6 +21,9 @@ export const appSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
+        builder.addCase(getProvinces.fulfilled, (state, action) => {
+            state.provinces = action.payload
+        })
     }
 })
 export const { toggleLoading, modal } = appSlice.actions

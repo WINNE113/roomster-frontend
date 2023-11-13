@@ -1,4 +1,6 @@
+import path from '@/ultils/path'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Card = () => {
     return (
@@ -10,10 +12,14 @@ const Card = () => {
             />
             <div className='p-3 flex flex-col gap-1'>
                 <span className='text-sm text-gray-500'>Hồ Chí Minh</span>
-                <h3 className='text-main font-semibold line-clamp-2'>Với 5tr/tháng có ngay CHDV ngay trung tâm Bàu Cát, sầm uất nhất Tân Bình</h3>
+                <Link
+                    to={`/${path.DETAIL_POST}/pid/Với 5tr/tháng có ngay CHDV ngay trung tâm Bàu Cát, sầm uất nhất Tân Bình`} className='text-emerald-800 cursor-pointer hover:underline font-semibold line-clamp-2'
+                >
+                    Với 5tr/tháng có ngay CHDV ngay trung tâm Bàu Cát, sầm uất nhất Tân Bình
+                </Link>
                 <span className='text-sm text-gray-500'>Bàu Cát, 14, Tân Bình , Tân Bình</span>
                 <div className='mt-3 flex justify-between items-center'>
-                    <span className='font-medium'>5.000.000 VNĐ</span>
+                    <span className='font-medium text-main-orange'>5.000.000 VNĐ</span>
                     <span className='text-gray-500 text-sm'>Hôm nay</span>
                 </div>
             </div>
