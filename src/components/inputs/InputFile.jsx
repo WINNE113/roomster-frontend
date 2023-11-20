@@ -3,11 +3,26 @@ import React, { useState } from "react"
 import { BsCamera } from "react-icons/bs"
 import { ImBin } from "react-icons/im"
 import { CgSpinner } from "react-icons/cg"
+import { apiUploadImageCloudinary } from "@/apis/app"
 
 const InputMultiFile = ({ style, label, id, getFile, invalid, image = [] }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [hoverElm, setHoverElm] = useState(null)
-  const handleUploadFile = async (e) => {}
+  const handleUploadFile = async (e) => {
+    const formData = new FormData()
+    const imagePaths = []
+    setIsLoading(true)
+    for (let file of e.target.files) {
+      formData.append("file", file)
+      formData.append("upload_preset", "trouytin")
+      const response = await apiUploadImageCloudinary(formData)
+      if (response.status === 200) {
+        imagePaths.push(response.data?.secure_url)
+      }
+    }
+    setIsLoading(false)
+    getFile(imagePaths)
+  }
   const handleRemoveImage = (e, imagePath) => {
     e.preventDefault()
     const removedImages = image.filter((el) => el !== imagePath)

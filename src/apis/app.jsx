@@ -1,4 +1,5 @@
 import axios from "axios"
+import axiosConfig from "@/axios"
 
 export const apiGetProvinces = () =>
   axios({
@@ -11,7 +12,7 @@ export const apiGetProvince = (provinceCode) =>
     method: "get",
   })
 export const apiUploadImageCloudinary = (data) =>
-  instance({
+  axios({
     method: "post",
     url: `https://api.cloudinary.com/v1_1/${
       import.meta.env.VITE_CLOUDINARY_NAME
@@ -19,8 +20,13 @@ export const apiUploadImageCloudinary = (data) =>
     data,
   })
 export const apiGetLngLatFromAddress = (params) =>
-  instance({
+  axios({
     method: "get",
     url: `https://api.geoapify.com/v1/geocode/search`,
     params,
+  })
+export const apiGetPostTypes = () =>
+  axiosConfig({
+    method: "get",
+    url: `/postType/getAll`,
   })

@@ -5,9 +5,10 @@ import { useForm } from "react-hook-form"
 import clsx from "clsx"
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { modal } from "@/redux/appSlice"
+import { apiGetProvince } from "@/apis/app"
 
 const SearchAddress = ({ getAddress, dispatch }) => {
-  const { datavn } = useSelector((state) => state.app)
+  const { provinces } = useSelector((state) => state.app)
   const {
     formState: { errors },
     setValue,
@@ -28,12 +29,18 @@ const SearchAddress = ({ getAddress, dispatch }) => {
       shouldTouch: true,
       shouldValidate: true,
     })
+  const getDataProvince = async (provinceCode) => {
+    const response = await apiGetProvince(provinceCode)
+    if (response.status === 200) {
+      setDistricts(response.data?.districts)
+    }
+  }
   useEffect(() => {
     if (province) {
       setCustomValue("district", "")
       setCustomValue("ward", "")
       setCustomValue("street", "")
-      setDistricts(province.districts)
+      getDataProvince(province.code)
     }
   }, [province])
   useEffect(() => {
@@ -66,7 +73,7 @@ const SearchAddress = ({ getAddress, dispatch }) => {
       <div className="mt-6">
         <div className="grid grid-cols-3 gap-4">
           <SelectLib
-            options={datavn?.map((el) => ({
+            options={provinces?.map((el) => ({
               ...el,
               value: el.code,
               label: el.name,

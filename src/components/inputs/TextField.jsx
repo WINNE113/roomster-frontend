@@ -3,7 +3,10 @@ import { Editor } from "@tinymce/tinymce-react"
 const TextField = ({ label, height = 400, onChange, value = "" }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-medium">{label}</label>
+      <label className="font-medium">
+        {label}
+        <span className="text-xs italic font-normal">{`(Không bắt buộc)`}</span>
+      </label>
       <Editor
         apiKey={import.meta.env.VITE_TINYCME_ID}
         initialValue={value}

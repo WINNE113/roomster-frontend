@@ -12,7 +12,7 @@ import SearchRange from "./SearchRange"
 import SearchAddress from "./SearchAddress"
 
 const Search = ({ dispatch, navigate, location }) => {
-  const { categories, prices, areas } = useSelector((s) => s.app)
+  const { prices, areas } = useSelector((s) => s.app)
   const { setValue, watch } = useForm()
   const categoryCode = watch("categoryCode")
   const priceRange = watch("priceRange")
@@ -32,7 +32,7 @@ const Search = ({ dispatch, navigate, location }) => {
     const queries = {}
     if (categoryCode) queries.category = categoryCode.id
     if (priceRange) queries.price = priceRange.value
-    if (areaRange) queries.area = areaRange.value
+    if (areaRange) queries.acreage = areaRange.value
     if (address) queries.address = address
     navigate({
       pathname: `/${path.LIST}`,

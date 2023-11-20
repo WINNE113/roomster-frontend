@@ -8,6 +8,12 @@ const PagiItem = ({ children, location, navigate }) => {
 
   const handlePagination = () => {
     const params = Object.fromEntries([...seachParams])
+    if (params.price) {
+      params.price = seachParams.getAll("price")
+    } else delete params.price
+    if (params.acreage) {
+      params.acreage = seachParams.getAll("acreage")
+    } else delete params.acreage
     if (!Number(children)) return
     params.page = children
     navigate({

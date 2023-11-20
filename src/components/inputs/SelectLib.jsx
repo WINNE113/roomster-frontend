@@ -10,11 +10,16 @@ const SelectLib = ({
   className,
   label,
   gap,
+  register = () => {},
+  id,
+  validate,
+  errors,
 }) => {
   return (
     <div className={twMerge(clsx("flex flex-col gap-2 flex-1", gap))}>
       <h3 className="font-medium">{label}</h3>
       <Select
+        {...register(id, validate)}
         placeholder={placeholder}
         isClearable
         options={options}
@@ -32,6 +37,9 @@ const SelectLib = ({
           option: () => "text-sm",
         }}
       />
+      {errors && errors[id] && (
+        <small className="text-xs text-red-500">{errors[id]?.message}</small>
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import {
   Button,
-  InputFile,
+  Convenient,
   InputForm,
   Map,
   SelectLib,
@@ -14,52 +14,74 @@ import { useSelector } from "react-redux"
 import { targets } from "@/ultils/constant"
 import clsx from "clsx"
 import useDebounce from "@/hooks/useDebounce"
-import { apiGetLngLatFromAddress } from "@/apis/app"
+import {
+  apiGetLngLatFromAddress,
+  apiGetPostTypes,
+  apiGetProvince,
+} from "@/apis/app"
 import { toast } from "react-toastify"
+import { getBase64 } from "@/ultils/fn"
+import { apiCreateNewPost } from "@/apis/post"
+import path from "@/ultils/path"
+import { ImBin } from "react-icons/im"
 
-const CreatePost = () => {
+const CreatePost = ({ navigate }) => {
   const {
     formState: { errors },
-    setValue,
     watch,
     register,
+    getValues,
     reset,
+    setValue,
+    handleSubmit: validate,
   } = useForm()
-  const { datavn, categories } = useSelector((state) => state.app)
-  const { current } = useSelector((state) => state.user)
-
+  const { provinces } = useSelector((state) => state.app)
+  const [postTypes, setPostTypes] = useState([])
   const [districts, setDistricts] = useState([])
   const [wards, setWards] = useState([])
   const [center, setCenter] = useState(null)
   const [zoom, setZoom] = useState(10)
   const [isLoading, setIsLoading] = useState(false)
+  const [imagesBase64, setImagesBase64] = useState([])
+  const [imageHover, setImageHover] = useState()
 
   const province = watch("province")
   const district = watch("district")
   const ward = watch("ward")
-  const category = watch("category")
+  const post_type = watch("post_type")
   const images = watch("images")
   const address = watch("address")
   const street = watch("street")
-  const title = watch("title")
-  const price = watch("price")
-  const area = watch("area")
-  const target = watch("target")
+  const object = watch("object")
   const description = watch("description")
-  const fetLngLat = async (payload) => {
-    const response = await apiGetLngLatFromAddress(payload)
-    if (response.status === 200)
-      setCenter([
-        response.data?.features[0]?.properties?.lat,
-        response.data?.features[0]?.properties?.lon,
-      ])
+  const convenient = watch("convenient")
+  // const fetLngLat = async (payload) => {
+  //   const response = await apiGetLngLatFromAddress(payload)
+  //   if (response.status === 200)
+  //     setCenter([
+  //       response.data?.features[0]?.properties?.lat,
+  //       response.data?.features[0]?.properties?.lon,
+  //     ])
+  // }
+  const convertFileToBase64 = async (file) => {
+    const base64 = await getBase64(file)
+    if (base64) setImagesBase64((prev) => [...prev, base64])
   }
-  const setCustomValue = (id, val) =>
-    setValue(id, val, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
+  useEffect(() => {
+    setImagesBase64([])
+    if (images && images instanceof FileList)
+      for (let file of images) convertFileToBase64(file)
+  }, [images])
+  const getDataProvince = async (provinceCode) => {
+    const response = await apiGetProvince(provinceCode)
+    if (response.status === 200) {
+      setDistricts(response.data?.districts)
+    }
+  }
+  const fetchPostTypes = async () => {
+    const response = await apiGetPostTypes()
+    setPostTypes(response || [])
+  }
   useEffect(() => {
     window.navigator.geolocation.getCurrentPosition((rs) => {
       if (rs && rs.coords) {
@@ -67,14 +89,17 @@ const CreatePost = () => {
         setCenter(ps)
       }
     })
+    fetchPostTypes()
   }, [])
   useEffect(() => {
     if (province) {
-      setCustomValue("district", "")
-      setCustomValue("ward", "")
-      setCustomValue("street", "")
-      setDistricts(province.districts)
+      getDataProvince(province.code)
     }
+    setValue("district", "")
+    setValue("ward", "")
+    setValue("street", "")
+    setDistricts([])
+    setWards([])
   }, [province])
   useEffect(() => {
     if (district) setWards(district.wards)
@@ -102,62 +127,101 @@ const CreatePost = () => {
       ?.split(",")
       ?.map((el) => el.trim())
       ?.join(", ")
-    setCustomValue("address", textModified)
-    if (textModified)
-      fetLngLat({
-        text: textModified,
-        apiKey: import.meta.env.VITE_MAP_API_KEY,
-      })
+    setValue("address", textModified)
+    // if (textModified)
+    //   fetLngLat({
+    //     text: textModified,
+    //     apiKey: import.meta.env.VITE_MAP_API_KEY,
+    //   })
   }, [province, district, ward, debounceValue])
+  const removeFileFromFileList = (index, filesId) => {
+    const dt = new DataTransfer()
+    const input = document.getElementById(filesId)
+    const { files } = input
 
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      if (index !== i) dt.items.add(file) // here you exclude the file. thus removing it.
+    }
+    setValue("images", dt.files)
+    // input.files = dt.files
+  }
   // Handle Submit Form
   const handleSubmit = async () => {
-    const payload = {
-      title,
-      category: category?.id,
+    const {
+      street,
+      ward,
+      district,
+      province,
+      emptyRoom,
+      numberRoom,
+      waterPrice,
+      stayMax,
+      electricityPrice,
+      acreage,
       price,
-      area,
+      post_type,
+      object,
       images,
-      target: target?.name,
-      description,
-      postedBy: current?.id,
-      address,
+      ...dto
+    } = getValues()
+    const roomDto = {
+      emptyRoom,
+      numberRoom,
+      waterPrice,
+      stayMax,
+      electricityPrice,
+      acreage,
+      price,
     }
-    console.log(payload)
+    const payload = {
+      description,
+      roomDto,
+      post_type: post_type?.code,
+      object: object?.name,
+      ...dto,
+      convenient: convenient?.join(","),
+    }
     // setIsLoading(true)
-    // const response = await apiCreateNewPost(payload)
-    // setIsLoading(false)
-    // if (response.success) {
-    //   reset()
-    //   setCustomValue("price", 0)
-    //   setCustomValue("area", 0)
-    //   setCustomValue("description", "")
-    //   toast.success(response.mes)
-    // } else toast.error(response.mes)
+    const formData = new FormData()
+    formData.append("postDto", JSON.stringify(payload))
+    if (images && images instanceof FileList) {
+      for (let image of images) formData.append("images", image)
+    }
+    setIsLoading(true)
+    const response = await apiCreateNewPost(formData)
+    setIsLoading(false)
+    if (response) {
+      toast.success("Tạo tin đăng thành công")
+      navigate("/" + path.MANAGER + "/" + path.MANAGE_POST)
+    } else toast.error("Tạo tin đăng không thành công, hãy thử lại")
   }
   return (
     <section className="pb-[200px]">
       <Title title="Tạo mới tin đăng">
-        <Button onClick={handleSubmit} disabled={isLoading}>
+        <Button onClick={validate(handleSubmit)} disabled={isLoading}>
           Tạo mới
         </Button>
       </Title>
-      <section className="p-4 grid grid-cols-12 gap-6">
+      <form className="p-4 grid grid-cols-12 gap-6">
         <div className="col-span-8">
           <h1 className="text-lg font-semibold  text-main-blue">
             1. Địa chỉ cho thuê
           </h1>
           <div className="grid grid-cols-3 gap-4 mt-6">
             <SelectLib
-              options={datavn?.map((el) => ({
+              options={provinces?.map((el) => ({
                 ...el,
                 value: el.code,
                 label: el.name,
               }))}
-              onChange={(val) => setCustomValue("province", val)}
+              onChange={(val) => setValue("province", val)}
               value={province}
               className="col-span-1"
               label="Tỉnh/Thành phố"
+              id="province"
+              register={register}
+              errors={errors}
             />
             <SelectLib
               options={districts?.map((el) => ({
@@ -165,10 +229,13 @@ const CreatePost = () => {
                 value: el.code,
                 label: el.name,
               }))}
-              onChange={(val) => setCustomValue("district", val)}
+              onChange={(val) => setValue("district", val)}
               value={district}
               className="col-span-1"
               label="Quận/Huyện"
+              id="district"
+              register={register}
+              errors={errors}
             />
             <SelectLib
               options={wards?.map((el) => ({
@@ -176,10 +243,13 @@ const CreatePost = () => {
                 value: el.code,
                 label: el.name,
               }))}
-              onChange={(val) => setCustomValue("ward", val)}
+              onChange={(val) => setValue("ward", val)}
               value={ward}
               className="col-span-1"
               label="Phường/Xã"
+              id="ward"
+              register={register}
+              errors={errors}
             />
           </div>
           <div className="mt-4">
@@ -199,11 +269,22 @@ const CreatePost = () => {
               register={register}
               errors={errors}
               id="address"
-              validate={{ required: "Trường này không được bỏ trống." }}
               fullWidth
               inputClassName="border-gray-300 bg-gray-200 focus:outline-none focus:ring-transparent focus:ring-offset-0 focus:border-transparent focus: ring-0 cursor-default"
               readOnly={true}
               value={address}
+              validate={{ required: "Không được bỏ trống" }}
+            />
+          </div>
+          <div className="mt-6">
+            <InputForm
+              label="Gần nơi"
+              register={register}
+              errors={errors}
+              id="surroundings"
+              placeholder="Gần nơi nào?"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
             />
           </div>
           <h1 className="text-lg font-semibold mt-6 text-main-blue">
@@ -211,16 +292,19 @@ const CreatePost = () => {
           </h1>
           <div className="mt-6 relative z-10">
             <SelectLib
-              options={categories?.map((el) => ({
+              options={postTypes?.map((el) => ({
                 ...el,
-                value: el.id,
-                label: el.value,
-                name: el.value,
+                value: el.code,
+                label: el.name,
               }))}
-              onChange={(val) => setCustomValue("category", val)}
-              value={category}
+              onChange={(val) => setValue("post_type", val)}
+              value={post_type}
               className="col-span-1"
-              label="Loại chuyên mục"
+              label="Loại tin đăng"
+              id="post_type"
+              register={register}
+              errors={errors}
+              validate={{ required: "Trường này không được bỏ trống." }}
             />
           </div>
           <div className="mt-4">
@@ -239,13 +323,12 @@ const CreatePost = () => {
             <TextField
               label="Nội dung mô tả"
               id="description"
-              onChange={(val) => setCustomValue("description", val)}
-              validate={{ required: "Trường này không được bỏ trống." }}
+              onChange={(val) => setValue("description", val)}
               placeholder="Điền mô tả về thông tin chỗ cho thuê"
               value={description}
             />
           </div>
-          <div className="mt-6 flex items-center gap-4">
+          {/* <div className="mt-6 flex items-center gap-4">
             <InputForm
               label="Thông tin liên hệ"
               register={register}
@@ -268,8 +351,8 @@ const CreatePost = () => {
               readOnly={true}
               value={current?.phone}
             />
-          </div>
-          <div className="mt-6 flex items-center gap-4">
+          </div> */}
+          <div className="mt-6 grid grid-cols-3 gap-4">
             <InputForm
               label="Giá cho thuê (đồng/tháng)"
               register={register}
@@ -277,36 +360,131 @@ const CreatePost = () => {
               id="price"
               validate={{ required: "Trường này không được bỏ trống." }}
               fullWidth
-              placeholder="Giá cho thuê"
               inputClassName="border-gray-300"
               type="number"
+              wrapClassanme="col-span-1"
             />
             <InputForm
               label="Diện tích (m2)"
               register={register}
               errors={errors}
-              id="area"
+              id="acreage"
               validate={{ required: "Trường này không được bỏ trống." }}
               fullWidth
-              placeholder="Diện tích chỗ cho thuê"
               inputClassName="border-gray-300"
               type="number"
+              wrapClassanme="col-span-1"
+            />
+            <InputForm
+              label="Tổng số phòng"
+              register={register}
+              errors={errors}
+              id="numberRoom"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
+              inputClassName="border-gray-300"
+              type="number"
+              wrapClassanme="col-span-1"
+            />
+            <InputForm
+              label="Số phòng trống"
+              register={register}
+              errors={errors}
+              id="emptyRoom"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
+              inputClassName="border-gray-300"
+              type="number"
+              wrapClassanme="col-span-1"
+            />
+            <InputForm
+              label="Số người ở 1 phòng"
+              register={register}
+              errors={errors}
+              id="stayMax"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
+              inputClassName="border-gray-300"
+              type="number"
+              wrapClassanme="col-span-1"
+            />
+            <InputForm
+              label="Giá tiền điện"
+              register={register}
+              errors={errors}
+              id="electricityPrice"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
+              inputClassName="border-gray-300"
+              type="number"
+              wrapClassanme="col-span-1"
+            />
+            <InputForm
+              label="Giá tiền nước"
+              register={register}
+              errors={errors}
+              id="waterPrice"
+              validate={{ required: "Trường này không được bỏ trống." }}
+              fullWidth
+              inputClassName="border-gray-300"
+              type="number"
+              wrapClassanme="col-span-1"
             />
             <SelectLib
               options={targets}
-              onChange={(val) => setCustomValue("target", val)}
-              value={target}
-              className="flex-1"
+              onChange={(val) => setValue("object", val)}
+              value={object}
+              className="col-span-1"
               label="Đối tượng cho thuê"
+              id="object"
+              register={register}
+              validate={{ required: "Trường này không được bỏ trống." }}
+              errors={errors}
             />
           </div>
-          <div className="mt-6">
-            <InputFile
-              getFile={(val) => setCustomValue("images", val)}
-              label="Hình ảnh"
-              image={images}
+          <div className="mt-4">
+            <Convenient
+              convenient={convenient}
+              onChange={(val) => setValue("convenient", val)}
+            />
+          </div>
+          <div className="mt-6 flex flex-col gap-2">
+            <label className="font-medium" htmlFor="images">
+              Chọn ảnh
+            </label>
+            <input
+              multiple
+              {...register("images", {
+                required: "Trường này không được bỏ trống.",
+              })}
+              type="file"
               id="images"
             />
+            {errors?.images && (
+              <small className="text-xs text-red-500">
+                {errors.images?.message}
+              </small>
+            )}
+            <div className="grid grid-cols-4 gap-4">
+              {imagesBase64?.map((el, idx) => (
+                <div
+                  onMouseEnter={() => setImageHover(el)}
+                  onMouseLeave={() => setImageHover()}
+                  className="col-span-1 w-full relative"
+                  key={idx}
+                >
+                  <img src={el} alt="" className="w-full object-contain" />
+                  {imageHover === el && (
+                    <div
+                      onClick={() => removeFileFromFileList(idx, "images")}
+                      className="absolute inset-0 text-white cursor-pointer flex items-center justify-center bg-overlay-70"
+                    >
+                      <ImBin />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="col-span-4 flex flex-col gap-4">
@@ -337,7 +515,7 @@ const CreatePost = () => {
             </ul>
           </div>
         </div>
-      </section>
+      </form>
     </section>
   )
 }

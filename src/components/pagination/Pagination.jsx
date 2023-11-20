@@ -3,7 +3,7 @@ import PagiItem from "./PagiItem"
 import { useSearchParams } from "react-router-dom"
 import usePagination from "@/hooks/usePagination"
 
-const Pagination = ({ totalCount }) => {
+const Pagination = ({ totalCount = 0 }) => {
   const [params] = useSearchParams()
   const pagination = usePagination(totalCount, +params.get("page") || 1)
 

@@ -8,7 +8,6 @@ import { Navigate, Outlet } from "react-router-dom"
 
 const LayoutManager = () => {
   const { current, token } = useSelector((state) => state.user)
-  console.log({ current, token })
   if (
     !current ||
     !token ||

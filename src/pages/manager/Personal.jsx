@@ -6,7 +6,6 @@ import { getBase64 } from "@/ultils/fn"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { CgSpinner } from "react-icons/cg"
 import { useSelector } from "react-redux"
 import { toast } from "react-toastify"
 

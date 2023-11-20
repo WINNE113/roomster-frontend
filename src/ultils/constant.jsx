@@ -15,26 +15,31 @@ export const menu = [
     path: "/danh-sach/?type=" + path.PHONGTRO,
     name: "PHÒNG TRỌ",
     id: "phongtro",
+    type: path.PHONGTRO,
   },
   {
-    path: "/danh-sach/?type=cho-thue-nha-can-ho" + path.CANHO,
+    path: "/danh-sach/?type=" + path.CANHO,
     name: "NHÀ, CĂN HỘ CHO THUÊ",
     id: "nhacanhochothue",
+    type: path.CANHO,
   },
   {
-    path: "/danh-sach/?type=tim-o-ghep" + path.TIMOGHEP,
+    path: "/danh-sach/?type=" + path.TIMOGHEP,
     name: "TÌM Ở GHÉP",
     id: "timoghep",
+    type: path.TIMOGHEP,
   },
   {
     path: "/" + path.BLOG,
     name: "BLOG",
     id: "blog",
+    type: path.BLOG,
   },
   {
     path: "/" + path.GUIDE,
     name: "HƯỚNG DẪN",
     id: "huongdan",
+    type: path.GUIDE,
   },
 ]
 export const distances = [
@@ -259,5 +264,123 @@ export const memberSidebar = [
     path: `/`,
     icon: <RiShareForwardFill size={20} />,
     type: "SINGLE",
+  },
+]
+export const postTypes = [
+  {
+    id: 1,
+    code: "P1",
+    name: "Cho thuê phòng trọ",
+  },
+  {
+    id: 1,
+    code: "P2",
+    name: "Cho thuê căn hộ",
+  },
+  {
+    id: 1,
+    code: "P3",
+    name: "Tìm người ở ghép",
+  },
+]
+
+export const convenients = [
+  {
+    id: 1,
+    name: "Gác lửng",
+  },
+  {
+    id: 2,
+    name: "Phòng tắm",
+  },
+  {
+    id: 3,
+    name: "Máy giặt",
+  },
+  {
+    id: 4,
+    name: "Tủ lạnh",
+  },
+  {
+    id: 5,
+    name: "Ban công / Sân thượng",
+  },
+  {
+    id: 6,
+    name: "Camara an ninh",
+  },
+  {
+    id: 7,
+    name: "Wifi",
+  },
+  {
+    id: 8,
+    name: "Bình nóng lạnh",
+  },
+  {
+    id: 9,
+    name: "Tivi",
+  },
+  {
+    id: 10,
+    name: "Giường nệm",
+  },
+  {
+    id: 11,
+    name: "Thang máy",
+  },
+  {
+    id: 12,
+    name: "Hồ bơi",
+  },
+  {
+    id: 13,
+    name: "Vệ sinh trong",
+  },
+  {
+    id: 14,
+    name: "Điều hòa",
+  },
+  {
+    id: 15,
+    name: "Tủ quần áo",
+  },
+  {
+    id: 16,
+    name: "Bãi để xe riêng",
+  },
+  {
+    id: 17,
+    name: "Sân vườn",
+  },
+  {
+    id: 18,
+    name: "Kệ bếp",
+  },
+]
+export const cities = [
+  {
+    image: "/hanoi.jpg",
+    name: "Hà Nội",
+    postCounter: 9845,
+    id: 2,
+  },
+  {
+    image: "/danang.jpg",
+    name: "Đà nẵng",
+    postCounter: 255,
+    id: 1,
+  },
+  {
+    image: "/hochiminh.jpg",
+    name: "Hồ Chí Minh",
+    postCounter: 742,
+    id: 3,
+  },
+  {
+    image: "/thuathienhue.jpg",
+    name: "Thừa Thiên Huế",
+    postCounter: 4747,
+    id: 4,
   },
 ]

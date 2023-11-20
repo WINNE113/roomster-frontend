@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useSearchParams } from "react-router-dom"
 import { useSelector } from "react-redux"
 // import avatarDefault from '@/assets/dfavatar.jpg'
 import { logout } from "@/redux/userSlice"
@@ -7,12 +7,14 @@ import withBaseTopping from "@/hocs/WithBaseTopping"
 import path from "@/ultils/path"
 import { menu } from "@/ultils/constant"
 import clsx from "clsx"
+import { resetFilter } from "@/redux/appSlice"
 
 const activedStyle =
   "text-sm flex gap-2 items-center px-4 py-3 rounded-l-full rounded-r-full border border-white"
 const notActivedStyle =
   "text-sm flex gap-2 items-center px-4 py-3 rounded-l-full rounded-r-full border border-emerald-800 hover:border-white"
 const Navigation = ({ dispatch, location, navigate }) => {
+  const [params] = useSearchParams()
   const [isShowOptions, setIsShowOptions] = useState(false)
   const { current } = useSelector((state) => state.user)
   const handleShowOptions = (e) => {
@@ -133,11 +135,9 @@ const Navigation = ({ dispatch, location, navigate }) => {
             <NavLink
               to={el.path}
               key={el.id}
+              onClick={() => dispatch(resetFilter(true))}
               className={clsx(
-                location.pathname.includes(el.path) &&
-                  location.pathname.includes("danh-sach")
-                  ? activedStyle
-                  : notActivedStyle
+                params.get("type") === el.type ? activedStyle : notActivedStyle
               )}
             >
               <span>{el.name}</span>
