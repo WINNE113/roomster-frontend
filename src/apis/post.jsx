@@ -36,3 +36,9 @@ export const apiGetRatings = (params) =>
     method: "get",
     params,
   })
+  export const apiDeletePost = (params) =>
+  axios({
+    url: "/post/delete",
+    method: "delete",
+    params,
+  })

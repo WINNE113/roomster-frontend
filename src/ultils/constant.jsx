@@ -416,15 +416,20 @@ export const stars = [
     value: 5,
   },
 ]
-export const status = [
+export const statuses = [
   {
-    name: "Hết phòng",
-    label: "Hết phòng",
-    value: true,
+    name: "Thành công",
+    label: "Thành công",
+    value: "APPROVED",
   },
   {
-    name: "Còn phòng",
-    label: "Còn phòng",
-    value: false,
+    name: "Đang xử lý",
+    label: "Đang xử lý",
+    value: "REVIEW",
+  },
+  {
+    name: "Từ chối",
+    label: "Từ chối",
+    value: "REJECTED",
   },
 ]

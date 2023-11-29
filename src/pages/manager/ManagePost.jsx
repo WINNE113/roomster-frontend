@@ -13,14 +13,15 @@ import UpdatePost from "./UpdatePost"
 import useDebounce from "@/hooks/useDebounce"
 import { useSelector } from "react-redux"
 import clsx from "clsx"
-import { apiGetPosts } from "@/apis/post"
+import { apiDeletePost, apiGetPosts } from "@/apis/post"
 import path from "@/ultils/path"
-import { stars, status } from "@/ultils/constant"
+import { stars, statuses } from "@/ultils/constant"
 
 const ManagePost = ({ dispatch, navigate }) => {
   const { setValue, watch } = useForm()
   const { current } = useSelector((s) => s.user)
   const keyword = watch("keyword")
+  const status = watch("status")
   const [posts, setPosts] = useState([])
   const [searchParams] = useSearchParams()
   const [update, setUpdate] = useState(false)
@@ -35,11 +36,14 @@ const ManagePost = ({ dispatch, navigate }) => {
     const { page, ...searchParamsObject } = Object.fromEntries([
       ...searchParams,
     ])
+    searchParamsObject.author_id = current?.userId
     if (page && Number(page)) formdata.append("page", Number(page) - 1)
+    if (status) searchParamsObject.status = status.value
+    else delete searchParamsObject.status
     formdata.append("json", JSON.stringify(searchParamsObject))
     formdata.append("size", 5)
     fetchPosts(formdata)
-  }, [searchParams, update, debounceValue])
+  }, [searchParams, update, debounceValue, status])
   const render = () => {
     setUpdate(!update)
   }
@@ -55,6 +59,11 @@ const ManagePost = ({ dispatch, navigate }) => {
     }).then(async (rs) => {
       if (rs.isConfirmed) {
         // Delete here
+        const response = await apiDeletePost({ postId: pid })
+        if (response.success) {
+          toast.success(response.message)
+          render()
+        } else toast.error("Có lỗi hãy thử lại sau")
       }
     })
   }
@@ -83,7 +92,8 @@ const ManagePost = ({ dispatch, navigate }) => {
               <SelectLib
                 placeholder="trạng thái"
                 className="py-2"
-                options={status}
+                options={statuses}
+                onChange={(val) => setValue("status", val)}
               />
             </div>
           </div>
@@ -136,17 +146,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                   <td className="p-2 text-center">
                     {formatMoney(el.price) + " VNĐ"}
                   </td>
-                  {/* <td className="p-2 text-center ">
-                    <span className="flex justify-center items-center">
-                      {el.star || 0} <AiFillStar color="orange" />
-                    </span>
-                  </td> */}
-                  {/* <td className="p-2 text-center">
-                    {el.area}
-                    <span>
-                      m<sup>2</sup>
-                    </span>
-                  </td> */}
+                 
                   <td className="p-2 text-center">
                     {moment(el.createdDate).format("DD/MM/YYYY")}
                   </td>
@@ -164,7 +164,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                     </span>
                   </td>
                   <td className="p-2 text-center">
-                    {el.isAvailable ? "Còn phòng" : "Hết phòng"}
+                  {statuses.find((n) => n.value === el.status)?.name}
                   </td>
                   <td className="p-2">
                     <span className="flex w-full justify-center text-emerald-700 items-center gap-2">
