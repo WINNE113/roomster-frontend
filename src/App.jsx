@@ -10,7 +10,7 @@ import {
   CreatePost,
   ManagePost,
 } from "./pages/manager"
-import { LayoutMember } from "./pages/member"
+import { LayoutMember, Wishlist } from "./pages/member"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { getCurrent, getProvinces } from "./redux/actions"
@@ -48,6 +48,7 @@ function App() {
         {/* Manager routes */}
         <Route path={path.MEMBER} element={<LayoutMember />}>
           <Route path={path.PERSONAL} element={<Personal />} />
+          <Route path={path.WISHLIST} element={<Wishlist />} />
         </Route>
 
         {/* Admin routes */}
@@ -61,6 +62,7 @@ function App() {
         {/* Member routes */}
         <Route path={path.MANAGER} element={<LayoutManager />}>
           <Route path={path.PERSONAL} element={<Personal />} />
+          <Route path={path.WISHLIST} element={<Wishlist />} />
           <Route path={path.CREATE_POST} element={<CreatePost />} />
           <Route path={path.MANAGE_POST} element={<ManagePost />} />
         </Route>

@@ -1,17 +1,11 @@
-import { Pagination, Title } from "@/components"
+import { Button, Pagination, SelectLib, Title } from "@/components"
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { modal } from "@/redux/appSlice"
 import { formatMoney } from "@/ultils/fn"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import {
-  AiFillDelete,
-  AiFillInfoCircle,
-  AiFillStar,
-  AiOutlineEdit,
-  AiOutlineInfoCircle,
-} from "react-icons/ai"
+import { AiFillDelete, AiFillStar, AiOutlineEdit } from "react-icons/ai"
 import { useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 import Swal from "sweetalert2"
@@ -19,22 +13,32 @@ import UpdatePost from "./UpdatePost"
 import useDebounce from "@/hooks/useDebounce"
 import { useSelector } from "react-redux"
 import clsx from "clsx"
+import { apiGetPosts } from "@/apis/post"
+import path from "@/ultils/path"
+import { stars, status } from "@/ultils/constant"
 
-const ManagePost = ({ dispatch }) => {
+const ManagePost = ({ dispatch, navigate }) => {
   const { setValue, watch } = useForm()
   const { current } = useSelector((s) => s.user)
   const keyword = watch("keyword")
   const [posts, setPosts] = useState([])
   const [searchParams] = useSearchParams()
   const [update, setUpdate] = useState(false)
-  const fetchPosts = async (params) => {}
+  const fetchPosts = async (params) => {
+    const response = await apiGetPosts(params)
+    if (response) setPosts(response)
+    else setPosts([])
+  }
   const debounceValue = useDebounce(keyword, 500)
   useEffect(() => {
-    const params = Object.fromEntries([...searchParams])
-    params.postedBy = current?.id
-    params.limit = import.meta.env.VITE_LIMIT
-    if (debounceValue) params.keyword = debounceValue
-    fetchPosts(params)
+    const formdata = new FormData()
+    const { page, ...searchParamsObject } = Object.fromEntries([
+      ...searchParams,
+    ])
+    if (page && Number(page)) formdata.append("page", Number(page) - 1)
+    formdata.append("json", JSON.stringify(searchParamsObject))
+    formdata.append("size", 5)
+    fetchPosts(formdata)
   }, [searchParams, update, debounceValue])
   const render = () => {
     setUpdate(!update)
@@ -50,14 +54,39 @@ const ManagePost = ({ dispatch }) => {
       cancelButtonText: "Quay lại",
     }).then(async (rs) => {
       if (rs.isConfirmed) {
+        // Delete here
       }
     })
   }
   return (
     <section className="mb-[200px]">
-      <Title title="Quản lý tin đăng"></Title>
-      <div className="p-4">
-        <div className="flex items-center justify-end">
+      <Title title="Quản lý tin đăng">
+        <Button
+          onClick={() => navigate(`/${path.MANAGER}/${path.CREATE_POST}`)}
+        >
+          Đăng tin mới
+        </Button>
+      </Title>
+      <div className="p-4 mt-4">
+        <div className="flex items-center gap-4 justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span>Lọc theo:</span>
+              <SelectLib
+                placeholder="đánh giá"
+                className="py-2"
+                options={stars}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span>Lọc theo:</span>
+              <SelectLib
+                placeholder="trạng thái"
+                className="py-2"
+                options={status}
+              />
+            </div>
+          </div>
           <input
             type="text"
             value={keyword}
@@ -69,40 +98,57 @@ const ManagePost = ({ dispatch }) => {
         <div className="mt-6 w-full">
           <table className="table-auto w-full">
             <thead>
-              <tr className="border bg-emerald-800 text-white">
-                <th className="p-2 font-medium text-center">Tựa đề</th>
-                <th className="p-2 font-medium text-center">Đánh giá</th>
-                <th className="p-2 font-medium text-center">Địa chỉ</th>
-                <th className="p-2 font-medium text-center">Chuyên mục</th>
-                <th className="p-2 font-medium text-center">Giá thuê</th>
-                <th className="p-2 font-medium text-center">Đối tượng</th>
-                <th className="p-2 font-medium text-center">Diện tích</th>
-                <th className="p-2 font-medium text-center">Trạng thái thuê</th>
-                <th className="p-2 font-medium text-center">Ngày hết hạn</th>
-                <th className="p-2 font-medium text-center">Hành động</th>
+              <tr>
+                <th className="p-2 border font-medium text-center">Mã tin</th>
+                <th className="p-2 border font-medium text-center">
+                  Ảnh đại diện
+                </th>
+                <th className="p-2 border font-medium text-center">Tiêu đề</th>
+                <th className="p-2 border font-medium text-center">Giá</th>
+                <th className="p-2 border font-medium text-center">
+                  Ngày bắt đầu
+                </th>
+                <th className="p-2 border font-medium text-center">
+                  Ngày hết hạn
+                </th>
+                <th className="p-2 border font-medium text-center">
+                  Trạng thái
+                </th>
+                <th className="p-2 border bg-emerald-800 text-white font-medium text-center">
+                  Hành động
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm">
-              {posts?.rows?.map((el) => (
+              {posts?.data?.map((el) => (
                 <tr className="border" key={el.id}>
+                  <td className="p-2 text-center">{el.id}</td>
+                  <td className="p-2 text-center">
+                    <span className="flex items-center justify-center">
+                      <img
+                        src={el.image}
+                        className="w-24 h-24 rounded-md border p-2 object-cover"
+                        alt=""
+                      />
+                    </span>
+                  </td>
                   <td className="p-2 text-center">{el.title}</td>
-                  <td className="p-2 text-center ">
+                  <td className="p-2 text-center">
+                    {formatMoney(el.price) + " VNĐ"}
+                  </td>
+                  {/* <td className="p-2 text-center ">
                     <span className="flex justify-center items-center">
                       {el.star || 0} <AiFillStar color="orange" />
                     </span>
-                  </td>
-                  <td className="p-2 text-center">{el.address}</td>
-                  <td className="p-2 text-center">{el.cates?.value}</td>
-                  <td className="p-2 text-center">{formatMoney(el.price)}</td>
-                  <td className="p-2 text-center">{el.target}</td>
-                  <td className="p-2 text-center">
+                  </td> */}
+                  {/* <td className="p-2 text-center">
                     {el.area}
                     <span>
                       m<sup>2</sup>
                     </span>
-                  </td>
+                  </td> */}
                   <td className="p-2 text-center">
-                    {el.isAvailable ? "Chưa thuê" : "Đã thuê"}
+                    {moment(el.createdDate).format("DD/MM/YYYY")}
                   </td>
                   <td className="p-2 text-center">
                     <span
@@ -117,8 +163,11 @@ const ManagePost = ({ dispatch }) => {
                       {moment(el.expiredDate).format("DD/MM/YYYY")}
                     </span>
                   </td>
+                  <td className="p-2 text-center">
+                    {el.isAvailable ? "Còn phòng" : "Hết phòng"}
+                  </td>
                   <td className="p-2">
-                    <span className="flex items-center gap-2">
+                    <span className="flex w-full justify-center text-emerald-700 items-center gap-2">
                       <span
                         onClick={() =>
                           dispatch(
@@ -148,7 +197,7 @@ const ManagePost = ({ dispatch }) => {
           </table>
         </div>
         <div className="mt-6">
-          <Pagination totalCount={posts?.count || 1} />
+          <Pagination totalCount={posts?.total || 1} />
         </div>
       </div>
     </section>

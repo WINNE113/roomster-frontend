@@ -6,3 +6,9 @@
 .otp-item {
   width: 4rem !important;
 }
+[contentEditable="true"]:empty:not(:focus):before {
+  content: attr(data-text);
+  font-size: 14px;
+  font-style: italic;
+  color: gray;
+}

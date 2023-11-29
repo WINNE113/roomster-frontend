@@ -63,7 +63,7 @@ const Filter = ({ location, navigate, dispatch }) => {
     if (searchParamsObject.acreage) {
       searchParamsObject.acreage = searchParams.getAll("acreage")?.join(",")
     } else delete searchParamsObject.acreage
-    if (page) formdata.append("page", page)
+    if (page && Number(page)) formdata.append("page", Number(page) - 1)
     if (type === path.PHONGTRO) searchParamsObject.post_type_id = 1
     if (type === path.CANHO) searchParamsObject.post_type_id = 2
     formdata.append("json", JSON.stringify(searchParamsObject))

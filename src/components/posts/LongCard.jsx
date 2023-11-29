@@ -1,4 +1,4 @@
-import { formatMoney } from "@/ultils/fn"
+import { formatMoney, formatVietnameseToString } from "@/ultils/fn"
 import path from "@/ultils/path"
 import clsx from "clsx"
 import moment from "moment"
@@ -14,6 +14,7 @@ const LongCard = ({
   createdDate,
   hideImage,
   containerClassName,
+  id,
 }) => {
   return (
     <div
@@ -37,7 +38,7 @@ const LongCard = ({
         <span className="text-sm text-gray-500">Hồ Chí Minh</span>
         <Link
           className="text-emerald-800 cursor-pointer hover:underline font-semibold line-clamp-2"
-          to={`/${path.DETAIL_POST}/pid/Với 5tr/tháng có ngay CHDV ngay trung tâm Bàu Cát, sầm uất nhất Tân Bình`}
+          to={`/${path.DETAIL_POST}/${id}/${formatVietnameseToString(title)}`}
         >
           {title}
         </Link>

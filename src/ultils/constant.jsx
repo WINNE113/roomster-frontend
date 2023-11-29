@@ -8,7 +8,7 @@ import {
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
 import { MdOutlineAttachMoney } from "react-icons/md"
-import { RiShareForwardFill } from "react-icons/ri"
+import { RiFileEditLine, RiShareForwardFill } from "react-icons/ri"
 
 export const menu = [
   {
@@ -183,20 +183,25 @@ export const managerSidebar = [
     type: "SINGLE",
   },
   {
-    id: 3,
-    name: "Tin đăng",
+    id: 123,
+    name: "Đăng tin mới",
+    path: `/${path.MANAGER}/${path.CREATE_POST}`,
+    icon: <RiFileEditLine size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 1234,
+    name: "Quản lý tin đăng",
+    path: `/${path.MANAGER}/${path.MANAGE_POST}`,
     icon: <BsPostcard size={20} />,
-    type: "PARENT",
-    subs: [
-      {
-        path: `/${path.MANAGER}/${path.CREATE_POST}`,
-        name: "Tạo mới",
-      },
-      {
-        path: `/${path.MANAGER}/${path.MANAGE_POST}`,
-        name: "Quản lý",
-      },
-    ],
+    type: "SINGLE",
+  },
+  {
+    id: 3000,
+    name: "Danh sánh yêu thích",
+    path: `/${path.MANAGER}/${path.WISHLIST}`,
+    icon: <AiOutlineHeart size={20} />,
+    type: "SINGLE",
   },
   {
     id: 2,
@@ -254,7 +259,7 @@ export const memberSidebar = [
   {
     id: 3,
     name: "Danh sánh yêu thích",
-    path: `/${path.MANAGER}/${path.WISHLIST}`,
+    path: `/${path.MEMBER}/${path.WISHLIST}`,
     icon: <AiOutlineHeart size={20} />,
     type: "SINGLE",
   },
@@ -382,5 +387,44 @@ export const cities = [
     name: "Thừa Thiên Huế",
     postCounter: 4747,
     id: 4,
+  },
+]
+export const stars = [
+  {
+    name: "1 sao",
+    label: "1 sao",
+    value: 1,
+  },
+  {
+    name: "2 sao",
+    label: "2 sao",
+    value: 2,
+  },
+  {
+    name: "3 sao",
+    label: "3 sao",
+    value: 3,
+  },
+  {
+    name: "4 sao",
+    label: "4 sao",
+    value: 4,
+  },
+  {
+    name: "5 sao",
+    label: "5 sao",
+    value: 5,
+  },
+]
+export const status = [
+  {
+    name: "Hết phòng",
+    label: "Hết phòng",
+    value: true,
+  },
+  {
+    name: "Còn phòng",
+    label: "Còn phòng",
+    value: false,
   },
 ]

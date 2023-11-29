@@ -72,7 +72,7 @@ const Home = () => {
             <LongCard key={el.id} {...el} />
           ))}
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 flex flex-col gap-4">
           <BoxFilter
             className="flex justify-center items-center text-xl font-semibold"
             title="LOẠI HÌNH"
@@ -95,17 +95,19 @@ const Home = () => {
           </BoxFilter>
           <BoxFilter
             className="flex justify-center items-center text-xl font-semibold"
-            title="LOẠI HÌNH"
+            title="DANH SÁCH TRỌ MỚI"
             containerClassName="bg-white w-full"
           >
-            {ratings?.map((el) => (
-              <LongCard
-                containerClassName="rounded-none border-b w-full"
-                hideImage
-                key={el.id}
-                {...el}
-              />
-            ))}
+            {posts
+              ?.filter((el, idx) => idx < 4)
+              ?.map((el) => (
+                <LongCard
+                  containerClassName="rounded-none border-b w-full"
+                  hideImage
+                  key={el.id}
+                  {...el}
+                />
+              ))}
           </BoxFilter>
         </div>
       </Section>

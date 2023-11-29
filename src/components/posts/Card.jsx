@@ -1,10 +1,10 @@
-import { formatMoney } from "@/ultils/fn"
+import { formatMoney, formatVietnameseToString } from "@/ultils/fn"
 import path from "@/ultils/path"
 import moment from "moment"
-import React from "react"
-import { Link } from "react-router-dom"
+import React, { useEffect } from "react"
+import { Link, useParams } from "react-router-dom"
 
-const Card = ({ image, title, address, price, createdDate }) => {
+const Card = ({ image, title, address, price, createdDate, id }) => {
   return (
     <div className="w-full col-span-1 flex flex-col rounded-md border">
       <img
@@ -15,7 +15,7 @@ const Card = ({ image, title, address, price, createdDate }) => {
       <div className="p-3 flex flex-col gap-1">
         <span className="text-sm text-gray-500">Hồ Chí Minh</span>
         <Link
-          to={`/${path.DETAIL_POST}/pid/Với 5tr/tháng có ngay CHDV ngay trung tâm Bàu Cát, sầm uất nhất Tân Bình`}
+          to={`/${path.DETAIL_POST}/${id}/${formatVietnameseToString(title)}`}
           className="text-emerald-800 text-lg cursor-pointer hover:underline font-semibold line-clamp-2"
         >
           {title}

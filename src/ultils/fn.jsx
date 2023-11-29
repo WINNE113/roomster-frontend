@@ -1,12 +1,15 @@
-import { AiFillStar, AiOutlineStar } from "react-icons/ai"
-
+import {
+  MdOutlineStarOutline,
+  MdOutlineStarHalf,
+  MdOutlineStarPurple500,
+} from "react-icons/md"
 export const generateRange = (start, end) => {
   const length = end + 1 - start
   return Array.from({ length }, (_, index) => start + index)
 }
 
 export const formatMoney = (number) =>
-  Number(number.toFixed(1)).toLocaleString()
+  Number(number?.toFixed(1)).toLocaleString()
 export const customMoney = (number) => {
   if (typeof number !== "number") return
   const unit = number >= 1000000 ? "triệu/tháng" : "đồng/tháng"
@@ -17,11 +20,19 @@ export const customMoney = (number) => {
 export const renderStarFromNumber = (number = 0, size = 16) => {
   if (!Number(number)) return
   const stars = []
-  number = Math.round(number)
-  for (let i = 0; i < +number; i++)
-    stars.push(<AiFillStar color="orange" size={size} />)
-  for (let i = 5; i > +number; i--)
-    stars.push(<AiOutlineStar color="orange" size={size} />)
+  if ((number * 10) % 2 === 0) {
+    number = Math.round(number)
+    for (let i = 0; i < +number; i++)
+      stars.push(<MdOutlineStarPurple500 color="orange" size={size} />)
+    for (let i = 5; i > +number; i--)
+      stars.push(<MdOutlineStarOutline color="orange" size={size} />)
+  } else {
+    for (let i = 1; i <= Math.floor(+number); i++)
+      stars.push(<MdOutlineStarPurple500 color="orange" size={size} />)
+    stars.push(<MdOutlineStarHalf color="orange" size={size} />)
+    for (let i = 5; i > Math.floor(+number) + 1; i--)
+      stars.push(<MdOutlineStarOutline color="orange" size={size} />)
+  }
   return stars
 }
 export const convertPercentageToNumberTarget = (percentage, targetNumber) => {
@@ -38,4 +49,13 @@ export const getBase64 = (file) => {
     reader.onload = () => resolve(reader.result)
     reader.onerror = (error) => reject(error)
   })
+}
+export const formatVietnameseToString = (keyword) => {
+  if (!keyword) return ""
+  return keyword
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .split(" ")
+    .join("-")
 }

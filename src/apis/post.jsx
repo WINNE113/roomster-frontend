@@ -18,3 +18,21 @@ export const apiGetPostsByRating = (params) =>
     method: "get",
     params,
   })
+export const apiGetDetailPost = (params) =>
+  axios({
+    url: "/guest/postDetail",
+    method: "get",
+    params,
+  })
+export const apiRatings = (data) =>
+  axios({
+    url: "/rating/new",
+    method: "post",
+    data,
+  })
+export const apiGetRatings = (params) =>
+  axios({
+    url: "/rating/list/group",
+    method: "get",
+    params,
+  })

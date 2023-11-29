@@ -12,7 +12,8 @@ import { login, selectRole } from "@/redux/userSlice"
 import { toast } from "react-toastify"
 
 const Login = ({ navigate, dispatch, location }) => {
-  const { selectedRole } = useSelector((state) => state.user)
+  const { selectedRole, current } = useSelector((state) => state.user)
+  if (current) navigate("/")
   const [variant, setVariant] = useState(() => location.state || "LOGIN")
   const [isLoading, setIsLoading] = useState(false)
   const {
