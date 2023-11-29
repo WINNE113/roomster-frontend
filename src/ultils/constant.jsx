@@ -1,10 +1,17 @@
-import { BsFilePerson, BsPostcard } from "react-icons/bs"
+import { BsFilePerson, BsPostcard, BsDoorOpenFill,
+  BsFillPieChartFill,
+  BsFillHouseGearFill,
+  BsDropletHalf,
+  BsFillLightningFill,
+  BsCashCoin,
+  BsStack, } from "react-icons/bs"
 import {
   AiFillDashboard,
   AiOutlineDashboard,
   AiOutlineHeart,
   AiOutlineUser,
 } from "react-icons/ai"
+
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
 import { MdOutlineAttachMoney } from "react-icons/md"
@@ -431,5 +438,49 @@ export const statuses = [
     name: "Từ chối",
     label: "Từ chối",
     value: "REJECTED",
+  },
+]
+export const superAdminSidebar = [
+  {
+    id: 1,
+    name: "Thống kê",
+    path: `${path.DASHBOARD}`,
+    icon: <BsFillPieChartFill size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 2,
+    name: "Quản lý Nhà",
+    icon: <BsFillHouseGearFill size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_HOUSE}`,
+  },
+  {
+    id: 3,
+    name: "Quản lý dịch vụ phòng",
+    icon: <BsStack size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_SERVICE}`,
+  },
+  {
+    id: 4,
+    name: "Quản lý điện & nước",
+    icon: <BsDropletHalf size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_ELECTRIC_WATER}`,
+  },
+  {
+    id: 5,
+    name: "Quản lý tiền phòng",
+    icon: <BsCashCoin size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_PAYMENT}`,
+  },
+  {
+    id: 6,
+    name: "Tới Homepage",
+    path: `/`,
+    icon: <RiShareForwardFill size={20} />,
+    type: "SINGLE",
   },
 ]

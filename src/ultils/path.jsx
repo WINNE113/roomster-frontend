@@ -4,6 +4,7 @@ const path = {
   HOME: "",
   LOGIN: "login",
   ADMIN: "admin",
+  SUPER_ADMIN: "adminsp",
   MEMBER: "member",
   MANAGER: "manager",
 
@@ -24,6 +25,10 @@ const path = {
   CREATE_POST: "tao-moi-tin-dang",
   FILTER: "tim-kiem",
   WISHLIST: "danh-sach-yeu-thich",
+  MANAGER_HOUSE: "house",
+  MANAGER_ELECTRIC_WATER: "electric-water",
+  MANAGER_SERVICE: "service",
+  MANAGER_PAYMENT: "payment"
 }
 
 export default path
