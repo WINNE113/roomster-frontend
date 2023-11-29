@@ -25,13 +25,13 @@ const ModalVote = ({ pid, dispatch }) => {
     }
     const response = await apiRatings(data)
     if (response.success) {
-      toast.success("Cảm ơn đóng góp của bạn")
+      toast.success(response.message)
       setPayload({
         txt: "",
         star: null,
       })
-      dispatch(modal({ isShowModal: false, modalContent: null }))
-    }
+    } else toast.info(response.message)
+    dispatch(modal({ isShowModal: false, modalContent: null }))
   }
   return (
     <div
