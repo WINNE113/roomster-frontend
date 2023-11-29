@@ -14,6 +14,7 @@ const Comment = ({
   replies,
   parents = [],
   parentCommentId,
+  update,
 }) => {
   // id - id của comment hiện tại
   // parentCommentId - id của parent cấp đầu
@@ -22,9 +23,8 @@ const Comment = ({
   useEffect(() => {
     if (!isShowMore) setFinalParents(() => parents.filter((_, idx) => idx < 1))
     else setFinalParents(parents)
-  }, [isShowMore])
-
-  return (
+  }, [isShowMore, update])
+   return (
     <div className="flex gap-3">
       <img
         src={partUser?.image || "/user.svg"}
@@ -42,20 +42,7 @@ const Comment = ({
           </span>
           <span className="flex items-center mb-2 justify-between">
             <span className="text-main-blue font-medium">
-              {partUser?.userName}{" "}
-              {/* <span
-                className={twMerge(
-                  clsx(
-                    "text-xs p-[2px] border font-normal",
-                    partUser?.role === "1010" &&
-                      "border-main-pink text-main-pink",
-                    partUser?.role === "102" &&
-                      "border-green-500 text-green-500"
-                  )
-                )}
-              >
-                {commentator?.roleData?.value}
-              </span> */}
+            {partUser?.userName}
             </span>
             <span className="font-normal text-xs italic text-gray-500">
               {moment(createdAt).fromNow()}

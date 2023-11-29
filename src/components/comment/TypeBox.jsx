@@ -3,13 +3,17 @@ import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { render } from "@/redux/commentSlice"
 import { useRef } from "react"
 import { AiOutlineSend } from "react-icons/ai"
-import { useParams } from "react-router-dom"
+import { createSearchParams, useParams } from "react-router-dom"
+import Swal from "sweetalert2"
+import path from "@/ultils/path" 
 
 const TypeBox = ({
   parentCommentId,
   parentComment,
   dispatch,
   handleReplies,
+  navigate,
+  location,
 }) => {
   const { pid } = useParams()
   const typeBoxRef = useRef()
@@ -23,6 +27,15 @@ const TypeBox = ({
       typeBoxRef.current.innerText = ""
       dispatch(render())
       if (handleReplies) handleReplies(parentComment)
+    }else {
+      Swal.fire("Oops!", "Bạn phải đang nhập trước", "info").then(() => {
+        navigate({
+          pathname: `/${path.LOGIN}`,
+          search: createSearchParams({
+            redirect: location.pathname,
+          }).toString(),
+        })
+      })
     }
   }
   return (

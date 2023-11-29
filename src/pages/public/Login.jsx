@@ -5,7 +5,7 @@ import Swal from "sweetalert2"
 import { useSelector } from "react-redux"
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { apiLogin, apiRegister } from "@/apis/user"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import path from "@/ultils/path"
 import { modal } from "@/redux/appSlice"
 import { login, selectRole } from "@/redux/userSlice"
@@ -16,6 +16,8 @@ const Login = ({ navigate, dispatch, location }) => {
   if (current) navigate("/")
   const [variant, setVariant] = useState(() => location.state || "LOGIN")
   const [isLoading, setIsLoading] = useState(false)
+  const [searchParams] = useSearchParams()
+  console.log(Object.fromEntries([...searchParams]))
   const {
     register,
     handleSubmit,
@@ -38,6 +40,8 @@ const Login = ({ navigate, dispatch, location }) => {
       const response = await apiLogin(data)
       if (response.token) {
         dispatch(login({ token: response.token }))
+        if (searchParams.get("redirect"))
+        return navigate(searchParams.get("redirect"))
         navigate("/")
       } else toast.error(response.message)
     }

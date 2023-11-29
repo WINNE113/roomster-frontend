@@ -9,8 +9,13 @@ const Comments = () => {
   const [comments, setComments] = useState([])
   const { updateComments } = useSelector((s) => s.comment)
   const [replies, setReplies] = useState([])
+  const [update, setUpdate] = useState(false)
   const fetchComments = async () => {
     const response = await apiGetComments(pid)
+    if (response) {
+      setComments(response)
+      setUpdate(!update)
+    }
     if (response) setComments(response)
   }
   useEffect(() => {
@@ -25,15 +30,16 @@ const Comments = () => {
     <div className="flex flex-col gap-4">
       {comments?.map((el, _, self) => (
         <Fragment key={el.commentPostId}>
-          {!el.parent_comment && (
+            {!el.parentComment && (
             <Comment
               parents={self.filter(
-                (cmt) => cmt.parent_comment === el.commentPostId
+                (cmt) => +cmt.parentComment === +el.commentPostId
               )}
               handleReplies={(commentId) => handleReplies(commentId)}
               replies={replies}
               {...el}
               parentCommentId={el.commentPostId}
+              update={update}
             />
           )}
         </Fragment>
