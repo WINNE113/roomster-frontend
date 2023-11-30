@@ -35,7 +35,9 @@ const LongCard = ({
           hideImage ? "col-span-10" : "col-span-8"
         )}
       >
-        <span className="text-sm text-gray-500">Hồ Chí Minh</span>
+         <span className="text-sm text-gray-500">
+          {address?.split(",")[address?.split(",")?.length - 1]}
+        </span>
         <Link
           className="text-emerald-800 cursor-pointer hover:underline font-semibold line-clamp-2"
           to={`/${path.DETAIL_POST}/${id}/${formatVietnameseToString(title)}`}

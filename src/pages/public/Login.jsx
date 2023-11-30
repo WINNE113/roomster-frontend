@@ -17,7 +17,6 @@ const Login = ({ navigate, dispatch, location }) => {
   const [variant, setVariant] = useState(() => location.state || "LOGIN")
   const [isLoading, setIsLoading] = useState(false)
   const [searchParams] = useSearchParams()
-  console.log(Object.fromEntries([...searchParams]))
   const {
     register,
     handleSubmit,

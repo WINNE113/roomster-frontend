@@ -1,11 +1,10 @@
-import clsx from "clsx"
 import moment from "moment"
 import { useEffect, useState } from "react"
 import { ImReply } from "react-icons/im"
-import { twMerge } from "tailwind-merge"
 import TypeBox from "./TypeBox"
 import { HiOutlineDotsVertical } from "react-icons/hi"
-import { apiDeleteComment } from "@/apis/comment"
+import { useSelector } from "react-redux"
+import WithBaseTopping from "@/hocs/WithBaseTopping"
 const Comment = ({
   partUser,
   content,
@@ -16,9 +15,12 @@ const Comment = ({
   parents = [],
   parentCommentId,
   update,
+  userId,
+  handleDeleteComment,
 }) => {
   // id - id của comment hiện tại
   // parentCommentId - id của parent cấp đầu
+  const { current } = useSelector((s) => s.user)
   const [isShowMore, setIsShowMore] = useState(false)
   const [finalParents, setFinalParents] = useState([])
   const [isShowOption, setIsShowOption] = useState(false)
@@ -27,10 +29,6 @@ const Comment = ({
     if (!isShowMore) setFinalParents(() => parents.filter((_, idx) => idx < 1))
     else setFinalParents(parents)
   }, [isShowMore, update])
-  const handleDeleteComment = async () => {
-    const response = await apiDeleteComment({ commentId: commentPostId })
-    console.log(response)
-  }
    return (
     <div className="flex gap-3">
       <img
@@ -56,33 +54,35 @@ const Comment = ({
                 ({moment(createdDate).fromNow()})
               </span>
             </span>
-            <span className="text-xl select-none cursor-pointer p-2 pr-0 relative">
-              <span
-                onClick={() => setIsShowOption(!isShowOption)}
-                className="text-xl cursor-pointer"
-              >
-                <HiOutlineDotsVertical />
-              </span>
-              {isShowOption && (
-                <span className="absolute top-0 right-full flex flex-col min-w-[100px] bg-white drop-shadow text-sm">
-                  <span
-                    onClick={() => {
-                      setIsEdit(true)
-                      setIsShowOption(false)
-                    }}
-                    className="p-2 hover:font-bold pb-1"
-                  >
-                    Chỉnh sửa
-                  </span>
-                  <span
-                    onClick={handleDeleteComment}
-                    className="p-2 hover:font-bold pt-1"
-                  >
-                    Xóa
-                  </span>
+            {+current?.userId === +userId && (
+              <span className="text-xl select-none cursor-pointer p-2 pr-0 relative">
+                <span
+                  onClick={() => setIsShowOption(!isShowOption)}
+                  className="text-xl cursor-pointer"
+                >
+                  <HiOutlineDotsVertical />
                 </span>
-              )}
-            </span>
+                {isShowOption && (
+                  <span className="absolute top-0 right-full flex flex-col min-w-[100px] bg-white drop-shadow text-sm">
+                    <span
+                      onClick={() => {
+                        setIsEdit(true)
+                        setIsShowOption(false)
+                      }}
+                      className="p-2 hover:font-bold pb-1"
+                    >
+                      Chỉnh sửa
+                    </span>
+                    <span
+                      onClick={() => handleDeleteComment(commentPostId)}
+                      className="p-2 hover:font-bold pt-1"
+                    >
+                      Xóa
+                    </span>
+                  </span>
+                )}
+              </span>
+            )}
           </span>
           {isEdit ? (
             <TypeBox
@@ -116,6 +116,7 @@ const Comment = ({
                 replies={replies}
                 key={el.commentPostId}
                 {...el}
+                handleDeleteComment={handleDeleteComment}
               />
             ))}
             {parents?.length > 1 && (
@@ -133,4 +134,4 @@ const Comment = ({
   )
 }
 
-export default Comment
+export default WithBaseTopping(Comment)
