@@ -66,6 +66,7 @@ const Filter = ({ location, navigate, dispatch }) => {
     if (page && Number(page)) formdata.append("page", Number(page) - 1)
     if (type === path.PHONGTRO) searchParamsObject.post_type_id = 1
     if (type === path.CANHO) searchParamsObject.post_type_id = 2
+    if (type === path.TIMOGHEP) searchParamsObject.post_type_id = 3
     formdata.append("json", JSON.stringify(searchParamsObject))
     formdata.append("size", 5)
     getPosts(formdata)
@@ -122,6 +123,17 @@ const Filter = ({ location, navigate, dispatch }) => {
       } else delete params.acreage
       params.address = value
     }
+    navigate({
+      pathname: location.pathname,
+      search: createSearchParams(params).toString(),
+    })
+  }
+  const handleResetRadio = (className) => {
+    const radioElms = document.getElementsByClassName(className)
+    for (let el of radioElms) el.checked = false
+    const params = Object.fromEntries([...searchParams])
+    if (className === "PRICE_OPTION") delete params.price
+    if (className === "AREA_OPTION") delete params.acreage
     navigate({
       pathname: location.pathname,
       search: createSearchParams(params).toString(),
@@ -185,14 +197,6 @@ const Filter = ({ location, navigate, dispatch }) => {
               placeholder="Phường / Xã"
               disabled={!district?.codename}
             />
-            {/* <SelectLib
-              className="col-span-2 text-sm"
-              onChange={(val) => setCustomValue("distance", val)}
-              value={distance}
-              options={distances}
-              placeholder="Khoảng cách"
-              disabled={!ward}
-            /> */}
             <div className="w-full flex gap-3 justify-end items-center">
               <Button
                 onClick={() => handleFilterRange("ADDRESS", address)}
@@ -219,11 +223,20 @@ const Filter = ({ location, navigate, dispatch }) => {
                   type="radio"
                   name={el.type}
                   id={el.value}
+                  className="PRICE_OPTION"
                 />
                 <label htmlFor={el.value}>{el.value}</label>
               </div>
             ))}
           </form>
+          <div className="flex justify-center items-center text-sm">
+            <Button
+              onClick={() => handleResetRadio("PRICE_OPTION")}
+              className="py-1 bg-transparent border border-red-600 text-red-600"
+            >
+              Reset
+            </Button>
+          </div>
         </BoxFilter>
         <BoxFilter title="DIỆN TÍCH">
           <div className="grid grid-cols-2 gap-2 p-2">
@@ -235,10 +248,19 @@ const Filter = ({ location, navigate, dispatch }) => {
                   name={el.type}
                   id={el.value}
                   value={el.value}
+                  className="AREA_OPTION"
                 />
                 <label htmlFor={el.value}>{el.value}</label>
               </div>
             ))}
+          </div>
+          <div className="flex justify-center items-center text-sm">
+            <Button
+              onClick={() => handleResetRadio("AREA_OPTION")}
+              className="py-1 bg-transparent border border-red-600 text-red-600"
+            >
+              Reset
+            </Button>
           </div>
         </BoxFilter>
         <BoxFilter title="KHÁC">

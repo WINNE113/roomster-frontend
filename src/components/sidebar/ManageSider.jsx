@@ -1,5 +1,6 @@
 import withBaseTopping from "@/hocs/WithBaseTopping"
-import { managerSidebar, memberSidebar } from "@/ultils/constant"
+import { logout } from "@/redux/userSlice"
+import { managerSidebar } from "@/ultils/constant"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -10,7 +11,7 @@ import {
 import { useSelector } from "react-redux"
 import { NavLink } from "react-router-dom"
 
-const ManageSidebar = () => {
+const ManageSidebar = ({ dispatch }) => {
   const [tabs, setTabs] = useState([])
   const { current } = useSelector((state) => state.user)
   const handleTabs = (tabId) => {
@@ -93,7 +94,7 @@ const ManageSidebar = () => {
           </Fragment>
         ))}
         <span
-          //   onClick={() => dispatch(logout())}
+             onClick={() => dispatch(logout())}
           className={clsx(
             "flex cursor-pointer hover:bg-blue-100 w-full p-3 items-center gap-2"
           )}

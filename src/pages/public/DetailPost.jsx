@@ -5,12 +5,12 @@ import { AiOutlineUnorderedList } from "react-icons/ai"
 import { GoLocation } from "react-icons/go"
 import { BsPhoneVibrate } from "react-icons/bs"
 import { createSearchParams, useParams } from "react-router-dom"
-import { apiGetDetailPost, apiGetRatings } from "@/apis/post"
+import { apiGetDetailPost, apiGetPosts, apiGetRatings } from "@/apis/post"
 import moment from "moment"
 import DOMPurify from "dompurify"
 import { apiGetLngLatFromAddress } from "@/apis/app"
 import { CgSpinner } from "react-icons/cg"
-import { Comments, Map, Rating } from "@/components"
+import { BoxFilter, Comments, LongCard, Map, Rating } from "@/components"
 import TypeBox from "@/components/comment/TypeBox"
 import { useSelector } from "react-redux"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
@@ -24,9 +24,19 @@ const DetailPost = ({ navigate, location }) => {
   const [post, setPost] = useState()
   const [rating, setRating] = useState({})
   const [center, setCenter] = useState([])
+  const [posts, setPosts] = useState([])
   const fetchDetailPost = async () => {
     const response = await apiGetDetailPost({ postId: pid })
     if (response) setPost({ ...response?.postDetail, images: response?.images })
+  }
+  const getPosts = async (address) => {
+    console.log(address)
+    const formdata = new FormData()
+    formdata.append("json", JSON.stringify({ address }))
+    formdata.append("size", 5)
+    const response = await apiGetPosts(formdata)
+    if (response) setPosts(response.data)
+    else setPosts([])
   }
   const fetchRating = async () => {
     const response = await apiGetRatings({ postId: pid })
@@ -51,6 +61,7 @@ const DetailPost = ({ navigate, location }) => {
         text: post?.address,
         apiKey: import.meta.env.VITE_MAP_API_KEY,
       })
+      getPosts(post?.address?.split(",")[post?.address?.split(",")?.length - 1])
     }
   }, [post])
 
@@ -265,10 +276,10 @@ const DetailPost = ({ navigate, location }) => {
             </div>
           </div>
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 flex flex-col gap-6">
           <div className="w-full flex flex-col gap-2 items-center justify-center rounded-md bg-emerald-800 text-white p-4">
             <img
-              src="/user.svg"
+               src={post?.createdBy?.images || "/user.svg"}
               alt="user"
               className="rounded-full w-24 h-24 object-cover border border-main-yellow"
             />
@@ -282,7 +293,9 @@ const DetailPost = ({ navigate, location }) => {
               <span className="text-white text-2xl">
                 <BsPhoneVibrate />
               </span>
-              <span>{post?.createdBy?.phoneNumber}</span>
+              <a href={`tel:${post?.createdBy?.phoneNumber}`}>
+                {post?.createdBy?.phoneNumber}
+              </a>
             </a>
             <a
               className="text-emerald-800 font-medium flex items-center bg-main-orange justify-center gap-2 px-4 py-2 border w-3/5 text-center border-main-orange rounded-md"
@@ -300,6 +313,22 @@ const DetailPost = ({ navigate, location }) => {
               <span>{post?.createdBy?.phoneNumber}</span>
             </a>
           </div>
+          <BoxFilter
+            className="flex justify-center items-center text-xl font-semibold"
+            title="Bài viết liên quan"
+            containerClassName="bg-white w-full"
+          >
+            {posts
+              ?.filter((el, idx) => idx < 4)
+              ?.map((el) => (
+                <LongCard
+                  containerClassName="rounded-none border-b w-full"
+                  hideImage
+                  key={el.id}
+                  {...el}
+                />
+              ))}
+          </BoxFilter>
         </div>
       </div>
       <div className="mt-6 bg-red-500 w-full">

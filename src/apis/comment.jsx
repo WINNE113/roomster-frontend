@@ -12,3 +12,15 @@ export const apiGetComments = (pid) =>
     url: "/comment/list/" + pid,
     method: "get",
   })
+  export const apiUpdateComment = (data) =>
+  axios({
+    url: "/comment/update",
+    method: "put",
+    data,
+  })
+export const apiDeleteComment = (params) =>
+  axios({
+    url: "/comment/delete",
+    method: "delete",
+    params,
+  })
