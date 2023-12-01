@@ -10,13 +10,24 @@ import moment from "moment"
 import DOMPurify from "dompurify"
 import { apiGetLngLatFromAddress } from "@/apis/app"
 import { CgSpinner } from "react-icons/cg"
-import { BoxFilter, Comments, LongCard, Map, Rating } from "@/components"
+import {
+  BoxFilter,
+  Button,
+  Comments,
+  DetailImages,
+  LongCard,
+  Map,
+  Rating,
+  Report,
+} from "@/components"
 import TypeBox from "@/components/comment/TypeBox"
 import { useSelector } from "react-redux"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import path from "@/ultils/path"
+import { MdOutlineReportProblem } from "react-icons/md"
+import { modal } from "@/redux/appSlice"
 
-const DetailPost = ({ navigate, location }) => {
+const DetailPost = ({ navigate, location, dispatch }) => {
   const { pid } = useParams()
   const { current } = useSelector((s) => s.user)
   const { isShowModal } = useSelector((s) => s.app)
@@ -30,7 +41,6 @@ const DetailPost = ({ navigate, location }) => {
     if (response) setPost({ ...response?.postDetail, images: response?.images })
   }
   const getPosts = async (address) => {
-    console.log(address)
     const formdata = new FormData()
     formdata.append("json", JSON.stringify({ address }))
     formdata.append("size", 5)
@@ -103,7 +113,17 @@ const DetailPost = ({ navigate, location }) => {
             className="col-span-1 w-full h-full row-span-1 object-cover rounded-br-md"
           />
         )}
-        <div className="absolute bottom-6 right-8 bg-white borer-2 rounded-md border-emerald-800 gap-2 flex items-center justify-center px-4 py-2">
+        <div
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: <DetailImages images={post?.images} />,
+              })
+            )
+          }
+          className="absolute cursor-pointer bottom-6 right-8 bg-white borer-2 rounded-md border-emerald-800 gap-2 flex items-center justify-center px-4 py-2"
+        >
           <AiOutlineUnorderedList />
           <span className="text-emerald-800 font-medium">
             Hiện thị tất cả ảnh
@@ -150,6 +170,17 @@ const DetailPost = ({ navigate, location }) => {
             <span className="flex items-center gap-2">
               🕓<span>{moment(post?.createdDate).fromNow()}</span>
             </span>
+          </div>
+          <div>
+            <Button
+              onClick={() =>
+                dispatch(modal({ isShowModal: true, modalContent: <Report /> }))
+              }
+              className="bg-orange-500"
+            >
+              <MdOutlineReportProblem size={22} />
+              Báo cáo tin đăng
+            </Button>
           </div>
           <div className="mt-6">
             <h2 className="text-lg my-3 font-bold">Đặc điểm tin đăng</h2>

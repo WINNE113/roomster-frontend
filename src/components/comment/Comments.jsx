@@ -50,6 +50,7 @@ const Comments = ({ dispatch }) => {
               {...el}
               parentCommentId={el.commentPostId}
               handleDeleteComment={handleDeleteComment}
+              update={update}
             />
           )}
         </Fragment>
