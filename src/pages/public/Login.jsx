@@ -40,7 +40,7 @@ const Login = ({ navigate, dispatch, location }) => {
       if (response.token) {
         dispatch(login({ token: response.token }))
         if (searchParams.get("redirect"))
-        return navigate(searchParams.get("redirect"))
+          return navigate(searchParams.get("redirect"))
         navigate("/")
       } else toast.error(response.message)
     }

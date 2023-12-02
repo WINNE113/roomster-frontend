@@ -146,7 +146,6 @@ const ManagePost = ({ dispatch, navigate }) => {
                   <td className="p-2 text-center">
                     {formatMoney(el.price) + " VNĐ"}
                   </td>
-                 
                   <td className="p-2 text-center">
                     {moment(el.createdDate).format("DD/MM/YYYY")}
                   </td>
@@ -164,7 +163,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                     </span>
                   </td>
                   <td className="p-2 text-center">
-                  {statuses.find((n) => n.value === el.status)?.name}
+                    {statuses.find((n) => n.value === el.status)?.name}
                   </td>
                   <td className="p-2">
                     <span className="flex w-full justify-center text-emerald-700 items-center gap-2">

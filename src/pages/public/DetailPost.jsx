@@ -310,7 +310,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
         <div className="col-span-3 flex flex-col gap-6">
           <div className="w-full flex flex-col gap-2 items-center justify-center rounded-md bg-emerald-800 text-white p-4">
             <img
-               src={post?.createdBy?.images || "/user.svg"}
+              src={post?.createdBy?.images || "/user.svg"}
               alt="user"
               className="rounded-full w-24 h-24 object-cover border border-main-yellow"
             />

@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify"
 import { Layout, Home, Login, Filter, DetailPost } from "./pages/public"
 import { Loading, Modal } from "./components"
 import { LayoutAdmin, Dashboard, ManageUser, ManagePosts } from "./pages/admin"
+import { LayoutSuperAdmin, Dashboardsp, ManagerHouse, ManagerWater, ManagerService, ManagerPayment } from "./pages/superAdmin"
 import {
   LayoutManager,
   Personal,
@@ -58,6 +59,15 @@ function App() {
           <Route path={path.MANAGE_POST_ALL} element={<ManagePosts />} />
           <Route path={path.INVALID} element={<Dashboard />} />
         </Route>
+
+         {/* Super Admin routes */}
+         <Route className="overflow-hidden" path={path.SUPER_ADMIN} element={<LayoutSuperAdmin />}>
+         <Route path={path.DASHBOARD} element={<Dashboardsp />} />
+         <Route path={path.MANAGER_HOUSE} element={<ManagerHouse />} />
+         <Route path={path.MANAGER_ELECTRIC_WATER} element={<ManagerWater />} />
+         <Route path={path.MANAGER_SERVICE} element={<ManagerService />} />
+         <Route path={path.MANAGER_PAYMENT} element={<ManagerPayment />} />
+       </Route>
 
         {/* Member routes */}
         <Route path={path.MANAGER} element={<LayoutManager />}>

@@ -13,7 +13,7 @@ const Card = ({ image, title, address, price, createdDate, id }) => {
         className="w-full h-[156px] object-cover rounded-tl-md rounded-tr-md"
       />
       <div className="p-3 flex flex-col gap-1">
-      <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500">
           {address?.split(",")[address?.split(",")?.length - 1]}
         </span>
         <Link

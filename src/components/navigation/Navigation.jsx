@@ -83,7 +83,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                         to={`/${path.MEMBER}/${path.PERSONAL}`}
                         className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
                       >
-                        Thông tin cá nhân 
+                        Thông tin cá nhân
                       </Link>
                     )}
                     {current?.roleList?.some(
@@ -125,7 +125,8 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 />
               </div>
             )}
-             <div className="relative">
+
+            <div className="relative">
               <span className="animate-ping absolute inline-flex h-3 w-3 top-0 right-0 rounded-full bg-red-600 opacity-75"></span>
               <span className="rounded-full absolute inline-flex h-3 w-3 top-0 right-0 bg-red-700"></span>
               <Link
@@ -136,6 +137,15 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 Đăng tin mới
               </Link>
             </div>
+            <button
+                onClick={() =>
+                  navigate(`/${path.SUPER_ADMIN}`, { state: "REGISTER" })
+                }
+                state={"REGISTER"}
+                className="text-emerald-800 rounded-md bg-gray-100 text-sm font-medium px-6 py-2"
+              >
+                Quản lý phòng
+              </button>
           </div>
         </div>
         <div className="flex items-center gap-4 -ml-4 text-white">
