@@ -32,7 +32,7 @@ const Comment = ({
    return (
     <div className="flex gap-3">
       <img
-        src={partUser?.image || "/user.svg"}
+         src={partUser?.images || "/user.svg"}
         alt="user"
         className="w-12 h-12 flex-none object-cover border rounded-full"
       />

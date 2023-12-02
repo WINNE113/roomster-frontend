@@ -16,11 +16,13 @@ const Home = () => {
   const [ratings, setRatings] = useState()
   const fetchHomeData = async () => {
     const formdata = new FormData()
+    formdata.append("json", JSON.stringify({ status: "APPROVED" }))
     formdata.append("size", 5)
     const response = await apiGetPosts(formdata)
     if (response?.data) setPosts(response.data)
   }
   const fetchHomeRatings = async () => {
+    const formdata = new FormData()
     const response = await apiGetPostsByRating({ size: 10 })
     if (response) setRatings(response)
   }

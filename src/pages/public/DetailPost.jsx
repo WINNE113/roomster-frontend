@@ -42,7 +42,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
   }
   const getPosts = async (address) => {
     const formdata = new FormData()
-    formdata.append("json", JSON.stringify({ address }))
+    formdata.append("json", JSON.stringify({ address, status: "APPROVED" }))
     formdata.append("size", 5)
     const response = await apiGetPosts(formdata)
     if (response) setPosts(response.data)

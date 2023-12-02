@@ -67,7 +67,10 @@ const Filter = ({ location, navigate, dispatch }) => {
     if (type === path.PHONGTRO) searchParamsObject.post_type_id = 1
     if (type === path.CANHO) searchParamsObject.post_type_id = 2
     if (type === path.TIMOGHEP) searchParamsObject.post_type_id = 3
-    formdata.append("json", JSON.stringify(searchParamsObject))
+    formdata.append(
+      "json",
+      JSON.stringify({ ...searchParamsObject, status: "APPROVED" })
+    )
     formdata.append("size", 5)
     getPosts(formdata)
     dispatch(resetFilter(false))
