@@ -138,11 +138,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
             </div>
             <button
                 onClick={() =>
-                  navigate(`/${path.SUPER_ADMIN}`, { state: "REGISTER" })
+                  navigate(`/${path.SUPER_ADMIN}` + `/${path.DASHBOARD}`, { state: "REGISTER" })
                 }
                 state={"REGISTER"}
-                className="text-emerald-800 rounded-md bg-gray-100 text-sm font-medium px-6 py-2"
-              >
+                className="text-emerald-800 rounded-md bg-gray-100 text-sm font-medium px-6 py-2">
                 Quản lý phòng
               </button>
           </div>
