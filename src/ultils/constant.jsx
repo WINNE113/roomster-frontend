@@ -11,7 +11,6 @@ import {
   AiOutlineHeart,
   AiOutlineUser,
 } from "react-icons/ai"
-
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
 import { MdOutlineAttachMoney } from "react-icons/md"
