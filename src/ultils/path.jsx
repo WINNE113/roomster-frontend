@@ -25,6 +25,7 @@ const path = {
   CREATE_POST: "tao-moi-tin-dang",
   FILTER: "tim-kiem",
   WISHLIST: "danh-sach-yeu-thich",
+  VERIFY_PHONE: "xac-minh-so-dien-thoai",
   MANAGER_HOUSE: "house",
   MANAGER_ELECTRIC_WATER: "electric-water",
   MANAGER_SERVICE: "service",

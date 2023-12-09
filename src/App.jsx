@@ -11,7 +11,7 @@ import {
   CreatePost,
   ManagePost,
 } from "./pages/manager"
-import { LayoutMember, Wishlist } from "./pages/member"
+import { LayoutMember, VerifyOtpUpgradeRole, Wishlist } from "./pages/member"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { getCurrent, getProvinces, getWishlist } from "./redux/actions"
@@ -28,8 +28,8 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       dispatch(getCurrent())
+      if (token) dispatch(getWishlist())
     }, 800)
-    if (token) dispatch(getWishlist())
   }, [token])
   return (
     <>
@@ -44,6 +44,7 @@ function App() {
           <Route path={path.HOME} element={<Home />} />
           <Route path={path.LIST} element={<Filter />} />
           <Route path={path.DETAIL_POST__PID__TITLE} element={<DetailPost />} />
+          <Route path={path.VERIFY_PHONE} element={<VerifyOtpUpgradeRole />} />
         </Route>
         <Route path={path.LOGIN} element={<Login />} />
 
@@ -59,14 +60,6 @@ function App() {
           <Route path={path.MANAGE_USER} element={<ManageUser />} />
           <Route path={path.MANAGE_POST_ALL} element={<ManagePosts />} />
           <Route path={path.INVALID} element={<Dashboard />} />
-          </Route>
-           {/* Super Admin routes */}
-         <Route className="overflow-hidden" path={path.SUPER_ADMIN} element={<LayoutSuperAdmin />}>
-         <Route path={path.DASHBOARD} element={<Dashboardsp />} />
-         <Route path={path.MANAGER_HOUSE} element={<ManagerHouse />} />
-         <Route path={path.MANAGER_ELECTRIC_WATER} element={<ManagerWater />} />
-         <Route path={path.MANAGER_SERVICE} element={<ManagerService />} />
-         <Route path={path.MANAGER_PAYMENT} element={<ManagerPayment />} />
         </Route>
 
         {/* Member routes */}

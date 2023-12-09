@@ -7,8 +7,10 @@ import withBaseTopping from "@/hocs/WithBaseTopping"
 import path from "@/ultils/path"
 import { menu } from "@/ultils/constant"
 import clsx from "clsx"
-import { resetFilter } from "@/redux/appSlice"
+import { modal, resetFilter } from "@/redux/appSlice"
 import { AiOutlineHeart } from "react-icons/ai"
+import { Button, VerifyPhone } from ".."
+import Swal from "sweetalert2"
 
 const activedStyle =
   "text-sm flex gap-2 items-center px-4 py-3 rounded-l-full rounded-r-full border border-white"
@@ -35,6 +37,25 @@ const Navigation = ({ dispatch, location, navigate }) => {
       window.removeEventListener("click", handleOffOptionsExternalClick)
     }
   }, [])
+  const handleClickCreatePost = (pathname) => {
+    if (current?.roleList?.some((el) => el.name === "ROLE_MANAGE")) {
+      navigate(pathname)
+    } else {
+      Swal.fire({
+        icon: "info",
+        title: "Oops!",
+        text: "Bạn phải xác minh SĐT mới được truy cập",
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Đi xác minh",
+        cancelButtonText: "Bỏ qua",
+      }).then((rs) => {
+        if (rs.isConfirmed) {
+          dispatch(modal({ isShowModal: true, modalContent: <VerifyPhone /> }))
+        }
+      })
+    }
+  }
   return (
     <div className="flex bg-emerald-800 py-6 justify-center">
       <div className="w-main flex flex-col gap-4">
@@ -71,11 +92,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
               <>
                 <Link
                   to={
-                    current?.roleList?.name === "ROLE_MANAGE"
+                    current?.roleList?.some((el) => el.name === "ROLE_MANAGE")
                       ? `/${path.MANAGER}/${path.WISHLIST}`
                       : `/${path.MEMBER}/${path.WISHLIST}`
                   }
-                  state={"REGISTER"}
                   className="rounded-md flex items-center gap-2 text-white text-sm font-medium px-6 py-2"
                 >
                   <span className="relative">
@@ -89,23 +109,28 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 <div className="relative">
                   <span className="animate-ping absolute inline-flex h-3 w-3 top-0 right-0 rounded-full bg-red-600 opacity-75"></span>
                   <span className="rounded-full absolute inline-flex h-3 w-3 top-0 right-0 bg-red-700"></span>
-                  <Link
-                    to={`/${path.MANAGER}/${path.CREATE_POST}`}
-                    state={"REGISTER"}
+                  <Button
+                    onClick={() =>
+                      handleClickCreatePost(
+                        `/${path.MANAGER}/${path.CREATE_POST}`
+                      )
+                    }
                     className="text-emerald-800-300 rounded-md flex items-center gap-2 border  bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
                   >
                     Đăng tin mới
-                  </Link>
+                  </Button>
                 </div>
-                {current?.roleList?.name === "ROLE_MANAGE" && (
-                  <Link
-                    to={`/${path.MANAGER}/${path.MANAGE_POST}`}
-                    state={"REGISTER"}
-                    className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
-                  >
-                    Quản lý phòng
-                  </Link>
-                )}
+                <Link
+                  to={`/${path.MANAGER}/${path.MANAGE_POST}`}
+                  onClick={() =>
+                    handleClickCreatePost(
+                      `/${path.MANAGER}/${path.MANAGE_POST}`
+                    )
+                  }
+                  className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
+                >
+                  Quản lý phòng
+                </Link>
                 <div
                   onClick={handleShowOptions}
                   className="flex relative cursor-pointer items-center gap-2"
