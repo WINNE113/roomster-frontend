@@ -53,7 +53,7 @@ const Rating = ({
           onClick={() => {
             if (
               current &&
-              current?.roleList?.some((el) => el.name === "ROLE_USER")
+              current?.roleList?.some((el) => el.name === "ROLE_USER" || el.name === "ROLE_MANAGE")
             ) {
               dispatch(
                 modal({
