@@ -4,8 +4,8 @@ import React, { useState } from "react"
 import { AiOutlineClose } from "react-icons/ai"
 import CustomSlider from "../common/CustomSlider"
 
-const DetailImages = ({ dispatch, images = [] }) => {
-  const [index, setIndex] = useState(1)
+const DetailImages = ({ dispatch, images = [], currentImage }) => {
+  const [index, setIndex] = useState(() => currentImage + 1 || 1)
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -24,7 +24,12 @@ const DetailImages = ({ dispatch, images = [] }) => {
       </div>
       <div className="w-full p-4 grid h-full pb-12 grid-rows-6">
         <div className="row-span-6 flex items-center pb-24 px-8">
-          <CustomSlider setIndex={setIndex} slides={images} count={1}>
+        <CustomSlider
+            currentImage={currentImage}
+            setIndex={setIndex}
+            slides={images}
+            count={1}
+          >
             {images.map((el) => (
               <img
                 key={el?.image}
