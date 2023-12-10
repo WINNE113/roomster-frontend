@@ -1,12 +1,14 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Button, InputForm, OtpVerify } from ".."
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { apiVerifyRole } from "@/apis/user"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
+import path from "@/ultils/path"
+import { toast } from "react-toastify"
 import { modal } from "@/redux/appSlice"
 
-const VerifyPhone = ({ dispatch }) => {
+const VerifyPhone = ({ navigate, dispatch }) => {
   const { current } = useSelector((s) => s.user)
   const [isLoading, setIsLoading] = useState(false)
   const {
@@ -27,7 +29,10 @@ const VerifyPhone = ({ dispatch }) => {
       userName: current?.userName,
     })
     setIsLoading(false)
-    dispatch(modal({ isShowModal: true, modalContent: <OtpVerify /> }))
+    if (response.status === "DELIVERED") {
+        dispatch(modal({ isShowModal: false, modalContent: null }))
+        navigate(`/${path.VERIFY_PHONE}`)
+      } else toast.error(response.message)
 
     console.log(response)
   }
