@@ -11,7 +11,13 @@ import {
   CreatePost,
   ManagePost,
 } from "./pages/manager"
-import { LayoutMember, Wishlist } from "./pages/member"
+import {
+  ChangePassword,
+  ChangePhone,
+  LayoutMember,
+  VerifyOtpUpgradeRole,
+  Wishlist,
+} from "./pages/member"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { getCurrent, getProvinces, getWishlist } from "./redux/actions"
@@ -47,10 +53,12 @@ function App() {
         </Route>
         <Route path={path.LOGIN} element={<Login />} />
 
-        {/* Manager routes */}
+        {/* Member routes */}
         <Route path={path.MEMBER} element={<LayoutMember />}>
           <Route path={path.PERSONAL} element={<Personal />} />
           <Route path={path.WISHLIST} element={<Wishlist />} />
+          <Route path={path.CHANGE_PHONE} element={<ChangePhone />} />
+          <Route path={path.CHANGE_PASSWORD} element={<ChangePassword />} />
         </Route>
 
         {/* Admin routes */}
@@ -69,12 +77,14 @@ function App() {
          <Route path={path.MANAGER_PAYMENT} element={<ManagerPayment />} />
         </Route>
 
-        {/* Member routes */}
+        {/* Manage routes */}
         <Route path={path.MANAGER} element={<LayoutManager />}>
           <Route path={path.PERSONAL} element={<Personal />} />
           <Route path={path.WISHLIST} element={<Wishlist />} />
           <Route path={path.CREATE_POST} element={<CreatePost />} />
           <Route path={path.MANAGE_POST} element={<ManagePost />} />
+          <Route path={path.CHANGE_PHONE} element={<ChangePhone />} />
+          <Route path={path.CHANGE_PASSWORD} element={<ChangePassword />} />
         </Route>
 
         <Route path={path.INVALID} element={<Home />} />

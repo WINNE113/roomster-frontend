@@ -3,10 +3,12 @@ import { Button, InputForm, Title } from "@/components"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { getCurrent } from "@/redux/actions"
 import { getBase64 } from "@/ultils/fn"
+import path from "@/ultils/path"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 
 const Personal = ({ dispatch }) => {
@@ -135,12 +137,25 @@ const Personal = ({ dispatch }) => {
               Cập nhật
             </Button>
           </div>
-          <span className="text-emerald-600 underline cursor-pointer mt-4 text-sm">
-            Đổi mật khẩu
-          </span>
-          <span className="text-emerald-600 underline cursor-pointer text-sm">
-            Cập nhật số điện thoại mới
-          </span>
+          <Link
+            to={
+              current?.roleList?.some((el) => el.name === "ROLE_MANAGE")
+                ? `/${path.MANAGER}/${path.CHANGE_PASSWORD}`
+                : `/${path.MEMBER}/${path.CHANGE_PASSWORD}`
+            }
+            className="text-emerald-600 hover:underline cursor-pointer text-sm"
+          >
+          </Link>
+          <Link
+            to={
+              current?.roleList?.some((el) => el.name === "ROLE_MANAGE")
+                ? `/${path.MANAGER}/${path.CHANGE_PHONE}`
+                : `/${path.MEMBER}/${path.CHANGE_PHONE}`
+            }
+            className="text-emerald-600 hover:underline cursor-pointer text-sm"
+          ></Link>
+          Đổi mật khẩu
+          Cập nhật số điện thoại mới
         </form>
         <div className="col-span-3 flex flex-col gap-4">
           <h3 className="font-medium" htmlFor="avatar">
