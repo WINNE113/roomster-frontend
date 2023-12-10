@@ -25,6 +25,7 @@ import {
   VerifyOtpUpgradeRole,
   Wishlist,
 } from "./pages/member"
+import { LayoutMember, VerifyOtpUpgradeRole, Wishlist } from "./pages/member"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { getCurrent, getProvinces, getWishlist } from "./redux/actions"

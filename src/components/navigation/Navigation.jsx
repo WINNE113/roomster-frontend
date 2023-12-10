@@ -122,11 +122,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 </div>
                 <Link
                   to={`/${path.MANAGER}/${path.MANAGE_POST}`}
-                  onClick={() =>
-                    handleClickCreatePost(
-                      `/${path.MANAGER}/${path.MANAGE_POST}`
-                    )
-                  }
+                  state={"REGISTER"}
                   className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
                 >
                   Quản lý phòng
@@ -156,23 +152,23 @@ const Navigation = ({ dispatch, location, navigate }) => {
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_ADMIN"
                       ) && (
-                        <Link
-                          to={`/${path.ADMIN}/${path.DASHBOARD}`}
-                          className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
-                        >
-                          Admin Workspace
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.ADMIN}/${path.DASHBOARD}`}
+                            className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
+                          >
+                            Admin Workspace
+                          </Link>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_MANAGE"
                       ) && (
-                        <Link
-                          to={`/${path.MANAGER}/${path.PERSONAL}`}
-                          className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
-                        >
-                          Manager Workspace
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.MANAGER}/${path.PERSONAL}`}
+                            className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
+                          >
+                            Manager Workspace
+                          </Link>
+                        )}
                       <span
                         onClick={() => dispatch(logout())}
                         className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"

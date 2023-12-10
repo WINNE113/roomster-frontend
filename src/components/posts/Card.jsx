@@ -9,7 +9,16 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
 
-const Card = ({ image, title, address, price, createdDate, id, isLike }) => {
+const Card = ({
+  image,
+  title,
+  address,
+  price,
+  createdDate,
+  id,
+  isLike,
+  wishListItemId,
+}) => {
   const dispatch = useDispatch()
   const { current, wishlist } = useSelector((s) => s.user)
   const handleAddWishlist = async () => {
@@ -21,7 +30,7 @@ const Card = ({ image, title, address, price, createdDate, id, isLike }) => {
     } else toast.error(response.message)
   }
   const handleRemoveWishlist = async () => {
-    const wishlistId = wishlist?.find((el) => el.id === id)?.id
+    const wishlistId = wishlist?.find((el) => el.id === id)?.wishListItemId
     const response = await apiRemoveWishlist(wishlistId)
     if (response.success) {
       toast.success(response.message)
