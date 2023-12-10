@@ -1,7 +1,14 @@
 import path from "./ultils/path"
 import { Route, Routes } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
-import { Layout, Home, Login, Filter, DetailPost } from "./pages/public"
+import {
+  Layout,
+  Home,
+  Login,
+  Filter,
+  DetailPost,
+  TopProvince,
+} from "./pages/public"
 import { Loading, Modal } from "./components"
 import { LayoutAdmin, Dashboard, ManageUser, ManagePosts } from "./pages/admin"
 import { LayoutSuperAdmin, Dashboardsp, ManagerHouse, ManagerWater, ManagerService, ManagerPayment } from "./pages/superAdmin"
@@ -50,6 +57,8 @@ function App() {
           <Route path={path.HOME} element={<Home />} />
           <Route path={path.LIST} element={<Filter />} />
           <Route path={path.DETAIL_POST__PID__TITLE} element={<DetailPost />} />
+          <Route path={path.VERIFY_PHONE} element={<VerifyOtpUpgradeRole />} />
+          <Route path={path.TOP_PROVINCE__NAME} element={<TopProvince />} />
         </Route>
         <Route path={path.LOGIN} element={<Login />} />
 

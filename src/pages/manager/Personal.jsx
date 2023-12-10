@@ -4,6 +4,7 @@ import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { getCurrent } from "@/redux/actions"
 import { getBase64 } from "@/ultils/fn"
 import path from "@/ultils/path"
+import clsx from "clsx"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -50,6 +51,8 @@ const Personal = ({ dispatch }) => {
     const { images, address, dateOfBirth, userName, email } = data
     const profileRequest = { address, dateOfBirth, userName, email }
 
+    if (current?.roleList?.some((el) => el.name === "ROLE_USER"))
+      profileRequest.phoneNumber = data.phoneNumber
     const formData = new FormData()
     if (images && images instanceof FileList && images.length > 0)
       formData.append("images", images[0])
@@ -81,8 +84,13 @@ const Personal = ({ dispatch }) => {
             errors={errors}
             id="phoneNumber"
             validate={{ required: "Trường này không được bỏ trống." }}
-            inputClassName="border-gray-300 bg-gray-200 focus:outline-none focus:ring-transparent focus:ring-offset-0 focus:border-transparent focus: ring-0 cursor-default"
-            readOnly
+            inputClassName={clsx(
+              current?.roleList?.some((el) => el.name === "ROLE_MANAGE") &&
+              "border-gray-300 bg-gray-200 focus:outline-none focus:ring-transparent focus:ring-offset-0 focus:border-transparent focus: ring-0 cursor-default"
+            )}
+            readOnly={current?.roleList?.some(
+              (el) => el.name === "ROLE_MANAGE"
+            )}
             fullWidth
           />
           <InputForm
@@ -145,17 +153,17 @@ const Personal = ({ dispatch }) => {
             }
             className="text-emerald-600 hover:underline cursor-pointer text-sm"
           >
+            Đổi mật khẩu
           </Link>
-          <Link
-            to={
-              current?.roleList?.some((el) => el.name === "ROLE_MANAGE")
-                ? `/${path.MANAGER}/${path.CHANGE_PHONE}`
-                : `/${path.MEMBER}/${path.CHANGE_PHONE}`
-            }
-            className="text-emerald-600 hover:underline cursor-pointer text-sm"
-          ></Link>
-          Đổi mật khẩu
-          Cập nhật số điện thoại mới
+          {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
+            <Link
+              to={`/${path.MANAGER}/${path.CHANGE_PHONE}`}
+              className="text-emerald-600 hover:underline cursor-pointer text-sm"
+            >
+              Cập nhật số điện thoại mới
+            </Link>
+          )}
+
         </form>
         <div className="col-span-3 flex flex-col gap-4">
           <h3 className="font-medium" htmlFor="avatar">

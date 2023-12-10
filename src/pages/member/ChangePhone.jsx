@@ -20,7 +20,7 @@ const ChangePhone = () => {
       return toast.error("Nhập lại SĐT không đúng.")
     const formatedDataArr = Object.entries(data).map((el) => [
       el[0],
-      "+84" + el[1].slice(1),
+      "0" + el[1].slice(1),
     ])
     const formatedData = Object.fromEntries(formatedDataArr)
     const response = await apiChangePhone(formatedData)

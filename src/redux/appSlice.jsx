@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getProvinces } from "./actions"
+import { getProvinces, getTopProvince } from "./actions"
 
 export const appSlice = createSlice({
   name: "app",
@@ -10,6 +10,7 @@ export const appSlice = createSlice({
     modalContent: null,
     provinces: [],
     isResetFilter: false,
+    topProvinces: [],
   },
   reducers: {
     toggleLoading: (state, action) => {
@@ -26,6 +27,9 @@ export const appSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getProvinces.fulfilled, (state, action) => {
       state.provinces = action.payload
+    })
+    builder.addCase(getTopProvince.fulfilled, (state, action) => {
+      state.topProvinces = action.payload
     })
   },
 })

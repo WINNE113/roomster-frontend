@@ -80,16 +80,16 @@ const DetailPost = ({ navigate, location, dispatch }) => {
       <div className="grid grid-cols-4 h-[410px] relative grid-rows-2 gap-3">
         {post?.images && post?.images[0] && (
           <img
-            onClick={() =>
-              dispatch(
-                modal({
-                  isShowModal: true,
-                  modalContent: (
-                    <DetailImages currentImage={0} images={post?.images} />
-                  ),
-                })
-              )
-            }
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: (
+                  <DetailImages currentImage={0} images={post?.images} />
+                ),
+              })
+            )
+          }
             src={post?.images[0]?.image}
             alt="avatar"
             className="col-span-2 w-full h-full row-span-2 object-cover cursor-pointer rounded-l-md"
@@ -97,16 +97,16 @@ const DetailPost = ({ navigate, location, dispatch }) => {
         )}
         {post?.images && post?.images[1] && (
           <img
-            onClick={() =>
-              dispatch(
-                modal({
-                  isShowModal: true,
-                  modalContent: (
-                    <DetailImages currentImage={1} images={post?.images} />
-                  ),
-                })
-              )
-            }
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: (
+                  <DetailImages currentImage={1} images={post?.images} />
+                ),
+              })
+            )
+          }
             src={post?.images[1]?.image}
             alt="avatar"
             className="col-span-1 w-full h-full row-span-1 object-cover cursor-pointer"
@@ -114,16 +114,16 @@ const DetailPost = ({ navigate, location, dispatch }) => {
         )}
         {post?.images && post?.images[2] && (
           <img
-            onClick={() =>
-              dispatch(
-                modal({
-                  isShowModal: true,
-                  modalContent: (
-                    <DetailImages currentImage={2} images={post?.images} />
-                  ),
-                })
-              )
-            }
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: (
+                  <DetailImages currentImage={2} images={post?.images} />
+                ),
+              })
+            )
+          }
             src={post?.images[2]?.image}
             alt="avatar"
             className="col-span-1 w-full h-full row-span-1 object-cover cursor-pointer rounded-tr-md"
@@ -131,16 +131,16 @@ const DetailPost = ({ navigate, location, dispatch }) => {
         )}
         {post?.images && post?.images[3] && (
           <img
-            onClick={() =>
-              dispatch(
-                modal({
-                  isShowModal: true,
-                  modalContent: (
-                    <DetailImages currentImage={3} images={post?.images} />
-                  ),
-                })
-              )
-            }
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: (
+                  <DetailImages currentImage={3} images={post?.images} />
+                ),
+              })
+            )
+          }
             src={post?.images[3]?.image}
             alt="avatar"
             className="col-span-1 w-full h-full row-span-1 object-cover cursor-pointer"
@@ -148,16 +148,16 @@ const DetailPost = ({ navigate, location, dispatch }) => {
         )}
         {post?.images && post?.images[4] && (
           <img
-            onClick={() =>
-              dispatch(
-                modal({
-                  isShowModal: true,
-                  modalContent: (
-                    <DetailImages currentImage={4} images={post?.images} />
-                  ),
-                })
-              )
-            }
+          onClick={() =>
+            dispatch(
+              modal({
+                isShowModal: true,
+                modalContent: (
+                  <DetailImages currentImage={4} images={post?.images} />
+                ),
+              })
+            )
+          }
             src={post?.images[4]?.image}
             alt="avatar"
             className="col-span-1 w-full h-full row-span-1 object-cover cursor-pointer rounded-br-md"

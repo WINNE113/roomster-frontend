@@ -26,7 +26,7 @@ const LongCard = ({
         <img
           src={image}
           alt="avatar"
-          className="w-full col-span-2 h-[156px] object-cover rounded-tl-md rounded-bl-md"
+          className="w-full col-span-2 h-[156px] object-cover p-2 rounded-tl-md rounded-bl-md"
         />
       )}
       <div

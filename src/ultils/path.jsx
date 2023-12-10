@@ -28,6 +28,8 @@ const path = {
   VERIFY_PHONE: "xac-minh-so-dien-thoai",
   CHANGE_PHONE: "cập-nhat-so-dien-thoai",
   CHANGE_PASSWORD: "doi-mat-khau",
+  TOP_PROVINCE__NAME: "tinh-thanh/:name",
+  TOP_PROVINCE: "tinh-thanh",
   MANAGER_HOUSE: "house",
   MANAGER_ELECTRIC_WATER: "electric-water",
   MANAGER_SERVICE: "service",
