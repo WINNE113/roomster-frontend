@@ -48,10 +48,10 @@ const Comment = ({
             </span>
           )}
           <span className="flex relative mb-2 justify-between">
-            <span className="text-main-blue font-medium">
-              {partUser?.userName}
+            <span className="text-main-blue font-medium ">
+              {partUser?.userName}&nbsp;
               <span className="font-normal text-xs italic text-gray-500">
-                ({moment(createdDate).fromNow()})
+              ({moment(createdDate).fromNow()})
               </span>
             </span>
             {+current?.userId === +userId && (

@@ -121,10 +121,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
                   </Button>
                 </div>
                 <Link
-                  to={`/${path.MANAGER}/${path.MANAGE_POST}`}
+                  to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
                   onClick={() =>
                     handleClickCreatePost(
-                      `/${path.MANAGER}/${path.MANAGE_POST}`
+                      `/${path.SUPER_ADMIN}/${path.DASHBOARD}`
                     )
                   }
                   className="rounded-md flex items-center gap-2 border bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"

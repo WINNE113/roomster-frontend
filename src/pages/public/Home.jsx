@@ -54,7 +54,7 @@ const Home = () => {
       </Section>
       <Section
         className="w-main mx-auto"
-        title="LỰA CHỌN NỔI BẬT"
+        title="PHÒNG TRỌ NỔI BẬT"
         contentClassName="grid grid-cols-4 gap-4"
       >
         {ratings?.map((el) => (
@@ -67,7 +67,7 @@ const Home = () => {
       </Section>
       <Section
         className="w-main mt-12 mx-auto"
-        title="LỰA CHỌN HOT"
+        title="TRỌ MỚI CẬP NHẬP"
         contentClassName="grid grid-cols-10 gap-4"
       >
         <div className="col-span-7 flex flex-col gap-4">
