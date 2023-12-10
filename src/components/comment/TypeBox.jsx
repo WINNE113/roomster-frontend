@@ -2,7 +2,6 @@ import { apiCreateNewComment, apiUpdateComment } from "@/apis/comment"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { render } from "@/redux/commentSlice"
 import { setCarat } from "@/ultils/fn"
-
 import path from "@/ultils/path"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"

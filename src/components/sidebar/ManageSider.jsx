@@ -94,7 +94,7 @@ const ManageSidebar = ({ dispatch }) => {
           </Fragment>
         ))}
         <span
-           onClick={() => dispatch(logout())}
+          onClick={() => dispatch(logout())}
           className={clsx(
             "flex cursor-pointer hover:bg-blue-100 w-full p-3 items-center gap-2"
           )}

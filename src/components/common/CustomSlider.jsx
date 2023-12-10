@@ -3,7 +3,14 @@ import Carousel from "nuka-carousel"
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi"
 import { twMerge } from "tailwind-merge"
 import clsx from "clsx"
-const CustomSlider = ({ count = 4, children, className, setIndex, slides }) => {
+const CustomSlider = ({
+  count = 4,
+  children,
+  className,
+  setIndex,
+  slides,
+  currentImage = 0,
+}) => {
   return (
     <div
       className={twMerge(
@@ -18,6 +25,7 @@ const CustomSlider = ({ count = 4, children, className, setIndex, slides }) => {
         slidesToShow={count}
         slidesToScroll={1}
         cellSpacing={16}
+        slideIndex={currentImage}
         afterSlide={(index) => setIndex(index)}
         renderCenterLeftControls={({ previousSlide, previousDisabled }) => (
           <button

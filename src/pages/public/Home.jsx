@@ -1,4 +1,5 @@
 import { apiGetPosts, apiGetPostsByRating } from "@/apis/post"
+import { apiGetWishlist } from "@/apis/user"
 import {
   BoxFilter,
   Card,
@@ -9,11 +10,13 @@ import {
 } from "@/components"
 import { cities, menu } from "@/ultils/constant"
 import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 import { NavLink } from "react-router-dom"
 
 const Home = () => {
   const [posts, setPosts] = useState()
   const [ratings, setRatings] = useState()
+  const { wishlist } = useSelector((s) => s.user)
   const fetchHomeData = async () => {
     const formdata = new FormData()
     formdata.append("json", JSON.stringify({ status: "APPROVED" }))
@@ -30,6 +33,7 @@ const Home = () => {
     fetchHomeRatings()
     fetchHomeData()
   }, [])
+
   return (
     <section className="pb-16">
       <Header />
@@ -40,7 +44,11 @@ const Home = () => {
         contentClassName="grid grid-cols-4 gap-4"
       >
         {ratings?.map((el) => (
-          <Card {...el} key={el.id} />
+          <Card
+            isLike={wishlist?.some((n) => n.id === el.id)}
+            {...el}
+            key={el.id}
+          />
         ))}
       </Section>
       <Section

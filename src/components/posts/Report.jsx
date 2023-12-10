@@ -57,6 +57,4 @@ const Report = ({ dispatch }) => {
   )
 }
 
-
 export default WithBaseTopping(Report)
-

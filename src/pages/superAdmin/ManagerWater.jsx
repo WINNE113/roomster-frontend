@@ -2,37 +2,39 @@ import { Title } from "@/components"
 import { useState, useEffect } from "react"
 import { Fragment } from "react"
 import axios from "axios"
-import { BsPencilSquare } from "react-icons/bs"
+import { BsPencilSquare, BsFillPatchPlusFill, BsFillTrashFill } from "react-icons/bs"
 
 const ManagerWater = () => {
 
-  const [waterModal, setWaterModal] = useState(false)
   const [waterData, setWaterData] = useState([]);
   const [houseData, setHouseData] = useState([]);
   const [currentHouseId, setCurrentHouseId] = useState(1);
   const [currentRoomId, setCurrentRoomId] = useState(1);
 
+  const [showModalOrder, setshowModalOrder] = useState(false);
+  const [statusModalOrder, setstatusModalOrder] = useState(false);
+
   const [form, setform] = useState({
     "orderId": null,
     "roomId": null,
-    "roomName": null,
-    "water": null,
-    "electricity": null
+    "water": 0,
+    "electricity": 0
   })
+
+  const [formOrderValidate, setFormOrderValidate] = useState({
+    "roomId": true,
+    "water": true,
+    "electricity": true
+  })
+
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/room-master/house`).then(response => {
       // Handle the response data here
       setHouseData(response.data);
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
-
-    axios.get("http://localhost:8080/room-master/room/" + currentRoomId).then(response => {
-      // Handle the response data here
-      setWaterData(response.data);
+      setCurrentRoomId(response.data[0].rooms[0].id);
+      getRoomDataById(currentRoomId)
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
@@ -40,9 +42,46 @@ const ManagerWater = () => {
 
   }, [callApi]);
 
+  const getRoomDataById = (id) => {
+    axios.get("http://localhost:8080/room-master/room/" + id).then(response => {
+      // Handle the response data here
+      console.log(response.data);
+      setWaterData(response.data);
+    }).catch(error => {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    });
+  }
 
   const reLoad = () => {
     setcallApi(!callApi)
+  }
+
+  const validateOrder = () => {
+    const newValidity = {
+        "roomId": form.roomId !== null && form.roomId != 0,
+        "water": form.water !== null && form.water != 0,
+        "electricity": form.electricity !== null && form.electricity != 0,
+      };
+      // Update the validity state for all fields
+      setFormOrderValidate(newValidity);
+  
+      // Return true if all fields are valid, false otherwise
+      return Object.values(newValidity).every((valid) => valid);
+  };
+
+  const setDefalutFormOrder = () => {
+    setform({
+      "orderId": null,
+      "roomId": null,
+      "water": 0,
+      "electricity": 0
+    })
+    setFormOrderValidate({
+      "roomId": true,
+      "water": true,
+      "electricity": true
+    })
   }
 
   const fillDataFrom = (data) => {
@@ -64,29 +103,6 @@ const ManagerWater = () => {
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.put('http://localhost:8080/room-master/order' + "/" + form.orderId.toString(), form).then(response => {
-      // Handle the response data here
-      reLoad()
-      setWaterModal(!waterModal)
-      console.log(response);
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
-
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    // Update the corresponding property in the person state
-    setform((form) => ({
-      ...form,
-      [name]: value,
-    }));
-  };
-
   const handleHouseChange = (value) => {
     // Update the corresponding property in the person state
     setCurrentHouseId(value)
@@ -100,7 +116,63 @@ const ManagerWater = () => {
   const handleRoomChange = (value) => {
     // Update the corresponding property in the person state
     setCurrentRoomId(value)
-    reLoad();
+    setform((form) => ({
+      ...form,
+      "roomId": value,
+    }));
+    getRoomDataById(value)
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(form);
+    if(validateOrder()){
+      if (form.orderId != null && form.orderId != '') {
+        // edit
+        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
+          // Handle the response data here
+          console.log(response);
+        }).catch(error => {
+          // Handle any errors that occurred during the request
+          console.error(error);
+        }).finally(()=>{
+          reLoad();
+          handleRoomChange(currentRoomId)
+          setDefalutFormOrder()
+        });
+      } else {
+        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
+          // Handle the response data here
+          console.log(response);
+        }).catch(error => {
+          // Handle any errors that occurred during the request
+          console.error(error);
+        }).finally(()=>{
+          reLoad();
+          handleRoomChange(currentRoomId)
+          setDefalutFormOrder()
+        });
+      }
+      setshowModalOrder(!showModalOrder)
+    }
+    else {
+      alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Update the corresponding property in the person state
+    setform((form) => ({
+      ...form,
+      [name]: value,
+    }));
+
+    setFormOrderValidate((formOrderValidate) => ({
+      ...formOrderValidate,
+      [name]: value != 0 && value.trim() !== '',
+  }));
+
   };
 
   return (
@@ -110,46 +182,55 @@ const ManagerWater = () => {
       </section>
       <div className="px-4">
         <div className="overflow-x-auto shadow-md sm:rounded-lg mt-2 border border-[#e2e1e1]">
-          <div className=" flex pb-4 bg-white dark:bg-white-900 px-4 py-4">
-            <label htmlFor="table-search" className="sr-only">Search</label>
-            <div className="relative mt-1">
-              <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg className="w-4 h-4 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                </svg>
+          <div className="w-full flex pb-4 bg-white dark:bg-white-900 px-4 py-4">
+            <div className="flex w-2/3">
+              <label htmlFor="self-center table-search" className="sr-only">Search</label>
+              <div className="self-center relative mt-1">
+                <span className="my-2 text-lg font-semibold self-center">Quản lý điện & nước phòng :</span>
               </div>
-              <input type="text" id="table-search" className="block pt-2 pb-2 ps-10 text-sm text-black border border-gray-300 rounded-lg w-80 bg-white focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500" placeholder="Search for items" />
+              <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                onChange={(e) => handleHouseChange(e.target.value)}>
+                {houseData.map(house => (
+                  <Fragment key={house.houseId}>
+                    <option className="text-start" value={house.houseId}>{house.houseName}</option>
+                  </Fragment>
+                ))}
+              </select>
+              <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                onChange={(e) => handleRoomChange(e.target.value)}
+                onClick={(e) => handleRoomChange(e.target.value)}>
+                {houseData.map((house) => (
+                  <Fragment key={house.houseId}>
+                    {house.houseId == currentHouseId && house.rooms.map((r) => (
+                      <Fragment key={r.id}>
+                        <option className="text-start" value={r.id}>Phòng {r.numberRoom}</option>
+                      </Fragment>
+                    ))}
+                  </Fragment>
+                ))}
+              </select>
             </div>
-            <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              onChange={(e) => handleHouseChange(e.target.value)}>
-              {houseData.map(house => (
-                <Fragment key={house.houseId}>
-                  <option className="text-start" value={house.houseId}>{house.houseName}</option>
-                </Fragment>
-              ))}
-            </select>
-            <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              onChange={(e) => handleRoomChange(e.target.value)}>
-              {houseData.map((house) => (
-                <Fragment key={house.houseId}>
-                  {house.houseId == currentHouseId && house.rooms.map((r) => (
-                    <Fragment key={r.id}>
-                      <option className="text-start" value={r.id}>Phòng {r.numberRoom}</option>
-                    </Fragment>
-                  ))}
-                </Fragment>
-              ))}
-            </select>
+            <div className=" w-full flex justify-end bg-white">
+              <ul className="my-2">
+                <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
+                  onClick={() => {
+                    setshowModalOrder(true)
+                    setstatusModalOrder(true)
+                    setform((form) => ({
+                      ...form,
+                      "roomId": currentRoomId,
+                    }));
+                  }}>
+                  <button className="flex inline-flex items-center px-4">
+                    Thêm dịch vụ <BsFillPatchPlusFill size={15} className="inline ml-3" />
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
           <table className="w-full text-sm text-center rtl:text-right text-[black] font-mono">
             <thead className="text-base text-[white] uppercase bg-[#059669]">
               <tr>
-                <th scope="col" className="p-4">
-                  <div className="flex items-center">
-                    <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                    <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                  </div>
-                </th>
                 <th scope="col" className="px-6 py-3">
                   Số chỉ điện sử dụng
                 </th>
@@ -165,16 +246,10 @@ const ManagerWater = () => {
               </tr>
             </thead>
             <tbody className="text-base font-medium">
-              {waterData.orders != null ? (
+              {waterData.orders != null && waterData.orders.length > 0 ? (
                 waterData.orders.map((order) => (
                   <Fragment key={order.orderId}>
                     <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
-                      <td className="w-4 p-4">
-                        <div className="flex items-center">
-                          <input id="checkbox-table-3" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                          <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
-                        </div>
-                      </td>
                       <td className="px-6 py-4">
                         {order.electricity} <span>chỉ</span>
                       </td>
@@ -187,10 +262,13 @@ const ManagerWater = () => {
                         })}
                       </td>
                       <td className="px-6 py-4">
-                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => {
-                          setDataFromById(order.orderId)
-                          setWaterModal(true)
-                        }}>Edit</button>
+                        {/*  */}
+                        <button className={order.statusPayment == 'Y' ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
+                          onClick={() => {
+                            setDataFromById(order.orderId)
+                            setshowModalOrder(true)
+                            setstatusModalOrder(false)
+                          }}>Edit</button>
                       </td>
                     </tr>
                   </Fragment>
@@ -205,63 +283,65 @@ const ManagerWater = () => {
           </table>
         </div>
       </div>
-      {/* room modal */}
-      {waterModal ? (
+
+      {/* order modal */}
+      {showModalOrder ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
             <div className="relative p-10 " style={{ width: '1000px' }}>
               <div className="relative bg-white rounded-lg shadow shadow-black">
                 <div className="flex items-center justify-between py-5 mx-4 border-b border-[#0000002e] rounded-t">
                   <h3 className="text-xl font-semibold text-black">
-                    Cập nhật điện nước phòng
+                    {!statusModalOrder ? "Sửa thông tin điện nước" : "Thêm điện nước cho phòng"}
                   </h3>
                   <button onClick={() => {
-                    setWaterModal(false)
-                  }} type="button" className="text-black bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                    setshowModalOrder(false)
+                    setDefalutFormOrder();
+                  }} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                     </svg>
                   </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-4 md:p-5">
-                  <div className="grid grid-rows gap-4">
+                  <div className="grid grid-rows- gap-4">
                     <div className="grid grid-cols-5 gap-4">
-                      <label htmlFor="serviceName" className="block mb-2 text-sm font-medium text-black">
-                        Tháng
+                      <label htmlFor="electricity" className="block mb-2 text-sm font-medium text-black">
+                        Số chỉ điện
                       </label>
-                      <div className="bg-white border-b border-gray-300 text-black text-sm p-2.5">
-                        {new Date(form.paymentDate).toLocaleString('en-US', {
-                          month: '2-digit',
-                        })}
-                      </div>
+                      <input type="number" name="electricity" id="electricity"
+                        className={`bg-white border ${!formOrderValidate.electricity ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        placeholder="Nhập số chỉ điện"
+                        required="" value={form.electricity}
+                        onChange={handleInputChange}
+                        onClick={handleInputChange}
+                      />
+
                     </div>
 
                     <div className="grid grid-cols-5 gap-4">
-                      <label htmlFor="water" className="block mb-2 text-sm font-medium text-black">
-                        Số chỉ điện
+                      <label htmlFor="electricity" className="block mb-2 text-sm font-medium text-black">
+                        Số chỉ nước
                       </label>
                       <input type="number" name="water" id="water"
-                        className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Nhập số chỉ điện"
+                        className={`bg-white border ${!formOrderValidate.water ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        placeholder="Nhập số chỉ nước"
                         required="" value={form.water}
                         onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className="grid grid-cols-5 gap-4">
-                      <label htmlFor="electricity" className="block mb-2 text-sm font-medium text-black">
-                        Số lít nước
-                      </label>
-                      <input type="number" name="electricity" id="electric"
-                        className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Nhập số lít nước"
-                        required="" value={form.electricity}
-                        onChange={handleInputChange}
+                        onClick={handleInputChange}
                       />
                     </div>
                   </div>
-                  <button type="submit" className="mt-10 text-white inline-flex items-center bg-[#26B99A] hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
-                    <BsPencilSquare size={15} className="mr-2 inline" /> Cập nhật thông tin phòng
-                  </button>
+                  {statusModalOrder ? (
+                    <button type="submit" className="mt-10 text-white inline-flex items-center bg-[#26B99A] hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                      <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                      Thêm dịch vụ điện nước
+                    </button>
+                  ) : (
+                    <button type="submit" className="mt-10 text-white inline-flex items-center bg-blue-700 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                      <BsPencilSquare size={15} className="mr-2 inline" /> Cập nhật số điện nước
+                    </button>
+                  )}
                 </form>
               </div>
             </div>
@@ -269,6 +349,8 @@ const ManagerWater = () => {
         </>
       ) : null
       }
+
+
     </>
   )
 }

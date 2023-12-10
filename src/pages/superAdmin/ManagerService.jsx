@@ -1,4 +1,4 @@
-import { Title } from "@/components"
+import { Title, DeleteConfirm } from "@/components"
 import React, { useState, useEffect } from "react"
 import {
     BsPencilSquare,
@@ -16,13 +16,20 @@ const ManagerService = () => {
 
     const [showModalServiceRoom, setshowModalServiceRoom] = useState(false);
     const [statusModalServiceRoom, setstatusModalServiceRoom] = useState(false);
+    const [showModalDelete, setshowModalDelete] = useState(false);
+    const [messageDelete, setmessageDelete] = useState("");
 
+    const [typeDelete, setTypeDelete] = useState({
+        type: "",
+        id: 0
+    });
     const [serviceHouseData, setServiceHouseData] = useState([]);
     const [serviceRoomData, setServiceRoomData] = useState([]);
     const [houseData, setHouseData] = useState([]);
     const [currentHouseId, setCurrentHouseId] = useState(1);
     const [currentRoomId, setCurrentRoomId] = useState(1);
 
+    // handle check for room service
     const [checkedEditRoomServiceIds, setCheckedEditRoomServiceIds] = useState([]);
 
     const handleCheckboxEditRoomServiceChange = (event) => {
@@ -51,18 +58,78 @@ const ManagerService = () => {
         }
 
     }
+    // handle check for service
+    const [checkedServiceIds, setCheckedServiceIds] = useState([]);
+
+    const handleCheckboxServiceChange = (event) => {
+        const checkboxId = event.target.id;
+
+        // Check if the checkbox is checked or unchecked
+        if (event.target.checked) {
+            // Add the ID to the list
+            setCheckedServiceIds((prevIds) => prevIds.filter((id) => id != checkboxId));
+            setCheckedServiceIds((prevIds) => [...prevIds, Number(checkboxId)]);
+        } else {
+            // Remove the ID from the list
+            setCheckedServiceIds((prevIds) => prevIds.filter((id) => id != checkboxId));
+        }
+    };
+
+    const handleCheckboxServiceCheckAll = (event) => {
+        if (event.target.checked) {
+            serviceHouseData.forEach(src => {
+                setCheckedServiceIds((prevIds) => prevIds.filter((id) => id != src.serviceId));
+                setCheckedServiceIds((prevIds) => [...prevIds, src.serviceId]);
+            })
+        }
+        else {
+            setCheckedServiceIds([])
+        }
+
+    }
+
 
     const [form, setform] = useState({
         "serviceId": "",
-        "serviceName": null,
+        "serviceName": "",
         "servicePrice": 0,
     })
+
+    const [formServiceValidate, setFormServiceValidate] = useState({
+        "serviceName": true,
+        "servicePrice": true,
+    })
+
+    const validateService = () => {
+        const newValidity = {
+            "serviceName": form.serviceName !== null && form.serviceName.trim() !== '',
+            "servicePrice": form.servicePrice !== null && form.servicePrice !== 0,
+        };
+        // Update the validity state for all fields
+        setFormServiceValidate(newValidity);
+
+        // Return true if all fields are valid, false otherwise
+        return Object.values(newValidity).every((valid) => valid);
+    };
 
     const fillDataFrom = (data) => {
         setform({
             "serviceId": data.serviceId,
             "serviceName": data.serviceName,
             "servicePrice": data.servicePrice,
+        })
+    }
+
+    const setDefaultForm = () => {
+        setform({
+            "serviceId": "",
+            "serviceName": null,
+            "servicePrice": 0,
+        })
+
+        setFormServiceValidate({
+            "serviceName": true,
+            "servicePrice": true,
         })
     }
 
@@ -82,13 +149,11 @@ const ManagerService = () => {
             // Handle the response data here
             console.log(response.data)
             setHouseData(response.data);
-            reloadRoomService(response.data[0].rooms[0].id)
+            reloadRoomService(currentRoomId)
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);
         });
-
-
 
     }, [callApi]);
 
@@ -119,28 +184,36 @@ const ManagerService = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(form);
-
-        if (form.serviceId != '') {
-            // edit
-            axios.put('http://localhost:8080/room-master/serviceHouse' + `/` + form.serviceId, form).then(response => {
-                // Handle the response data here
-                reLoad()
-                setshowModalService(!showModalService)
-                console.log(response);
-            }).catch(error => {
-                // Handle any errors that occurred during the request
-                console.error(error);
-            });
-        } else {
-            axios.post('http://localhost:8080/room-master/serviceHouse', form).then(response => {
-                // Handle the response data here
-                reLoad()
-                setshowModalService(!showModalService)
-                console.log(response);
-            }).catch(error => {
-                // Handle any errors that occurred during the request
-                console.error(error);
-            });
+        if (validateService()) {
+            if (form.serviceId != '') {
+                // edit
+                axios.put('http://localhost:8080/room-master/serviceHouse' + `/` + form.serviceId, form).then(response => {
+                    // Handle the response data here
+                    alert(response.data.message)
+                }).catch(error => {
+                    // Handle any errors that occurred during the request
+                    alert(error.response.data.message)
+                }).finally(() => {
+                    reLoad();
+                    setDefaultForm();
+                });
+            } else {
+                axios.post('http://localhost:8080/room-master/serviceHouse', form).then(response => {
+                    // Handle the response data here
+                    alert(response.data.message)
+                }).catch(error => {
+                    // Handle any errors that occurred during the request
+                    alert(error.response.data.message)
+                }).finally(() => {
+                    reLoad();
+                    setDefaultForm();
+                });
+            }
+            setshowModalService(!showModalService)
+        }
+        else {
+            // If validation fails, display an error message or alert
+            alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
         }
 
 
@@ -152,6 +225,11 @@ const ManagerService = () => {
         setform((form) => ({
             ...form,
             [name]: value,
+        }));
+
+        setFormServiceValidate((formServiceValidate) => ({
+            ...formServiceValidate,
+            [name]: value != 0 && value.trim() !== '',
         }));
     };
 
@@ -173,7 +251,34 @@ const ManagerService = () => {
     };
 
     const handleSubmitEditServiceRoom = () => {
-        console.log(checkedEditRoomServiceIds);
+        axios.put('http://localhost:8080/room-master/serviceHouse/room-service' + '/' + currentRoomId, checkedEditRoomServiceIds).then(response => {
+            // Handle the response data here
+            reLoad()
+            alert(response.data.message)
+            setCheckedEditRoomServiceIds([])
+            setshowModalServiceRoom(!showModalServiceRoom)
+        }).catch(error => {
+            // Handle any errors that occurred during the request
+            alert(error.response.data.message)
+        });
+    }
+
+    const confirmDelete = (status, type) => {
+        if (status) {
+            //delete sẻvice
+            console.log(checkedServiceIds);
+            axios.delete('http://localhost:8080/room-master/serviceHouse', { data: checkedServiceIds }).then(response => {
+                // Handle the response data here
+                alert(response.data.message)
+                reLoad()
+                setCheckedServiceIds([])
+            }).catch(error => {
+                // Handle any errors that occurred during the request
+                alert(error.response.data.message)
+            });
+
+        }
+        setshowModalDelete(false)
     }
 
     return (
@@ -201,20 +306,27 @@ const ManagerService = () => {
                                 </li>
                                 <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800"
                                     onClick={() => {
-
+                                        setTypeDelete({
+                                            type: "service",
+                                            id: 0
+                                        })
+                                        setmessageDelete("Xóa dịch vụ này sẽ xóa tất cả thông tin dịch vụ liên quan đến nhà có đăng ký dịch vụ này này bạn có muốn tiếp tục ?")
+                                        setshowModalDelete(true)
                                     }}>
                                     <button>Xóa dịch vụ <BsFillTrashFill size={15} className="ml-1 inline" /></button>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    {/* TABLE HOME SERVICE */}
+                    {/* TABLE HOUSE SERVICE */}
                     <table className="w-full text-sm text-center rtl:text-right text-[black] font-mono">
                         <thead className="text-base text-[white] uppercase bg-[#059669]">
                             <tr>
                                 <th scope="col" className="p-4">
                                     <div className="flex items-center">
-                                        <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            onClick={handleCheckboxServiceCheckAll}
+                                            checked={checkedServiceIds.length == serviceHouseData.length} />
                                         <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                     </div>
                                 </th>
@@ -235,7 +347,9 @@ const ManagerService = () => {
                                     <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
                                         <td className="w-4 p-4">
                                             <div className="flex items-center">
-                                                <input id="checkbox-table-3" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                <input id={service.serviceId} type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                    onClick={handleCheckboxServiceChange}
+                                                    checked={checkedServiceIds.includes(Number(service.serviceId))} />
                                                 <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
                                             </div>
                                         </td>
@@ -260,7 +374,7 @@ const ManagerService = () => {
                 {/* LINE SEPERATE */}
                 <div className=" border-b border-[#0000003b] m-7">
                 </div>
-                {/* ROOM SERVICE MANAGE SEPERATE */}
+                {/* ROOM SERVICE MANAGE */}
                 <div className="overflow-x-auto shadow-md sm:rounded-lg mt-2 border border-[#e2e1e1] mb-4">
                     {/* HEADER */}
                     <div className="pb-4 bg-white dark:bg-white-900 px-4 py-4">
@@ -296,15 +410,7 @@ const ManagerService = () => {
                                         setstatusModalServiceRoom(true)
                                     }}>
                                     <button className="flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-900">
-                                        Thay đổi dịch vụ phòng<BsPencilSquare size={15} className="ml-1 inline" />
-                                    </button>
-                                </li>
-                                <li className="inline"
-                                    onClick={() => {
-
-                                    }}>
-                                    <button className={serviceRoomData != null && serviceRoomData.length > 0 ? "font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800" : "font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] opacity-50 cursor-not-allowed"}>
-                                        Xóa dịch vụ phòng <BsFillTrashFill size={15} className="ml-1 inline" />
+                                        Thay đổi hoặc xóa dịch vụ phòng<BsPencilSquare size={15} className="ml-1 inline" />
                                     </button>
                                 </li>
                             </ul>
@@ -314,12 +420,6 @@ const ManagerService = () => {
                     <table className="w-full text-sm text-center rtl:text-right text-[black] font-mono">
                         <thead className="text-base text-[white] uppercase bg-[#059669]">
                             <tr>
-                                <th scope="col" className="p-4">
-                                    <div className="flex items-center">
-                                        <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                                    </div>
-                                </th>
                                 <th scope="col" className="px-6 py-3">
                                     Tên dịch vụ
                                 </th>
@@ -328,18 +428,11 @@ const ManagerService = () => {
                                 </th>
                             </tr>
                         </thead>
-
                         <tbody className="text-base font-medium">
                             {serviceRoomData.length > 0 ? (
                                 serviceRoomData.map((service) => (
                                     <Fragment key={service.serviceHouse.serviceId}>
                                         <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
-                                            <td className="w-4 p-4">
-                                                <div className="flex items-center">
-                                                    <input id="checkbox-table-3" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                    <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
-                                                </div>
-                                            </td>
                                             <td className="px-6 py-4">
                                                 {service.serviceHouse.serviceName}
                                             </td>
@@ -374,6 +467,7 @@ const ManagerService = () => {
                                         </h3>
                                         <button onClick={() => {
                                             setshowModalService(false)
+                                            setDefaultForm()
                                         }} type="button" className="text-black bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -387,10 +481,11 @@ const ManagerService = () => {
                                                     Tên dịch vụ
                                                 </label>
                                                 <input type="text" name="serviceName" id="serviceName"
-                                                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                    placeholder="Nhập Tên dịch vụ"
+                                                    className={`bg-white border ${!formServiceValidate.serviceName ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
+                                                    placeholder="Nhập tên dịch vụ"
                                                     required="" value={form.serviceName}
                                                     onChange={handleInputChange}
+                                                    onClick={handleInputChange}
                                                 />
 
                                             </div>
@@ -399,11 +494,12 @@ const ManagerService = () => {
                                                 <label htmlFor="servicePrice" className="block mb-2 text-sm font-medium text-black">
                                                     Giá dịch vụ
                                                 </label>
-                                                <input type="text" name="servicePrice" id="servicePrice"
-                                                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                    placeholder="Nhập Tên dịch vụ"
+                                                <input type="number" name="servicePrice" id="servicePrice"
+                                                    className={`bg-white border ${!formServiceValidate.servicePrice ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
+                                                    placeholder="Nhập giá dịch vụ"
                                                     required="" value={form.servicePrice}
                                                     onChange={handleInputChange}
+                                                    onClick={handleInputChange}
                                                 />
 
                                             </div>
@@ -453,7 +549,8 @@ const ManagerService = () => {
                                                     <th scope="col" className="p-4">
                                                         <div className="flex items-center">
                                                             <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                onClick={handleCheckboxEditRoomServiceCheckAll} />
+                                                                onClick={handleCheckboxEditRoomServiceCheckAll}
+                                                                checked={checkedEditRoomServiceIds.length == serviceHouseData.length} />
                                                             <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                                         </div>
                                                     </th>
@@ -492,7 +589,8 @@ const ManagerService = () => {
                                         <div className="flex-col">
                                             <div className="flex">
                                                 <select className="self-start ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                    onChange={(e) => handleHouseChange(e.target.value)}>
+                                                    onChange={(e) => handleHouseChange(e.target.value)}
+                                                    value={currentHouseId}>
                                                     {houseData.map(house => (
                                                         <Fragment key={house.houseId}>
                                                             <option className="text-start" value={house.houseId}>{house.houseName}</option>
@@ -515,7 +613,9 @@ const ManagerService = () => {
                                             </div>
                                             <div className="px-4 py-4">
                                                 <span className="underline underline-offset-4">Note :</span>
-                                                <span className="text-[#000000ad]">Thay đổi dịch vụ phòng <br /> bằng cách tick chọn những dịch vụ trong bảng dịch vụ có sẵn của nhà</span>
+                                                <span className="text-[#000000ad]">
+                                                    Thay đổi dịch vụ phòng <br /> bằng cách tick chọn những dịch vụ trong bảng dịch vụ có sẵn của nhà. <br /> Nếu không chọn sẽ xóa hết dịch vụ phòng.
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -529,6 +629,11 @@ const ManagerService = () => {
                 ) : null
             }
 
+            {/* delete modal */}
+            {showModalDelete ? (
+                <DeleteConfirm message={messageDelete} onRegister={confirmDelete} type={typeDelete} />
+            ) : null
+            }
 
         </>
     )
