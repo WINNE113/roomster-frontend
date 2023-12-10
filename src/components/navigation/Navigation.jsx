@@ -127,7 +127,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                       `/${path.MANAGER}/${path.MANAGE_POST}`
                     )
                   }
-                  className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
+                  className="rounded-md flex items-center gap-2 border bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
                 >
                   Quản lý phòng
                 </Link>

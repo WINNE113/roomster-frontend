@@ -1,17 +1,20 @@
 import { apiChangePhone } from "@/apis/user"
 import { Button, InputForm, Title } from "@/components"
+import WithBaseTopping from "@/hocs/WithBaseTopping"
+import { getCurrent } from "@/redux/actions"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { toast } from "react-toastify"
 
-const ChangePhone = () => {
+const ChangePhone = ({ dispatch }) => {
   const [step, setStep] = useState("PHONE")
   const { current } = useSelector((s) => s.user)
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm()
   const handleGetOtp = async (data) => {
     if (current?.phoneNumber !== `+84${Number(data.oldPhoneNumber)}`)
@@ -24,7 +27,11 @@ const ChangePhone = () => {
     ])
     const formatedData = Object.fromEntries(formatedDataArr)
     const response = await apiChangePhone(formatedData)
-    console.log(response)
+    if (response.success) {
+      toast.success(response.message)
+      dispatch(getCurrent())
+      reset()
+    } else toast.error(response.message)
   }
   return (
     <div className="w-full">
@@ -84,4 +91,4 @@ const ChangePhone = () => {
   )
 }
 
-export default ChangePhone
+export default WithBaseTopping(ChangePhone)

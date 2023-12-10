@@ -35,7 +35,7 @@ const ManageSidebar = ({ dispatch }) => {
             className="w-24 h-24 rounded-full object-cover"
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
-          <span>{"ID: #" + "98546"}</span>
+          <span>{"ID: #" + current?.userId}</span>
         </div>
       </div>
       <div>
