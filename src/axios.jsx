@@ -1,6 +1,7 @@
 import axios from "axios"
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  //baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: 'http://localhost:8080',
 })
 instance.interceptors.request.use(
   function (config) {
@@ -22,7 +23,8 @@ instance.interceptors.response.use(
     return response.data
   },
   function (error) {
-    return error.response.data
+    //return error.response.data
+    return error.response
   }
 )
 

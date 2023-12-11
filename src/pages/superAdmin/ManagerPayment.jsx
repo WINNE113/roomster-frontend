@@ -1,64 +1,59 @@
 import { Title } from "@/components"
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
+import path from "../../ultils/path"
 import {
-  BsPencilSquare,
-  BsFillTrashFill,
-  BsFillPatchPlusFill,
+  BsFillEyeFill,
 } from "react-icons/bs"
 import { getOrderHouse } from "@/apis/supperAdmin/order/order"
+import { getListHouse } from "@/apis/supperAdmin/house/house"
 import axios from "axios"
 import { Fragment } from "react"
+import { useNavigate } from 'react-router-dom';
+import { NavLink } from "react-router-dom"
 const ManagerService = () => {
   const [showModalOrder, setshowModalOrder] = useState(false);
   const [statusModalOrder, setstatusModalOrder] = useState(false);
   const [houseData, setHouseData] = useState([]);
-  const [roomData, setRoomData] = useState([]);
   const [currentHouseId, setCurrentHouseId] = useState(1);
   const [currentRoomId, setCurrentRoomId] = useState(1);
   const [orderHouseData, setOrderHouseData] = useState([]);
 
-  const [form, setform] = useState({
-    "orderId": "",
-    "roomId": null,
-    "electricity": 0,
-    "water": 0,
-    "statusPayment": 'N',
-    "paymentDate": null,
-  })
+  const navigate = useNavigate();
+  // const [form, setform] = useState({
+  //   "orderId": "",
+  //   "roomId": null,
+  //   "electricity": 0,
+  //   "water": 0,
+  //   "statusPayment": 'N',
+  //   "paymentDate": null,
+  // })
 
-  const fillDataFrom = (data) => {
-    setform({
-      "orderId": data.orderId,
-      "roomId": data.roomId,
-      "electricity": data.electricity,
-      "water": data.water,
-      "total": data.total,
-      "statusPayment": data.statusPayment,
-      "paymentDate": data.paymentDate,
 
-    })
-  }
+  // const fillDataFrom = (data) => {
+  //   setform({
+  //     "orderId": data.orderId,
+  //     "roomId": data.roomId,
+  //     "electricity": data.electricity,
+  //     "water": data.water,
+  //     "total": data.total,
+  //     "statusPayment": data.statusPayment,
+  //     "paymentDate": data.paymentDate,
+
+  //   })
+  // }
 
   var [callApi, setcallApi] = useState(true);
   useEffect(() => {
 
-    axios.get(`http://localhost:8080/room-master/house`).then(response => {
-      // Handle the response data here
-      setHouseData(response.data);
-      setCurrentRoomId(response.data[0].rooms[0].id);
-      getRoomDataById(response.data[0].rooms[0].id)
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
+    getListHouse().then((house) => {
+      console.log(house);
+      setHouseData(house);
+      setCurrentRoomId(house[0].rooms[0].id);
+    })
 
-    axios.get(`http://localhost:8080/room-master/order`).then(response => {
-      // Handle the response data here
-      setOrderHouseData(response.data);
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
+    getOrderHouse().then((orders) => {
+      setOrderHouseData(orders);
+    })
 
   }, [callApi]);
 
@@ -68,17 +63,6 @@ const ManagerService = () => {
     setcallApi(!callApi)
   }
 
-  const getRoomDataById = (value) => {
-    // Update the corresponding property in the person state
-    axios.get("http://localhost:8080/room-master/room/" + value).then(response => {
-      // Handle the response data here
-      console.log(response.data);
-      setRoomData(response.data);
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
-  };
 
   const handleHouseChange = (value) => {
     // Update the corresponding property in the person state
@@ -93,16 +77,14 @@ const ManagerService = () => {
   const handleRoomChange = (value) => {
     // Update the corresponding property in the person state
     setCurrentRoomId(value)
-    getRoomDataById(value)
   };
-
-  const setDataFromById = (id) => {
-    axios.get(`http://localhost:8080/room-master/order` + `/` + id).then(response => {
-      fillDataFrom(response.data)
-    }).catch(err => {
-      console.error(err.data);
-    })
-  }
+  // const setDataFromById = (id) => {
+  //   axios.get(`http://localhost:8080/room-master/order` + `/` + id).then(response => {
+  //     fillDataFrom(response.data)
+  //   }).catch(err => {
+  //     console.error(err.data)
+  //   })
+  // }
 
 
   return (
@@ -174,6 +156,9 @@ const ManagerService = () => {
                 <th scope="col" className="px-6 py-3">
                   Action
                 </th>
+                <th scope="col" className="px-6 py-3">
+                  Bill
+                </th>
               </tr>
             </thead>
             <tbody className="text-base font-medium">
@@ -223,9 +208,14 @@ const ManagerService = () => {
                         <td className="px-6 py-4">
                           <button className={order.statusPayment == 'Y' ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
                             onClick={() => {
-                              setDataFromById(order.orderId)
-                              setshowModalOrder(true)
-                            }}>Edit</button>
+                            }}>Sửa</button>
+
+                            </td>
+                            <td className={order.statusPayment == 'Y' ? "px-6 py-4 text-[green]" : "px-6 py-4 text-[red]"}>
+                              <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                onClick={() => {
+                                  navigate(`/${path.BILL}/${order.orderId}`)
+                                }}><BsFillEyeFill /></button>
                         </td>
                       </tr>
 

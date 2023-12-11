@@ -39,6 +39,7 @@ const Login = ({ navigate, dispatch, location }) => {
       const response = await apiLogin(data)
       if (response.token) {
         dispatch(login({ token: response.token }))
+        dispatch(selectRole({ role: response.role, userName: response.userName }))
         if (searchParams.get("redirect"))
           return navigate(searchParams.get("redirect"))
         navigate("/")

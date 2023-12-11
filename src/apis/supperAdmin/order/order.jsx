@@ -1,29 +1,29 @@
-import instance from "@/axios"
+import axios from "@/axios"
 
 export const getOrderHouse = () =>
-  instance({
-    url: "http://localhost:8080/room-master/order",
+  axios({
+    url: "/api/vi/room-master/order",
     method: "get",
   })
 export const getOrderHouseById = (id) =>
-  instance({
+  axios({
     url: `http://localhost:8080/room-master/order/${id}`,
     method: "get",
   })
 export const addOrderHouse = (data) =>
-  instance({
+  axios({
     method: "post",
     url: `http://localhost:8080/room-master/order`,
     data,
   })
 export const updateOrderHouse = (id, data) =>
-  instance({
+  axios({
     method: "put",
     url: `http://localhost:8080/room-master/order/${id}`,
     data,
   })
 export const deleteOrderHouse = (id) =>
-  instance({
+  axios({
     url: `http://localhost:8080/room-master/order/${id}`,
     method: "delete",
-})
+  })

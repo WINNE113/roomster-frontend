@@ -20,6 +20,7 @@ export const menu = [
   {
     path: "/danh-sach/?type=" + path.PHONGTRO,
     name: "PHÒNG TRỌ",
+    subname: "Phòng trọ",
     id: "phongtro",
     type: path.PHONGTRO,
   },
@@ -27,6 +28,7 @@ export const menu = [
     path: "/danh-sach/?type=" + path.CANHO,
     name: "NHÀ, CĂN HỘ CHO THUÊ",
     id: "nhacanhochothue",
+    subname: "Nhà, Căn hộ cho thuê",
     type: path.CANHO,
   },
   {
@@ -34,18 +36,21 @@ export const menu = [
     name: "TÌM Ở GHÉP",
     id: "timoghep",
     type: path.TIMOGHEP,
+    subname: "Tìm ở ghép",
   },
   {
     path: "/" + path.BLOG,
     name: "BLOG",
     id: "blog",
     type: path.BLOG,
+    subname: "Blogs",
   },
   {
     path: "/" + path.GUIDE,
     name: "HƯỚNG DẪN",
     id: "huongdan",
     type: path.GUIDE,
+    subname: "Hướng dẫn",
   },
 ]
 export const distances = [

@@ -28,11 +28,11 @@ export const apiGetLngLatFromAddress = (params) =>
 export const apiGetPostTypes = () =>
   axiosConfig({
     method: "get",
-    url: `/postType/getAll`,
+    url: `/api/v1/postType/getAll`,
   })
   export const apiGetTopProvince = (params) =>
   axiosConfig({
     method: "get",
-    url: `/guest/post/top-province`,
+    url: `/api/v1/guest/post/top-province`,
     params,
   })

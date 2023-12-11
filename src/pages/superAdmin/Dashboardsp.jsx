@@ -3,6 +3,7 @@ import { Fragment, useState, useEffect } from "react"
 import { PieChart } from 'react-minimal-pie-chart';
 import { Line } from 'react-chartjs-2';
 import axios from "axios"
+import { getHouseStatus, getRoomStatus, getRoomStatusPayment, getOrderStatus } from "@/apis/supperAdmin/dashboard/dashboard"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,30 +54,21 @@ const Dashboardsp = () => {
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/room-master/house/status`).then(response => {
-      setHouseStatusData(response.data)
-    }).catch(err => {
-      console.error(err.data);
+    getHouseStatus().then((houseStatus) => {
+      setHouseStatusData(houseStatus)
     })
 
-    axios.get(`http://localhost:8080/room-master/room/status`).then(response => {
-      setRoomStatusPercent(response.data)
-    }).catch(err => {
-      console.error(err.data);
+    getRoomStatus().then((roomStatus) => {
+      setRoomStatusPercent(roomStatus)
     })
 
-    axios.get(`http://localhost:8080/room-master/room/statusPayment`).then(response => {
-      setRoomStatusPaymentData(response.data)
-    }).catch(err => {
-      console.error(err.data);
+    getRoomStatusPayment().then((roomStatusPayment) => {
+      setRoomStatusPaymentData(roomStatusPayment)
     })
 
-    axios.get(`http://localhost:8080/room-master/order/status`).then(response => {
-      setOrderData(response.data.map(entry => entry.total))
-      setOrderLabelData(response.data.map(entry => 'Tháng ' + entry.month))
-      console.log(orderData);
-    }).catch(err => {
-      console.error(err.data);
+    getOrderStatus().then((orderStatus) => {
+      setOrderData(orderStatus.map(entry => entry.total))
+      setOrderLabelData(orderStatus.map(entry => 'Tháng ' + entry.month))
     })
 
   }, [callApi]);

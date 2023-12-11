@@ -20,6 +20,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
   const [params] = useSearchParams()
   const [isShowOptions, setIsShowOptions] = useState(false)
   const { current, wishlist } = useSelector((state) => state.user)
+  console.log(useSelector((state) => state.user));
   const handleShowOptions = (e) => {
     e.stopPropagation()
     if (!isShowOptions) setIsShowOptions(true)
@@ -99,9 +100,11 @@ const Navigation = ({ dispatch, location, navigate }) => {
                   className="rounded-md flex items-center gap-2 text-white text-sm font-medium px-6 py-2"
                 >
                   <span className="relative">
-                    <span className="text-[8px] text-white w-3 h-3 flex items-center justify-center bg-red-500 border border-white absolute -top-2 -right-2 p-2 rounded-full">
-                      {wishlist?.length || 0}
-                    </span>
+                    {wishlist && wishlist.length > 0 && (
+                      <span className="text-[8px] text-white w-3 h-3 flex items-center justify-center bg-red-500 border border-white absolute -top-2 -right-2 p-2 rounded-full">
+                        {wishlist?.length || 0}
+                      </span>
+                    )}
                     <AiOutlineHeart size={22} />
                   </span>
                   <span>Yêu thích</span>
@@ -161,6 +164,16 @@ const Navigation = ({ dispatch, location, navigate }) => {
                             className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
                           >
                             Admin Workspace
+                          </Link>
+                        )}                    
+                      {current?.roleList?.some(
+                        (el) => el.name === "ROLE_ADMIN"
+                      ) && (
+                          <Link
+                            to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
+                            className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
+                          >
+                            Super Admin Workspace
                           </Link>
                         )}
                       {current?.roleList?.some(

@@ -1,29 +1,29 @@
 import instance from "@/axios"
 
-export const getListHouse = () =>
+export const getListRoom = () =>
     instance({
-        url: "http://localhost:8080/room-master/house",
+        url: "/api/vi/room-master/room",
         method: "get",
     })
-export const getHouseById = (id) =>
+export const getRoomById = (id) =>
     instance({
-        url: `http://localhost:8080/room-master/room/${id}`,
+        url: `/api/vi/room-master/room/${id}`,
         method: "get",
     })
 export const addRoom = (data) =>
     instance({
         method: "post",
-        url: `http://localhost:8080/room-master/room`,
+        url: `/api/v1/room-master/room`,
         data,
     })
-export const updateHouse = (id, data) =>
+export const updateRoom = (id, data) =>
     instance({
         method: "put",
-        url: `http://localhost:8080/room-master/house/${id}`,
+        url: `/api/v1/room-master/house/${id}`,
         data,
     })
-export const deleteHouse = (id) =>
+export const deleteRoom = (id) =>
     instance({
-        url: `http://localhost:8080/room-master/house/${id}`,
+        url: `/api/v1/room-master/house/${id}`,
         method: "delete",
     })

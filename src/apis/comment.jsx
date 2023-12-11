@@ -2,26 +2,26 @@ import axios from "@/axios"
 
 export const apiCreateNewComment = (data) =>
   axios({
-    url: "/comment/new",
+    url: "/api/v1/comment/new",
     method: "post",
     data,
   })
 
 export const apiGetComments = (pid) =>
   axios({
-    url: "/comment/list/" + pid,
+    url: "/api/v1/comment/list/" + pid,
     method: "get",
   })
 export const apiUpdateComment = (data, id) =>
   axios({
-    url: "/comment/update",
+    url: "/api/v1/comment/update",
     method: "put",
     data,
     params: { commentId: id },
   })
 export const apiDeleteComment = (params) =>
   axios({
-    url: "/comment/delete",
+    url: "/api/v1/comment/delete",
     method: "delete",
     params,
   })

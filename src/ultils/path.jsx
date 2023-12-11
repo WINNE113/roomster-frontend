@@ -7,6 +7,7 @@ const path = {
   SUPER_ADMIN: "adminsp",
   MEMBER: "member",
   MANAGER: "manager",
+  BILL: "bill",
 
   PHONGTRO: "cho-thue-tro",
   CANHO: "cho-thue-nha-can-ho",

@@ -12,6 +12,7 @@ import {
 import { Loading, Modal } from "./components"
 import { LayoutAdmin, Dashboard, ManageUser, ManagePosts } from "./pages/admin"
 import { LayoutSuperAdmin, Dashboardsp, ManagerHouse, ManagerWater, ManagerService, ManagerPayment } from "./pages/superAdmin"
+import { BillOrderPage } from "./pages/orderbill"
 import {
   LayoutManager,
   Personal,
@@ -77,7 +78,8 @@ function App() {
           <Route path={path.MANAGE_POST_ALL} element={<ManagePosts />} />
           <Route path={path.INVALID} element={<Dashboard />} />
           </Route>
-           {/* Super Admin routes */}
+           
+        {/* Super Admin routes */}
          <Route className="overflow-hidden" path={path.SUPER_ADMIN} element={<LayoutSuperAdmin />}>
          <Route path={path.DASHBOARD} element={<Dashboardsp />} />
          <Route path={path.MANAGER_HOUSE} element={<ManagerHouse />} />
@@ -97,6 +99,7 @@ function App() {
         </Route>
 
         <Route path={path.INVALID} element={<Home />} />
+        <Route path={`${path.BILL}/:orderId`} element={<BillOrderPage />} />
       </Routes>
       <ToastContainer
         position="top-center"
