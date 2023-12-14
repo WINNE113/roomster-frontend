@@ -1,7 +1,7 @@
 import { customMoney, formatMoney, renderStarFromNumber } from "@/ultils/fn"
 import clsx from "clsx"
 import React, { useEffect, useState } from "react"
-import { AiOutlineUnorderedList } from "react-icons/ai"
+import { AiOutlineHeart, AiOutlineUnorderedList } from "react-icons/ai"
 import { GoLocation } from "react-icons/go"
 import { BsPhoneVibrate } from "react-icons/bs"
 import { createSearchParams, useParams } from "react-router-dom"
@@ -26,16 +26,20 @@ import WithBaseTopping from "@/hocs/WithBaseTopping"
 import path from "@/ultils/path"
 import { MdOutlineReportProblem } from "react-icons/md"
 import { modal } from "@/redux/appSlice"
+import { toast } from "react-toastify"
+import { apiAddWishlist, apiRemoveWishlist } from "@/apis/user"
+import { getWishlist } from "@/redux/actions"
+import { FaHeart, FaRegHeart } from "react-icons/fa"
 
 const DetailPost = ({ navigate, location, dispatch }) => {
   const { pid } = useParams()
-  const { current } = useSelector((s) => s.user)
   const { isShowModal } = useSelector((s) => s.app)
   const [seeMore, setSeeMore] = useState(false)
   const [post, setPost] = useState()
   const [rating, setRating] = useState({})
   const [center, setCenter] = useState([])
   const [posts, setPosts] = useState([])
+  const { current, wishlist } = useSelector((s) => s.user)
   const fetchDetailPost = async () => {
     const response = await apiGetDetailPost({ postId: pid })
     if (response) setPost({ ...response?.postDetail, images: response?.images })
@@ -74,7 +78,22 @@ const DetailPost = ({ navigate, location, dispatch }) => {
       getPosts(post?.address?.split(",")[post?.address?.split(",")?.length - 1])
     }
   }, [post])
-
+  const handleAddWishlist = async () => {
+    if (!current) return toast.warn("Bạn phải đăng nhập trước.")
+    const response = await apiAddWishlist({ postId: pid, wishlistName: "POST" })
+    if (response.wishlistId) {
+      toast.success("Thêm bài đăng yêu thích thành công")
+      dispatch(getWishlist())
+    } else toast.error(response.message)
+  }
+  const handleRemoveWishlist = async () => {
+    const wishlistId = wishlist?.find((el) => +el.id === +pid)?.wishListItemId
+    const response = await apiRemoveWishlist(wishlistId)
+    if (response.success) {
+      toast.success(response.message)
+      dispatch(getWishlist())
+    } else toast.error(response.message)
+  }
   return (
     <div className="w-main mt-6 m-auto pb-[200px]">
       <div className="grid grid-cols-4 h-[410px] relative grid-rows-2 gap-3">
@@ -182,16 +201,38 @@ const DetailPost = ({ navigate, location, dispatch }) => {
       </div>
       <div className="grid grid-cols-10 gap-4 mt-6">
         <div className="col-span-7 flex flex-col gap-3">
-          <h1 className="text-xl flex items-center gap-3 text-emerald-700 font-bold line-clamp-2">
-            <span className="flex items-center">
-              {renderStarFromNumber(rating?.averageStarPoint)?.map(
-                (el, idx) => (
-                  <span key={idx}>{el}</span>
-                )
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl flex-auto flex items-center gap-3 text-emerald-700 font-bold line-clamp-2">
+              {rating?.averageStarPoint ? (
+                <span className="flex items-center">
+                  {renderStarFromNumber(rating?.averageStarPoint)?.map(
+                    (el, idx) => (
+                      <span key={idx}>{el}</span>
+                    )
+                  )}
+                </span>
+              ) : (
+                ""
               )}
-            </span>
-            <span>{post?.title}</span>
-          </h1>
+
+              <span>{post?.title}</span>
+            </h1>
+            {!wishlist?.some((n) => +n.id === +pid) ? (
+              <span
+                onClick={handleAddWishlist}
+                className="flex-none block text-black p-1 cursor-pointer"
+              >
+                <FaRegHeart size={22} />
+              </span>
+            ) : (
+              <span
+                onClick={handleRemoveWishlist}
+                className="flex-none block text-red-500 p-1 cursor-pointer"
+              >
+                <FaHeart size={22} />
+              </span>
+            )}
+          </div>
           <span>
             Chuyên mục:{" "}
             <span className="font-semibold cursor-pointer">
@@ -295,7 +336,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
                   {post?.surroundings}
                 </span>
                 <span className="p-2  border-[0.5px] bg-gray-100">
-                  {post?.convenient}
+                  {post?.convenient?.join(", ")}
                 </span>
               </div>
             </div>

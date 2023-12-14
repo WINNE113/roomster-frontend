@@ -13,7 +13,6 @@ import { toast } from "react-toastify"
 
 const Login = ({ navigate, dispatch, location }) => {
   const { selectedRole, current } = useSelector((state) => state.user)
-  if (current) navigate("/")
   const [variant, setVariant] = useState(() => location.state || "LOGIN")
   const [isLoading, setIsLoading] = useState(false)
   const [searchParams] = useSearchParams()
@@ -27,6 +26,13 @@ const Login = ({ navigate, dispatch, location }) => {
   useEffect(() => {
     reset()
   }, [variant])
+  useEffect(() => {
+    if (current) {
+      if (current?.roleList?.some((el) => el.name === "ROLE_ADMIN"))
+        return navigate(`/${path.ADMIN}/${path.DASHBOARD}`)
+      return navigate("/")
+    }
+  }, [current])
   const role = watch("role")
   const userName = watch("userName")
   useEffect(() => {
@@ -36,12 +42,13 @@ const Login = ({ navigate, dispatch, location }) => {
     const { name, phoneNumber, ...data } = payload
     if (variant === "LOGIN") {
       if (phoneNumber) data.phoneNumber = `+84${phoneNumber?.substring(1)}`
+      setIsLoading(true)
       const response = await apiLogin(data)
+      setIsLoading(false)
       if (response.token) {
         dispatch(login({ token: response.token }))
         if (searchParams.get("redirect"))
           return navigate(searchParams.get("redirect"))
-        navigate("/")
       } else toast.error(response.message)
     }
     if (variant === "REGISTER") {

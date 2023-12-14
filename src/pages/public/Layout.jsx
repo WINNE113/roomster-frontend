@@ -1,5 +1,5 @@
 import React from "react"
-import { Navigation } from "@/components"
+import { Footer, Navigation } from "@/components"
 import { Outlet } from "react-router-dom"
 import withBaseTopping from "@/hocs/WithBaseTopping"
 
@@ -10,7 +10,7 @@ const Layout = ({ location }) => {
       <div className="w-full bg-white">
         <Outlet />
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

@@ -58,3 +58,39 @@ export const apiUpgradeRole = (data) =>
     method: "post",
     data,
   })
+export const apiChangePhone = (data) =>
+  axios({
+    url: "/user/update-phonenumber",
+    method: "post",
+    data,
+  })
+export const apiChangePassword = (data) =>
+  axios({
+    url: "/user/update-password",
+    method: "patch",
+    data,
+  })
+export const apiGetUsersByAdmin = (params) =>
+  axios({
+    url: "/admin/user/getAll",
+    method: "get",
+    params,
+  })
+export const apiGetUsersDeletedByAdmin = (params) =>
+  axios({
+    url: "/admin/user/getAllByDeleted",
+    method: "get",
+    params,
+  })
+export const apiGetRoleByRole = (params) =>
+  axios({
+    url: "/admin/user/by-role-name",
+    method: "get",
+    params,
+  })
+export const apiDeleteUser = (params) =>
+  axios({
+    url: "/admin/user/delete",
+    method: "delete",
+    params,
+  })

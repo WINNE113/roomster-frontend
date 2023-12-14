@@ -33,8 +33,6 @@ const VerifyPhone = ({ navigate, dispatch }) => {
       dispatch(modal({ isShowModal: false, modalContent: null }))
       navigate(`/${path.VERIFY_PHONE}`)
     } else toast.error(response.message)
-
-    console.log(response)
   }
   return (
     <div

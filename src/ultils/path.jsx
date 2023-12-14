@@ -7,13 +7,11 @@ const path = {
   SUPER_ADMIN: "adminsp",
   MEMBER: "member",
   MANAGER: "manager",
-
   PHONGTRO: "cho-thue-tro",
   CANHO: "cho-thue-nha-can-ho",
   TIMOGHEP: "tim-o-ghep",
   BLOG: "blog",
   GUIDE: "huong-dan",
-
   LIST: "danh-sach",
   DETAIL_POST: "chi-tiet-tin-dang",
   DETAIL_POST__PID__TITLE: "chi-tiet-tin-dang/:pid/:title/*",
@@ -29,7 +27,19 @@ const path = {
   MANAGER_HOUSE: "house",
   MANAGER_ELECTRIC_WATER: "electric-water",
   MANAGER_SERVICE: "service",
+
+  CHANGE_PHONE: "cập-nhat-so-dien-thoai",
+  CHANGE_PASSWORD: "doi-mat-khau",
+  TOP_PROVINCE__NAME: "tinh-thanh/:name",
+  TOP_PROVINCE: "tinh-thanh",
+  DEPOSIT: "nap-tien",
+  PAYMENT_RESULT: "payment/status",
+  MANAGE_DEPOSIT: "quan-ly-nap-tien",
+  PRICING: "bang-gia-dich-vu",
+  CREATE_PRICING: "tao-moi-bang-gia-dich-vu",
+  MANAGE_PRICING: "quan-ly-bang-gia-dich-vu",
   MANAGER_PAYMENT: "payment"
+
 }
 
 export default path
