@@ -18,8 +18,8 @@ const Card = ({
   id,
   isLike,
   wishListItemId,
-}) => { 
-   const dispatch = useDispatch()
+}) => {
+  const dispatch = useDispatch()
   const { current, wishlist } = useSelector((s) => s.user)
   const handleAddWishlist = async () => {
     if (!current) return toast.warn("Bạn phải đăng nhập trước.")

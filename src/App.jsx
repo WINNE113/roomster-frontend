@@ -84,37 +84,37 @@ function App() {
           <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
         </Route>
 
-      {/* Admin routes */}
-      <Route path={path.ADMIN} element={<LayoutAdmin />}>
-      <Route path={path.DASHBOARD} element={<Dashboard />} />
-      <Route path={path.MANAGE_USER} element={<ManageUser />} />
-      <Route path={path.MANAGE_POST_ALL} element={<ManagePosts />} />
-      <Route path={path.DEPOSIT} element={<Deposit />} />
-      <Route path={path.CREATE_PRICING} element={<CreatePricing />} />
-      <Route path={path.MANAGE_PRICING} element={<ManagePricing />} />
-      <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
-      </Route>
-        {/* Super Admin routes */}
-        <Route className="overflow-hidden" path={path.SUPER_ADMIN} element={<LayoutSuperAdmin />}>
-          <Route path={path.DASHBOARD} element={<Dashboardsp />} />
-          <Route path={path.MANAGER_HOUSE} element={<ManagerHouse />} />
-          <Route path={path.MANAGER_ELECTRIC_WATER} element={<ManagerWater />} />
-          <Route path={path.MANAGER_SERVICE} element={<ManagerService />} />
-          <Route path={path.MANAGER_PAYMENT} element={<ManagerPayment />} />
+        {/* Admin routes */}
+        <Route path={path.ADMIN} element={<LayoutAdmin />}>
+          <Route path={path.DASHBOARD} element={<Dashboard />} />
+          <Route path={path.MANAGE_USER} element={<ManageUser />} />
+          <Route path={path.MANAGE_POST_ALL} element={<ManagePosts />} />
+          <Route path={path.DEPOSIT} element={<Deposit />} />
+          <Route path={path.CREATE_PRICING} element={<CreatePricing />} />
+          <Route path={path.MANAGE_PRICING} element={<ManagePricing />} />
+          <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
         </Route>
+         {/* Super Admin routes */}
+         <Route className="overflow-hidden" path={path.SUPER_ADMIN} element={<LayoutSuperAdmin />}>
+         <Route path={path.DASHBOARD} element={<Dashboardsp />} />
+         <Route path={path.MANAGER_HOUSE} element={<ManagerHouse />} />
+         <Route path={path.MANAGER_ELECTRIC_WATER} element={<ManagerWater />} />
+         <Route path={path.MANAGER_SERVICE} element={<ManagerService />} />
+         <Route path={path.MANAGER_PAYMENT} element={<ManagerPayment />} />
+       </Route>
 
-      {/* Manage routes */}
-      <Route path={path.MANAGER} element={<LayoutManager />}>
-      {/* <Route path={path.PERSONAL} element={<Personal />} /> */}
-      {/* <Route path={path.WISHLIST} element={<Wishlist />} /> */}
-      <Route path={path.CREATE_POST} element={<CreatePost />} />
-      <Route path={path.DEPOSIT} element={<Deposit />} />
-      <Route path={path.MANAGE_POST} element={<ManagePost />} />
-      <Route path={path.CHANGE_PHONE} element={<ChangePhone />} />
-      <Route path={path.CHANGE_PASSWORD} element={<ChangePassword />} />
-      <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
-    </Route>
-       <Route path={path.PAYMENT_RESULT} element={<PaymentResult />} />
+        {/* Manage routes */}
+        <Route path={path.MANAGER} element={<LayoutManager />}>
+          {/* <Route path={path.PERSONAL} element={<Personal />} /> */}
+          {/* <Route path={path.WISHLIST} element={<Wishlist />} /> */}
+          <Route path={path.CREATE_POST} element={<CreatePost />} />
+          <Route path={path.DEPOSIT} element={<Deposit />} />
+          <Route path={path.MANAGE_POST} element={<ManagePost />} />
+          <Route path={path.CHANGE_PHONE} element={<ChangePhone />} />
+          <Route path={path.CHANGE_PASSWORD} element={<ChangePassword />} />
+          <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
+        </Route>
+        <Route path={path.PAYMENT_RESULT} element={<PaymentResult />} />
         <Route path={path.INVALID} element={<Home />} />
         <Route path={`${path.BILL}/:orderId`} element={<BillOrderPage />} />
       </Routes>

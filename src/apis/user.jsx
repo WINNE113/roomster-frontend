@@ -82,7 +82,7 @@ export const apiGetUsersDeletedByAdmin = (params) =>
     method: "get",
     params,
   })
-export const apiGetRoleByRole = (params) =>
+export const apiGetUserByRole = (params) =>
   axios({
     url: "/admin/user/by-role-name",
     method: "get",

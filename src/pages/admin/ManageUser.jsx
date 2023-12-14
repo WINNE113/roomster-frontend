@@ -11,6 +11,7 @@ import UpdateUser from "./UpdateUser"
 import useDebounce from "@/hooks/useDebounce"
 import {
   apiDeleteUser,
+  apiGetUserByRole,
   apiGetUsersByAdmin,
   apiGetUsersDeletedByAdmin,
 } from "@/apis/user"
@@ -45,6 +46,13 @@ const ManageUser = ({ dispatch }) => {
       setCounts(response.count)
     }
   }
+  const fetchUsersByRolename = async (params) => {
+    const response = await apiGetUserByRole(params)
+    if (response.data) {
+      setUsers(response.data)
+      setCounts(response.count)
+    }
+  }
   useEffect(() => {
     const { page, ...searchParamsObject } = Object.fromEntries([
       ...searchParams,
@@ -52,8 +60,14 @@ const ManageUser = ({ dispatch }) => {
     if (page && Number(page)) searchParamsObject.page = Number(page) - 1
     else searchParamsObject.page = 0
     searchParamsObject.limit = 5
+    // if (roleName) {
+    //   setValue("deleted", false)
+    // }
     if (deleted) {
       fetchUsersDeleted(searchParamsObject)
+    } else if (roleName) {
+      searchParamsObject.roleName = roleName
+      fetchUsersByRolename(searchParamsObject)
     } else {
       fetchUsers(searchParamsObject)
     }
@@ -80,6 +94,7 @@ const ManageUser = ({ dispatch }) => {
       }
     })
   }
+  console.log(roleName)
   return (
     <section className="mb-[200px]">
       <Title title="Quản lý thành viên"></Title>
