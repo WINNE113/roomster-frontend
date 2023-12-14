@@ -1,8 +1,7 @@
-import { BsFilePerson, BsPostcard, BsDoorOpenFill,
+import { BsFilePerson, BsPostcard,
   BsFillPieChartFill,
   BsFillHouseGearFill,
   BsDropletHalf,
-  BsFillLightningFill,
   BsCashCoin,
   BsStack, } from "react-icons/bs"
 import {
@@ -15,8 +14,6 @@ import {
 } from "react-icons/ai"
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
-import { MdOutlineAttachMoney } from "react-icons/md"
-import { RiFileEditLine, RiShareForwardFill } from "react-icons/ri"
 import { MdOutlineAttachMoney, MdOutlinePriceCheck } from "react-icons/md"
 import {
   RiFileEditLine,
