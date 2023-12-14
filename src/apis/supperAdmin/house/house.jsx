@@ -1,29 +1,37 @@
-import instance from "@/axios"
+import axios from "@/axios"
 
 export const getListHouse = () =>
-  instance({
-    url: "http://localhost:8080/room-master/house",
+  axios({
+    url: "/api/v1/room-master/house",
     method: "get",
   })
+
 export const getHouseById = (id) =>
-  instance({
-    url: `http://localhost:8080/room-master/house/${id}`,
+  axios({
+    url: `/api/v1/room-master/house/${id}`,
+    method: "get",
+  })
+
+  export const getHouseBySearchCondition = (condition) =>
+  axios({
+    url: `/api/v1/room-master/house${condition ? `?${condition}` : ''}`,
     method: "get",
   })
 export const addHouse = (data) =>
-  instance({
+  axios({
     method: "post",
-    url: `http://localhost:8080/room-master/house`,
+    url: `/api/v1/room-master/house`,
     data,
   })
 export const updateHouse = (id, data) =>
-  instance({
+  axios({
     method: "put",
-    url: `http://localhost:8080/room-master/house/${id}`,
+    url: `/api/v1/room-master/house/${id}`,
     data,
   })
 export const deleteHouse = (id) =>
-  instance({
-    url: `http://localhost:8080/room-master/house/${id}`,
+  axios({
+    url: `/api/v1/room-master/house/${id}`,
     method: "delete",
-})
+
+  })

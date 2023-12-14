@@ -8,6 +8,7 @@ import path from "@/ultils/path"
 import { menu } from "@/ultils/constant"
 import clsx from "clsx"
 import { modal, resetFilter } from "@/redux/appSlice"
+import { resetFilter } from "@/redux/appSlice"
 import { AiOutlineHeart } from "react-icons/ai"
 import { Button, VerifyPhone } from ".."
 import Swal from "sweetalert2"
@@ -91,55 +92,55 @@ const Navigation = ({ dispatch, location, navigate }) => {
             </div>
             {current && (
               <>
-                {current?.roleList?.some((el) => el.name === "ROLE_USER") && (
-                  <Link
-                    to={`/${path.MEMBER}/${path.WISHLIST}`}
-                    className="rounded-md flex items-center gap-2 text-white text-sm font-medium px-6 py-2"
-                  >
-                    <span className="relative">
-                      {wishlist && wishlist.length > 0 && (
-                        <span className="text-[8px] text-white w-3 h-3 flex items-center justify-center bg-red-500 border border-white absolute -top-2 -right-2 p-2 rounded-full">
-                          {wishlist?.length || 0}
-                        </span>
-                      )}
-                      <AiOutlineHeart size={22} />
-                    </span>
-                    <span>Yêu thích</span>
-                  </Link>
-                )}
-
+              {current?.roleList?.some((el) => el.name === "ROLE_USER") && (
+                <Link
+                  to={`/${path.MEMBER}/${path.WISHLIST}`}
+                  className="rounded-md flex items-center gap-2 text-white text-sm font-medium px-6 py-2"
+                >
+                  <span className="relative">
+                    {wishlist && wishlist.length > 0 && (
+                      <span className="text-[8px] text-white w-3 h-3 flex items-center justify-center bg-red-500 border border-white absolute -top-2 -right-2 p-2 rounded-full">
+                        {wishlist?.length || 0}
+                      </span>
+                    )}
+                    <AiOutlineHeart size={22} />
+                  </span>
+                  <span>Yêu thích</span>
+                </Link>
+              )}
+              
                 <div className="relative">
                   <span className="animate-ping absolute inline-flex h-3 w-3 top-0 right-0 rounded-full bg-red-600 opacity-75"></span>
                   <span className="rounded-full absolute inline-flex h-3 w-3 top-0 right-0 bg-red-700"></span>
                   <Button
-                    onClick={() =>
-                      handleClickCreatePost(
-                        `/${path.MANAGER}/${path.CREATE_POST}`
-                      )
-                    }
-                    className="text-emerald-800-300 rounded-md flex items-center gap-2 border  bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
-                  >
-                    Đăng tin mới
-                  </Button>
-                </div>
-                <Button
                   onClick={() =>
                     handleClickCreatePost(
-                      `/${path.MANAGER}/${path.MANAGE_POST}`
+                      `/${path.MANAGER}/${path.CREATE_POST}`
                     )
                   }
-                  className="rounded-md flex items-center gap-2 border text-white bg-transparent text-sm font-medium px-6 py-2"
+                  className="text-emerald-800-300 rounded-md flex items-center gap-2 border  bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
                 >
-                  Quản lý phòng
+                  Đăng tin mới
                 </Button>
-                {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
-                  <Link
-                    to={`/${path.MANAGER}/${path.DEPOSIT}`}
-                    className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
-                  >
-                    Nạp tiền
-                  </Link>
-                )}
+                </div>
+                <Button
+                onClick={() =>
+                  handleClickCreatePost(
+                    `/${path.MANAGER}/${path.MANAGE_POST}`
+                  )
+                }
+                className="rounded-md flex items-center gap-2 border text-white bg-transparent text-sm font-medium px-6 py-2"
+              >
+                Quản lý phòng
+              </Button>
+              {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
+                <Link
+                  to={`/${path.MANAGER}/${path.DEPOSIT}`}
+                  className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
+                >
+                  Nạp tiền
+                </Link>
+              )}
 
                 <div
                   onClick={handleShowOptions}
@@ -153,33 +154,43 @@ const Navigation = ({ dispatch, location, navigate }) => {
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_USER"
                       ) && (
-                        <Link
-                          to={`/${path.MEMBER}/${path.PERSONAL}`}
-                          className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
-                        >
-                          Thông tin cá nhân
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.MEMBER}/${path.PERSONAL}`}
+                            className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
+                          >
+                            Thông tin cá nhân
+                          </Link>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_ADMIN"
                       ) && (
-                        <Link
-                          to={`/${path.ADMIN}/${path.DASHBOARD}`}
-                          className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
-                        >
-                          Admin
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.ADMIN}/${path.DASHBOARD}`}
+                            className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
+                          >
+                            Admin
+                          </Link>
+                        )}
+                      {current?.roleList?.some(
+                        (el) => el.name === "ROLE_ULTI_MANAGER"
+                      ) && (
+                          <Link
+                            to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
+                            className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
+                          >
+                            House Workspace
+                          </Link>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_MANAGE"
                       ) && (
-                        <Link
+                          <Link
                           to={`/${path.MANAGER}/${path.CREATE_POST}`}
-                          className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
-                        >
-                          Manager
-                        </Link>
-                      )}
+                            className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
+                          >
+                            Manager
+                          </Link>
+                        )}
                       <span
                         onClick={() => dispatch(logout())}
                         className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
@@ -211,13 +222,13 @@ const Navigation = ({ dispatch, location, navigate }) => {
               key={el.id}
               onClick={() => dispatch(resetFilter(true))}
               className={({ isActive }) =>
-                clsx(
-                  params.get("type") === el.type
-                    ? activedStyle
-                    : notActivedStyle,
-                  !params.get("type") && isActive && activedStyle
-                )
-              }
+              clsx(
+                params.get("type") === el.type
+                  ? activedStyle
+                  : notActivedStyle,
+                !params.get("type") && isActive && activedStyle
+              )
+            }
             >
               <span>{el.name}</span>
             </NavLink>

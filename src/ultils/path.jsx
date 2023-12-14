@@ -7,11 +7,14 @@ const path = {
   SUPER_ADMIN: "adminsp",
   MEMBER: "member",
   MANAGER: "manager",
+  BILL: "bill",
+
   PHONGTRO: "cho-thue-tro",
   CANHO: "cho-thue-nha-can-ho",
   TIMOGHEP: "tim-o-ghep",
   BLOG: "blog",
   GUIDE: "huong-dan",
+
   LIST: "danh-sach",
   DETAIL_POST: "chi-tiet-tin-dang",
   DETAIL_POST__PID__TITLE: "chi-tiet-tin-dang/:pid/:title/*",
@@ -27,7 +30,7 @@ const path = {
   MANAGER_HOUSE: "house",
   MANAGER_ELECTRIC_WATER: "electric-water",
   MANAGER_SERVICE: "service",
-
+  
   CHANGE_PHONE: "cập-nhat-so-dien-thoai",
   CHANGE_PASSWORD: "doi-mat-khau",
   TOP_PROVINCE__NAME: "tinh-thanh/:name",

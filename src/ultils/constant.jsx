@@ -15,6 +15,8 @@ import {
 } from "react-icons/ai"
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
+import { MdOutlineAttachMoney } from "react-icons/md"
+import { RiFileEditLine, RiShareForwardFill } from "react-icons/ri"
 import { MdOutlineAttachMoney, MdOutlinePriceCheck } from "react-icons/md"
 import {
   RiFileEditLine,
@@ -58,13 +60,13 @@ export const menu = [
   //   type: path.GUIDE,
   //   subname: "Hướng dẫn",
   // },
-  {
-    path: "/" + path.PRICING,
-    name: "BẢNG GIÁ DỊCH VỤ",
-    id: "banggiadichvu",
-    type: path.PRICING,
-    subname: "Bảng giá dịch vụ",
-  },
+    {
+      path: "/" + path.PRICING,
+      name: "BẢNG GIÁ DỊCH VỤ",
+      id: "banggiadichvu",
+      type: path.PRICING,
+      subname: "Bảng giá dịch vụ",
+    },
 ]
 export const distances = [
   {

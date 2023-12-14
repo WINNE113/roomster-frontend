@@ -6,9 +6,13 @@ import {
     BsFillPatchPlusFill,
     BsFillHouseAddFill,
     BsArrowLeftRight,
+    BsArrowClockwise,
 } from "react-icons/bs"
 import { Fragment, useState, useEffect } from "react"
-import { getListHouse } from "@/apis/supperAdmin/house/house"
+import { getHouseBySearchCondition, getHouseById, addHouse, updateHouse, deleteHouse } from "@/apis/supperAdmin/house/house"
+import { getRoomById, addRoom, updateRoom, deleteRoom } from "@/apis/supperAdmin/room/room"
+import { getTenantById, addTenant, updateTenant, getTenantByRoomId, moveTenant, deleteTenant } from "@/apis/supperAdmin/tenant/tenant"
+import { getCities, getWardesByDistrictId, getDistrictesByCityId } from "@/apis/common"
 //import { addRoom } from "@/apis/supperAdmin/room/room"
 import axios from "axios"
 
@@ -50,11 +54,11 @@ const ManagerHouse = () => {
 
     const handleCityChange = (value) => {
         setCurrentCityId(value)
-        axios.get(`http://localhost:8080/common/district?id_city=` + value).then(response => {
-            console.log(response.data);
-            setDistrictData(response.data)
+        getDistrictesByCityId(value).then(response => {
+            console.log(response);
+            setDistrictData(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     };
 
@@ -78,21 +82,21 @@ const ManagerHouse = () => {
     const handleDistrictChange = (value) => {
         console.log(value);
         setCurrentDistrictId(value)
-        axios.get(`http://localhost:8080/common/ward?id_district=` + value).then(response => {
-            console.log(response.data);
-            setWardData(response.data)
+        getWardesByDistrictId(value).then(response => {
+            console.log(response);
+            setWardData(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     };
 
     var [callApi, setcallApi] = useState(true);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/common/city`).then(response => {
-            setCityData(response.data)
+        getCities().then(response => {
+            setCityData(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
 
         handleSearchRoom()
@@ -164,6 +168,15 @@ const ManagerHouse = () => {
         "identifier": true,
         "email": true,
     })
+
+    const setDefalutFormSearch = () => {
+        setSearchForm({
+            "price": "",
+            "stayMax": "",
+            "acreage": "",
+            "status": ""
+        })
+    }
 
     const setDefalutFormRoom = () => {
         setFormRoom({
@@ -268,29 +281,29 @@ const ManagerHouse = () => {
 
     // call api to get data and set to form
     const setDataFormRoomById = (id) => {
-        axios.get(`http://localhost:8080/room-master/room` + `/` + id).then(response => {
-            console.log(response.data);
-            fillDataFormRoom(response.data)
+        getRoomById(id).then(response => {
+            console.log(response);
+            fillDataFormRoom(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     }
 
     const setDataFormHouseById = (id) => {
-        axios.get(`http://localhost:8080/room-master/house` + `/` + id).then(response => {
-            console.log(response.data);
-            fillDataFormHouse(response.data)
+        getHouseById(id).then(response => {
+            console.log(response);
+            fillDataFormHouse(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     }
 
     const setDataFormTenantById = (id) => {
-        axios.get(`http://localhost:8080/room-master/tenant` + `/` + id).then(response => {
-            console.log(response.data);
-            fillDataFormTenant(response.data)
+        getTenantById(id).then(response => {
+            console.log(response);
+            fillDataFormTenant(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     }
 
@@ -318,11 +331,10 @@ const ManagerHouse = () => {
 
         // Convert the object to query parameters
         const queryString = new URLSearchParams(queryParams).toString();
-        const apiUrl = `http://localhost:8080/room-master/house${queryString ? `?${queryString}` : ''}`;
-        console.log(apiUrl);
-        axios.get(apiUrl).then(response => {
+        getHouseBySearchCondition(queryString).then(response => {
             // Handle the response data here
-            setHouseData(response.data);
+            setHouseData(response);
+            handleHouseMoveChange(response[0].houseId)
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);
@@ -387,24 +399,27 @@ const ManagerHouse = () => {
         if (validateRoom()) {
             if (formRoom.id != '') {
                 // edit
-                axios.put('http://localhost:8080/room-master/room' + `/` + formRoom.id, formRoom).then(response => {
+                updateRoom(formRoom.id, formRoom).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
+                    console.log(response);
                 }).finally(() => {
                     reLoad()
                     setshowModalRoom(!showModalRoom)
                     setDefalutFormRoom()
                 });
             } else {
-                axios.post('http://localhost:8080/room-master/room', formRoom).then(response => {
+                addRoom(formRoom).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad()
                     setshowModalRoom(!showModalRoom)
@@ -424,24 +439,26 @@ const ManagerHouse = () => {
         if (validateHouse()) {
             if (formHouse.houseId != '') {
                 // edit
-                axios.put('http://localhost:8080/room-master/house' + `/` + formHouse.houseId, formHouse).then(response => {
+                updateHouse(formHouse.houseId, formHouse).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad()
                     setshowModalHouse(!showModalHouse)
                     setDefalutFormHouse()
                 });
             } else {
-                axios.post('http://localhost:8080/room-master/house', formHouse).then(response => {
+                addHouse(formHouse).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad()
                     setshowModalHouse(!showModalHouse)
@@ -464,24 +481,26 @@ const ManagerHouse = () => {
         if (validateTenant()) {
             if (formTenant.id != '') {
                 // edit
-                axios.put('http://localhost:8080/room-master/tenant' + `/` + formTenant.id, formTenant).then(response => {
+                updateTenant(formTenant.id, formTenant).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad()
                     reloadTenant(currentRoomId)
                     setDefalutFormTenant()
                 });
             } else {
-                axios.post('http://localhost:8080/room-master/tenant', formTenant).then(response => {
+                addTenant(formTenant).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad()
                     reloadTenant(currentRoomId)
@@ -562,6 +581,7 @@ const ManagerHouse = () => {
         houseData.forEach(house => {
             if (house.houseId == value) {
                 handleRoomChange(house.rooms[0].id)
+
             }
         })
     };
@@ -590,7 +610,7 @@ const ManagerHouse = () => {
 
     const [checkedMoveTenantIds, setCheckedMoveTenantIds] = useState([]);
 
-    const handleCheckboxEditRoomServiceChange = (event) => {
+    const handleCheckboxMoveTenantChange = (event) => {
         const checkboxId = event.target.id;
         console.log(checkboxId);
         // Check if the checkbox is checked or unchecked
@@ -604,7 +624,7 @@ const ManagerHouse = () => {
         }
     };
 
-    const handleCheckboxEditRoomServiceCheckAll = (event) => {
+    const handleCheckboxMoveTenantCheckAll = (event) => {
         if (event.target.checked) {
             tenantData.forEach(src => {
                 setCheckedMoveTenantIds((prevIds) => prevIds.filter((id) => id != src.id));
@@ -618,10 +638,10 @@ const ManagerHouse = () => {
     }
 
     const reloadTenant = (value) => {
-        axios.get(`http://localhost:8080/room-master/tenant/house` + `/` + value).then(response => {
+        getTenantByRoomId(value).then(response => {
             // Handle the response data here
-            console.log(response.data)
-            setTenantData(response.data);
+            console.log(response)
+            setTenantData(response);
             setCheckedMoveTenantIds([])
         }).catch(error => {
             // Handle any errors that occurred during the request
@@ -632,16 +652,16 @@ const ManagerHouse = () => {
     const HandleSubmitMoveTenant = () => {
         console.log(checkedMoveTenantIds);
         console.log('next room', RoomMoveId);
-        axios.put('http://localhost:8080/room-master/tenant/move' + '/' + RoomMoveId, checkedMoveTenantIds).then(response => {
+        moveTenant(RoomMoveId, checkedMoveTenantIds).then(response => {
             // Handle the response data here
-            alert(response.data.message);
+            if (response.data) {
+                alert(response.data.message)
+            } else {
+                alert(response.message)
+            }
             reloadTenant(currentRoomId)
             reLoad()
             setShowModalMoveTenant(!showShowModalMoveTenant)
-            setCheckedMoveTenantIds([])
-        }).catch(error => {
-            // Handle any errors that occurred during the request
-            alert(error.response.data.message);
             setCheckedMoveTenantIds([])
         });
     }
@@ -650,35 +670,35 @@ const ManagerHouse = () => {
         if (status) {
             //delete room
             if (type.type == 'room') {
-                axios.delete(`http://localhost:8080/room-master/room` + "/" + type.id).then(response => {
-                    alert(response.data.message)
+                deleteRoom(type.id).then(response => {
+                    alert(response.message)
                     reLoad()
                     setshowModalDelete(false)
                     setTypeDelete({
                         type: "",
                         id: 0
                     })
-                }).catch(err => {
-                    console.error(err.data);
+                }).catch(error => {
+                    alert(error.response.message);
                 })
             }
             else if (type.type == 'house') {
-                axios.delete(`http://localhost:8080/room-master/house` + "/" + type.id).then(response => {
-                    alert(response.data.message)
+                deleteHouse(type.id).then(response => {
+                    alert(response.message)
                     reLoad()
                     setshowModalDelete(false)
                     setTypeDelete({
                         type: "",
                         id: 0
                     })
-                }).catch(err => {
-                    console.error(err.data);
+                }).catch(error => {
+                    alert(error.response.message);
                 })
             }
             else if (type.type == 'tenant') {
                 console.log(checkedMoveTenantIds);
-                axios.delete(`http://localhost:8080/room-master/tenant`, { data: checkedMoveTenantIds }).then(response => {
-                    alert(response.data.message)
+                deleteTenant(checkedMoveTenantIds).then(response => {
+                    alert(response.message)
                     reloadTenant(currentRoomId)
                     reLoad()
                     setshowModalDelete(false)
@@ -687,8 +707,8 @@ const ManagerHouse = () => {
                         id: 0
                     })
                     setCheckedMoveTenantIds([])
-                }).catch(err => {
-                    console.error(err);
+                }).catch(error => {
+                    alert(error.response.message);
                     setCheckedMoveTenantIds([])
                 })
             }
@@ -759,6 +779,12 @@ const ManagerHouse = () => {
                                     </select>
                                 </div>
                             </div>
+                            <button className="font-bold cursor-pointer px-5 py-2 mr-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#03c6fc] hover:bg-[#03a5fc]"
+                                onClick={() => {
+                                    setDefalutFormSearch();
+                                }}>
+                                <BsArrowClockwise size={20} />
+                            </button>
                             <button type="submit" className="font-bold cursor-pointer px-5 py-2 mr-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800">
                                 Tìm kiếm
                             </button>
@@ -772,7 +798,7 @@ const ManagerHouse = () => {
                     <div className='flex justify-between px-8 py-4'>
                         {/* house list */}
                         <ul className="self-center px-5 py-4 border-b-2 border-[#059669]">
-                            {houseData.map((el) => (
+                            {houseData && houseData.length > 0 && houseData.map((el) => (
                                 <Fragment key={el.houseId}>
                                     <li className={currentHouseId == el.houseId ? "font-bold cursor-pointer py-2 px-2 mx-2 inline border-b-4 border-r-2 border-l-2 border-[#059669] shadow-md shadow-[#26B99A]" : "cursor-pointer  py-2  px-2 mx-2 inline hover:border-b-4 hover:border-[#059669] hover:shadow-md hover:shadow-[#26B99A]"}
                                         onClick={() => {
@@ -831,8 +857,8 @@ const ManagerHouse = () => {
                     </div>
                     {/* room list */}
                     <div className='flex justify-start px-10 mt-8'>
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                            {houseData.map((el) => (
+                        <div className="grid grid-cols-2 md:grid-cols-5 2xl:grid-cols-5 gap-4">
+                            {houseData && houseData.length > 0 && houseData.map((el) => (
                                 <Fragment key={el.houseId}>
                                     {el.houseId === currentHouseId && (
                                         el.rooms.length > 0 ? (
@@ -841,7 +867,11 @@ const ManagerHouse = () => {
                                                     <div className="flex flex-col max-w-sm p-5 bg-white border rounded-lg border-[#059669] shadow-md shadow-[#26B99A]">
                                                         <h5 className="mb-2 text-xl font-bold tracking-tight text-black dark:text-black">phòng {r.numberRoom}</h5>
                                                         <div className="text-black py-1">
-                                                            <span className="font-bold px-2">Giá : </span> {r.price} <span className="font-bold">$</span>
+                                                            <span className="font-bold px-2">Giá :
+                                                            </span> {new Intl.NumberFormat('vi-VN', {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }).format(parseInt(r.price))}
                                                         </div>
                                                         <div className="text-black py-1">
                                                             <span className="font-bold px-2">Số người ở tối đa : </span> {r.stayMax}
@@ -1168,7 +1198,7 @@ const ManagerHouse = () => {
                                                     <select className=" ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                         value={currentHouseId}
                                                         onChange={(e) => handleHouseChange(e.target.value)}>
-                                                        {houseData.map(house => (
+                                                        {houseData && houseData.length > 0 && houseData.map(house => (
                                                             <Fragment key={house.houseId}>
                                                                 <option className="text-start" value={house.houseId}>{house.houseName}</option>
                                                             </Fragment>
@@ -1177,7 +1207,7 @@ const ManagerHouse = () => {
                                                     <select className=" ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                         onChange={(e) => handleRoomChange(e.target.value)}
                                                         value={currentRoomId}>
-                                                        {houseData.map((house) => (
+                                                        {houseData && houseData.length > 0 && houseData.map((house) => (
                                                             <Fragment key={house.houseId}>
                                                                 {house.houseId == currentHouseId && house.rooms.map((r) => (
                                                                     <Fragment key={r.id}>
@@ -1235,7 +1265,7 @@ const ManagerHouse = () => {
                                                     <th scope="col" className="p-4">
                                                         <div className="flex items-center">
                                                             <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                onClick={handleCheckboxEditRoomServiceCheckAll} />
+                                                                onClick={handleCheckboxMoveTenantCheckAll} />
                                                             <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                                         </div>
                                                     </th>
@@ -1271,7 +1301,8 @@ const ManagerHouse = () => {
                                                                 <td className="w-4 p-4">
                                                                     <div className="flex items-center">
                                                                         <input id={tenant.id} type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                            onClick={handleCheckboxEditRoomServiceChange}
+                                                                            onClick={handleCheckboxMoveTenantChange}
+                                                                            onChange={handleCheckboxMoveTenantChange}
                                                                             checked={checkedMoveTenantIds.includes(tenant.id)} />
                                                                         <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
                                                                     </div>

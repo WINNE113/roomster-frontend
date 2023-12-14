@@ -3,6 +3,7 @@ import { Fragment, useState, useEffect } from "react"
 import { PieChart } from 'react-minimal-pie-chart';
 import { Line } from 'react-chartjs-2';
 import axios from "axios"
+import { getHouseStatus, getRoomStatus, getRoomStatusPayment, getOrderStatus } from "@/apis/supperAdmin/dashboard/dashboard"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,30 +54,22 @@ const Dashboardsp = () => {
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/room-master/house/status`).then(response => {
-      setHouseStatusData(response.data)
-    }).catch(err => {
-      console.error(err.data);
+
+    getHouseStatus().then((houseStatus) => {
+      setHouseStatusData(houseStatus)
     })
 
-    axios.get(`http://localhost:8080/room-master/room/status`).then(response => {
-      setRoomStatusPercent(response.data)
-    }).catch(err => {
-      console.error(err.data);
+    getRoomStatus().then((roomStatus) => {
+      setRoomStatusPercent(roomStatus)
     })
 
-    axios.get(`http://localhost:8080/room-master/room/statusPayment`).then(response => {
-      setRoomStatusPaymentData(response.data)
-    }).catch(err => {
-      console.error(err.data);
+    getRoomStatusPayment().then((roomStatusPayment) => {
+      setRoomStatusPaymentData(roomStatusPayment)
     })
 
-    axios.get(`http://localhost:8080/room-master/order/status`).then(response => {
-      setOrderData(response.data.map(entry => entry.total))
-      setOrderLabelData(response.data.map(entry => 'Tháng ' + entry.month))
-      console.log(orderData);
-    }).catch(err => {
-      console.error(err.data);
+    getOrderStatus().then((orderStatus) => {
+      setOrderData(orderStatus.map(entry => entry.total))
+      setOrderLabelData(orderStatus.map(entry => 'Tháng ' + entry.month))
     })
 
   }, [callApi]);
@@ -141,7 +134,7 @@ const Dashboardsp = () => {
                     </td>
                   </tr>
                 ) : (
-                  houseStatusData.map((house, houseIndex) => (
+                  houseStatusData && houseStatusData.length > 0 && houseStatusData.map((house, houseIndex) => (
                     <Fragment key={houseIndex}>
                       {house.roomName.map((roomName, roomIndex) => (
                         <tr key={roomIndex} className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
@@ -161,7 +154,7 @@ const Dashboardsp = () => {
         </div>
         <div className="mx-2 my-2 border border-[#E6E9ED] rounded-md shadow">
           <div className="border-b-2 border-[#E6E9ED] mx-4 py-2">
-            <h1 className="text-2xl font-bold text-[#73879E] px-2">Danh sách khách chưa đóng tiền phòng</h1>
+            <h1 className="text-2xl font-bold text-[#73879E] px-2">Danh sách phòng chưa đóng tiền</h1>
           </div>
           <div className="px-2 py-4 overflow-y-auto max-h-[300px]">
             <table className="w-full text-sm text-center rtl:text-right text-[black] font-mono">
@@ -177,7 +170,7 @@ const Dashboardsp = () => {
                     Tháng
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Số tiền
+                    Số tiền còn nợ
                   </th>
                 </tr>
               </thead>
@@ -192,7 +185,7 @@ const Dashboardsp = () => {
                     </td>
                   </tr>
                 ) : (
-                  roomStatusPaymentData.map((room, index) => (
+                  roomStatusPaymentData && roomStatusPaymentData.length > 0 && roomStatusPaymentData.map((room, index) => (
                     <Fragment key={index}>
                       {room.orderStatusPayments.map((order, index) => (
                         <tr key={index} className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
@@ -208,7 +201,10 @@ const Dashboardsp = () => {
                             })}
                           </td>
                           <td className="px-6 py-4">
-                            {parseInt(order.billNumber)} đ
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(parseInt(order.restNumber))}
                           </td>
                         </tr>
                       ))}

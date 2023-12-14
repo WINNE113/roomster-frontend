@@ -2,7 +2,10 @@ import { Title } from "@/components"
 import { useState, useEffect } from "react"
 import { Fragment } from "react"
 import axios from "axios"
-import { BsPencilSquare, BsFillPatchPlusFill, BsFillTrashFill } from "react-icons/bs"
+import { getListHouse } from "@/apis/supperAdmin/house/house"
+import { getRoomById } from "@/apis/supperAdmin/room/room"
+import { getOrderById, updateOrAddOrder } from "@/apis/supperAdmin/order/order"
+import { BsPencilSquare, BsFillPatchPlusFill } from "react-icons/bs"
 
 const ManagerWater = () => {
 
@@ -30,11 +33,12 @@ const ManagerWater = () => {
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/room-master/house`).then(response => {
+    getListHouse().then(response => {
       // Handle the response data here
-      setHouseData(response.data);
-      setCurrentRoomId(response.data[0].rooms[0].id);
-      getRoomDataById(currentRoomId)
+      console.log(response);
+      setHouseData(response);
+      setCurrentRoomId(response[0].rooms[0].id);
+      getRoomDataById(response[0].rooms[0].id)
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
@@ -43,14 +47,15 @@ const ManagerWater = () => {
   }, [callApi]);
 
   const getRoomDataById = (id) => {
-    axios.get("http://localhost:8080/room-master/room/" + id).then(response => {
+    getRoomById(id).then(response => {
       // Handle the response data here
-      console.log(response.data);
-      setWaterData(response.data);
+      console.log(response);
+      setWaterData(response);
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
     });
+
   }
 
   const reLoad = () => {
@@ -59,15 +64,15 @@ const ManagerWater = () => {
 
   const validateOrder = () => {
     const newValidity = {
-        "roomId": form.roomId !== null && form.roomId != 0,
-        "water": form.water !== null && form.water != 0,
-        "electricity": form.electricity !== null && form.electricity != 0,
-      };
-      // Update the validity state for all fields
-      setFormOrderValidate(newValidity);
-  
-      // Return true if all fields are valid, false otherwise
-      return Object.values(newValidity).every((valid) => valid);
+      "roomId": form.roomId !== null && form.roomId != 0,
+      "water": form.water !== null && form.water != 0,
+      "electricity": form.electricity !== null && form.electricity != 0,
+    };
+    // Update the validity state for all fields
+    setFormOrderValidate(newValidity);
+
+    // Return true if all fields are valid, false otherwise
+    return Object.values(newValidity).every((valid) => valid);
   };
 
   const setDefalutFormOrder = () => {
@@ -95,9 +100,8 @@ const ManagerWater = () => {
   }
 
   const setDataFromById = (id) => {
-    console.log(id);
-    axios.get(`http://localhost:8080/room-master/order` + `/` + id).then(response => {
-      fillDataFrom(response.data)
+    getOrderById(id).then(response => {
+      fillDataFrom(response)
     }).catch(err => {
       console.error(err);
     })
@@ -126,34 +130,19 @@ const ManagerWater = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(form);
-    if(validateOrder()){
-      if (form.orderId != null && form.orderId != '') {
-        // edit
-        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
-          // Handle the response data here
-          console.log(response);
-        }).catch(error => {
-          // Handle any errors that occurred during the request
-          console.error(error);
-        }).finally(()=>{
-          reLoad();
-          handleRoomChange(currentRoomId)
-          setDefalutFormOrder()
-        });
-      } else {
-        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
-          // Handle the response data here
-          console.log(response);
-        }).catch(error => {
-          // Handle any errors that occurred during the request
-          console.error(error);
-        }).finally(()=>{
-          reLoad();
-          handleRoomChange(currentRoomId)
-          setDefalutFormOrder()
-        });
-      }
-      setshowModalOrder(!showModalOrder)
+    if (validateOrder()) {
+      updateOrAddOrder(form.orderId, form).then(response => {
+        // Handle the response data here
+        console.log(response);
+      }).catch(error => {
+        // Handle any errors that occurred during the request
+        console.error(error);
+      }).finally(() => {
+        reLoad();
+        handleRoomChange(currentRoomId)
+        setDefalutFormOrder()
+        setshowModalOrder(!showModalOrder)
+      });
     }
     else {
       alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
@@ -171,7 +160,7 @@ const ManagerWater = () => {
     setFormOrderValidate((formOrderValidate) => ({
       ...formOrderValidate,
       [name]: value != 0 && value.trim() !== '',
-  }));
+    }));
 
   };
 
@@ -190,7 +179,7 @@ const ManagerWater = () => {
               </div>
               <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 onChange={(e) => handleHouseChange(e.target.value)}>
-                {houseData.map(house => (
+                {houseData && houseData.length > 0 && houseData.map(house => (
                   <Fragment key={house.houseId}>
                     <option className="text-start" value={house.houseId}>{house.houseName}</option>
                   </Fragment>
@@ -199,7 +188,7 @@ const ManagerWater = () => {
               <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 onChange={(e) => handleRoomChange(e.target.value)}
                 onClick={(e) => handleRoomChange(e.target.value)}>
-                {houseData.map((house) => (
+                {houseData && houseData.length > 0 && houseData.map((house) => (
                   <Fragment key={house.houseId}>
                     {house.houseId == currentHouseId && house.rooms.map((r) => (
                       <Fragment key={r.id}>
@@ -310,7 +299,7 @@ const ManagerWater = () => {
                         Số chỉ điện
                       </label>
                       <input type="number" name="electricity" id="electricity"
-                        className={`bg-white border ${!formOrderValidate.electricity ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        className={`bg-white border ${!formOrderValidate.electricity ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
                         placeholder="Nhập số chỉ điện"
                         required="" value={form.electricity}
                         onChange={handleInputChange}
@@ -324,7 +313,7 @@ const ManagerWater = () => {
                         Số chỉ nước
                       </label>
                       <input type="number" name="water" id="water"
-                        className={`bg-white border ${!formOrderValidate.water ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        className={`bg-white border ${!formOrderValidate.water ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
                         placeholder="Nhập số chỉ nước"
                         required="" value={form.water}
                         onChange={handleInputChange}

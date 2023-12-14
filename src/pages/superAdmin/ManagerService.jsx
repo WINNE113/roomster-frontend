@@ -4,10 +4,10 @@ import {
     BsPencilSquare,
     BsFillTrashFill,
     BsFillPatchPlusFill,
-    BsArrowClockwise,
 } from "react-icons/bs"
-import { getServiceHouse, addServiceHouse } from "@/apis/supperAdmin/serviceHouse/serviceHouse"
-import { getListHouse } from "@/apis/supperAdmin/room/room"
+import { getServiceHouse, getServiceHouseById, addServiceHouse, updateServiceHouse, updateServiceRoom, deleteServiceHouse } from "@/apis/supperAdmin/serviceHouse/serviceHouse"
+import { getListHouse } from "@/apis/supperAdmin/house/house"
+import { getServiceRoomById } from "@/apis/supperAdmin/room/room"
 import axios from "axios"
 import { Fragment } from "react"
 const ManagerService = () => {
@@ -23,11 +23,12 @@ const ManagerService = () => {
         type: "",
         id: 0
     });
+
     const [serviceHouseData, setServiceHouseData] = useState([]);
     const [serviceRoomData, setServiceRoomData] = useState([]);
     const [houseData, setHouseData] = useState([]);
     const [currentHouseId, setCurrentHouseId] = useState(1);
-    const [currentRoomId, setCurrentRoomId] = useState(1);
+    const [currentRoomId, setCurrentRoomId] = useState(null);
 
     // handle check for room service
     const [checkedEditRoomServiceIds, setCheckedEditRoomServiceIds] = useState([]);
@@ -88,7 +89,6 @@ const ManagerService = () => {
 
     }
 
-
     const [form, setform] = useState({
         "serviceId": "",
         "serviceName": "",
@@ -137,19 +137,17 @@ const ManagerService = () => {
 
     useEffect(() => {
         getServiceHouse().then(response => {
-            // Handle the response data here
-            // console.log(response)
             setServiceHouseData(response);
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);
         });
 
-        axios.get(`http://localhost:8080/room-master/house`).then(response => {
+        getListHouse().then(house => {
             // Handle the response data here
-            console.log(response.data)
-            setHouseData(response.data);
-            reloadRoomService(currentRoomId)
+            setHouseData(house);
+            setCurrentRoomId(currentRoomId ? currentRoomId : house[0].rooms[0].id)
+            reloadRoomService(currentRoomId ? currentRoomId : house[0].rooms[0].id)
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);
@@ -162,10 +160,10 @@ const ManagerService = () => {
     }
 
     const reloadRoomService = (value) => {
-        axios.get(`http://localhost:8080/room-master/room/service-room` + `/` + value).then(response => {
+
+        getServiceRoomById(value).then(response => {
             // Handle the response data here
-            console.log(value)
-            setServiceRoomData(response.data);
+            setServiceRoomData(response);
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);
@@ -173,11 +171,10 @@ const ManagerService = () => {
     }
 
     const setDataFromById = (id) => {
-        axios.get(`http://localhost:8080/room-master/serviceHouse` + `/` + id).then(response => {
-            console.log(response.data);
-            fillDataFrom(response.data)
+        getServiceHouseById(id).then(response => {
+            fillDataFrom(response)
         }).catch(err => {
-            console.error(err.data);
+            console.error(err);
         })
     }
 
@@ -187,23 +184,25 @@ const ManagerService = () => {
         if (validateService()) {
             if (form.serviceId != '') {
                 // edit
-                axios.put('http://localhost:8080/room-master/serviceHouse' + `/` + form.serviceId, form).then(response => {
+                updateServiceHouse(form.serviceId, form).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad();
                     setDefaultForm();
                 });
             } else {
-                axios.post('http://localhost:8080/room-master/serviceHouse', form).then(response => {
+                addServiceHouse(form).then(response => {
                     // Handle the response data here
-                    alert(response.data.message)
-                }).catch(error => {
-                    // Handle any errors that occurred during the request
-                    alert(error.response.data.message)
+                    if (response.data) {
+                        alert(response.data.message)
+                    } else {
+                        alert(response.message)
+                    }
                 }).finally(() => {
                     reLoad();
                     setDefaultForm();
@@ -215,8 +214,6 @@ const ManagerService = () => {
             // If validation fails, display an error message or alert
             alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
         }
-
-
     };
 
     const handleInputChange = (e) => {
@@ -251,32 +248,31 @@ const ManagerService = () => {
     };
 
     const handleSubmitEditServiceRoom = () => {
-        axios.put('http://localhost:8080/room-master/serviceHouse/room-service' + '/' + currentRoomId, checkedEditRoomServiceIds).then(response => {
+        updateServiceRoom(currentRoomId, checkedEditRoomServiceIds).then(response => {
             // Handle the response data here
             reLoad()
-            alert(response.data.message)
+            alert(response.message)
             setCheckedEditRoomServiceIds([])
             setshowModalServiceRoom(!showModalServiceRoom)
         }).catch(error => {
             // Handle any errors that occurred during the request
-            alert(error.response.data.message)
+            alert(error.response.message)
         });
     }
 
     const confirmDelete = (status, type) => {
         if (status) {
-            //delete sẻvice
+            //delete service
             console.log(checkedServiceIds);
-            axios.delete('http://localhost:8080/room-master/serviceHouse', { data: checkedServiceIds }).then(response => {
+            deleteServiceHouse(checkedServiceIds).then(response => {
                 // Handle the response data here
-                alert(response.data.message)
+                alert(response.message)
                 reLoad()
                 setCheckedServiceIds([])
             }).catch(error => {
                 // Handle any errors that occurred during the request
-                alert(error.response.data.message)
+                alert(error.response.message)
             });
-
         }
         setshowModalDelete(false)
     }
@@ -326,7 +322,9 @@ const ManagerService = () => {
                                     <div className="flex items-center">
                                         <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                             onClick={handleCheckboxServiceCheckAll}
-                                            checked={checkedServiceIds.length == serviceHouseData.length} />
+                                            onChange={handleCheckboxServiceCheckAll}
+                                            checked={checkedServiceIds.length == serviceHouseData.length}
+                                            defaultChecked={false} />
                                         <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                     </div>
                                 </th>
@@ -342,14 +340,16 @@ const ManagerService = () => {
                             </tr>
                         </thead>
                         <tbody className="text-base font-medium">
-                            {serviceHouseData.map((service) =>
+                            {serviceHouseData && serviceHouseData.length > 0 && serviceHouseData.map((service) =>
                                 <Fragment key={service.serviceId}>
                                     <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
                                         <td className="w-4 p-4">
                                             <div className="flex items-center">
                                                 <input id={service.serviceId} type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                     onClick={handleCheckboxServiceChange}
-                                                    checked={checkedServiceIds.includes(Number(service.serviceId))} />
+                                                    onChange={handleCheckboxServiceChange}
+                                                    checked={checkedServiceIds.includes(Number(service.serviceId))}
+                                                    defaultChecked={false} />
                                                 <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
                                             </div>
                                         </td>
@@ -357,7 +357,10 @@ const ManagerService = () => {
                                             {service.serviceName}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {service.servicePrice}
+                                            {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND',
+                                            }).format(parseInt(service.servicePrice))}
                                         </td>
                                         <td className="px-6 py-4">
                                             <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => {
@@ -383,7 +386,7 @@ const ManagerService = () => {
                                 <span>Quản lý dịch vụ phòng :</span>
                                 <select className=" ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     onChange={(e) => handleHouseChange(e.target.value)}>
-                                    {houseData.map(house => (
+                                    {houseData && houseData.length > 0 && houseData.map(house => (
                                         <Fragment key={house.houseId}>
                                             <option className="text-start" value={house.houseId}>{house.houseName}</option>
                                         </Fragment>
@@ -391,7 +394,7 @@ const ManagerService = () => {
                                 </select>
                                 <select className=" ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     onChange={(e) => handleRoomChange(e.target.value)}>
-                                    {houseData.map((house) => (
+                                    {houseData && houseData.length > 0 && houseData.map((house) => (
                                         <Fragment key={house.houseId}>
                                             {house.houseId == currentHouseId && house.rooms.map((r) => (
                                                 <Fragment key={r.id}>
@@ -437,7 +440,10 @@ const ManagerService = () => {
                                                 {service.serviceHouse.serviceName}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {service.serviceHouse.servicePrice}
+                                                {new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }).format(parseInt(service.serviceHouse.servicePrice))}
                                             </td>
                                         </tr>
                                     </Fragment>
@@ -550,6 +556,8 @@ const ManagerService = () => {
                                                         <div className="flex items-center">
                                                             <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                                 onClick={handleCheckboxEditRoomServiceCheckAll}
+                                                                onChange={handleCheckboxEditRoomServiceCheckAll}
+                                                                defaultChecked={false}
                                                                 checked={checkedEditRoomServiceIds.length == serviceHouseData.length} />
                                                             <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                                         </div>
@@ -563,7 +571,7 @@ const ManagerService = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="text-base font-medium text-start">
-                                                {serviceHouseData.map((service) =>
+                                                {serviceHouseData && serviceHouseData.length > 0 && serviceHouseData.map((service) =>
                                                     <Fragment key={service.serviceId}>
                                                         <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
                                                             <td className="w-4 p-4">
@@ -571,6 +579,8 @@ const ManagerService = () => {
                                                                     <input id={service.serviceId} type="checkbox"
                                                                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                                         onClick={handleCheckboxEditRoomServiceChange}
+                                                                        onChange={handleCheckboxEditRoomServiceChange}
+                                                                        defaultChecked={false}
                                                                         checked={checkedEditRoomServiceIds.includes(Number(service.serviceId))}
                                                                     />
                                                                     <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
