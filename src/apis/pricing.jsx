@@ -8,7 +8,7 @@ export const apiCreatePricing = (data) =>
   })
 export const apiGetPricings = (params) =>
   axios({
-    url: "/admin/service/service-package",
+    url: "/guest/service/service-package",
     method: "get",
     params,
   })

@@ -8,7 +8,6 @@ import { Navigate, Outlet } from "react-router-dom"
 const LayoutMember = () => {
   const { current } = useSelector((state) => state.user)
   if (!current?.roleList?.some((el) => el.name === "ROLE_USER")) {
-    toast.info("Yêu cầu quyền User")
     return <Navigate to={`/${path.LOGIN}`} replace={true} />
   }
   return (

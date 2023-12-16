@@ -4,12 +4,10 @@ import path from "@/ultils/path"
 import React, { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, Outlet } from "react-router-dom"
-import { toast } from "react-toastify"
 
 const LayoutAdmin = ({ dispatch }) => {
   const { current } = useSelector((s) => s.user)
   if (!current?.roleList?.some((el) => el.name === "ROLE_ADMIN")) {
-    toast.info("Yêu cầu quyền Admin")
     return <Navigate to={`/${path.LOGIN}`} replace={true} />
   }
 

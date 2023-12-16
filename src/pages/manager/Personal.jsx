@@ -28,7 +28,7 @@ const Personal = ({ dispatch }) => {
     reset({
       userName: current?.userName,
       phoneNumber: current?.phoneNumber,
-      role: current?.roleList[0]?.name,
+      role: current?.roleList?.map((el) => el.name)?.join(" / "),
       active: !current?.active ? "Đang khóa" : "Đang hoạt động",
       email: current?.email,
       address: current?.address,

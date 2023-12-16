@@ -132,7 +132,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 >
                   Quản lý phòng
                 </Button>
+
+               
                 {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
+                 
                   <Link
                     to={`/${path.MANAGER}/${path.DEPOSIT}`}
                     className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
@@ -140,6 +143,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                     Nạp tiền
                   </Link>
                 )}
+                
 
                 <div
                   onClick={handleShowOptions}

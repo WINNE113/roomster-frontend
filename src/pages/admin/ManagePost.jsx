@@ -136,7 +136,7 @@ const ManagePost = ({ dispatch, navigate }) => {
           />
         </div>
         <div className="mt-6 w-full">
-          <table className="table-auto w-full">
+          <table className="table-fixed w-full">
             <thead>
               <tr>
                 <th className="p-2 border font-medium text-center">Mã tin</th>
