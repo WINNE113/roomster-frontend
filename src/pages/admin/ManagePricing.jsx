@@ -1,14 +1,16 @@
 import { apiDeletePricing, apiGetPricings } from "@/apis/pricing"
-import { Pagination, Title } from "@/components"
+import { Button, Pagination, Title } from "@/components"
 import moment from "moment"
 import React, { useCallback, useEffect, useState } from "react"
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai"
 import UpdatePricing from "./UpdatePricing"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { modal } from "@/redux/appSlice"
-import { useSearchParams } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import Swal from "sweetalert2"
 import { toast } from "react-toastify"
+import path from "@/ultils/path"
+
 
 const ManagePricing = ({ dispatch }) => {
   const [pricings, setPricings] = useState()
@@ -56,7 +58,14 @@ const ManagePricing = ({ dispatch }) => {
 
   return (
     <section className="mb-[200px]">
-      <Title title="Quản lý bảng giá dịch vụ"></Title>
+      <Title title="Quản lý bảng giá dịch vụ">
+        <Link
+          className="px-4 py-2 text-white rounded-md bg-emerald-700"
+          to={`/${path.ADMIN}/${path.CREATE_PRICING}`}
+        >
+          Tạo mới dịch vụ
+        </Link>
+      </Title>      
       <div className="p-4">
         <div className="mt-6 w-full">
           <table className="table-auto w-full">

@@ -198,13 +198,7 @@ export const targets = [
   },
 ]
 export const managerSidebar = [
-  {
-    id: 123,
-    name: "Đăng tin mới",
-    path: `/${path.MANAGER}/${path.CREATE_POST}`,
-    icon: <RiFileEditLine size={20} />,
-    type: "SINGLE",
-  },
+
   {
     id: 1234,
     name: "Quản lý tin đăng",
@@ -257,17 +251,10 @@ export const adminSidebar = [
     type: "SINGLE",
   },
   {
-    id: 57238,
-    name: "Tạo mới giá dịch vụ",
-    path: `/${path.ADMIN}/${path.CREATE_PRICING}`,
-    icon: <RiPriceTag2Line size={20} />,
-    type: "SINGLE",
-  },
-  {
     id: 573238,
     name: "Quản lý giá dịch vụ",
     path: `/${path.ADMIN}/${path.MANAGE_PRICING}`,
-    icon: <MdOutlinePriceCheck size={20} />,
+    icon: <RiPriceTag2Line size={20} />,
     type: "SINGLE",
   },
   {

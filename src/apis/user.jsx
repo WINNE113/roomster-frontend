@@ -94,3 +94,8 @@ export const apiDeleteUser = (params) =>
     method: "delete",
     params,
   })
+  export const apiGetRoleAdmin = () =>
+  axios({
+    url: "/admin/role/getAll",
+    method: "get",
+  })

@@ -11,11 +11,17 @@ import UpdateUser from "./UpdateUser"
 import useDebounce from "@/hooks/useDebounce"
 import {
   apiDeleteUser,
+  apiGetRoleAdmin,
   apiGetUserByRole,
   apiGetUsersByAdmin,
   apiGetUsersDeletedByAdmin,
 } from "@/apis/user"
 import moment from "moment"
+import {
+  BsPencilSquare,
+  BsFillTrashFill,
+  BsFillPatchPlusFill,
+} from "react-icons/bs"
 // import UpdatePost from './UpdatePost'
 
 const ManageUser = ({ dispatch }) => {
@@ -29,6 +35,7 @@ const ManageUser = ({ dispatch }) => {
   const [users, setUsers] = useState([])
   const [counts, setCounts] = useState(0)
   const [searchParams] = useSearchParams()
+  const [roles, setRoles] = useState([])
   const deleted = watch("deleted")
   const roleName = watch("roleName")
   const [update, setUpdate] = useState(false)
@@ -45,6 +52,13 @@ const ManageUser = ({ dispatch }) => {
       setUsers(response.data)
       setCounts(response.count)
     }
+  }
+  useEffect(() => {
+    fetchRoles()
+  }, [])
+  const fetchRoles = async (params) => {
+    const response = await apiGetRoleAdmin()
+    if (response) setRoles(response)
   }
   const fetchUsersByRolename = async (params) => {
     const response = await apiGetUserByRole(params)
@@ -99,7 +113,23 @@ const ManageUser = ({ dispatch }) => {
     <section className="mb-[200px]">
       <Title title="Quản lý thành viên"></Title>
       <div className="p-4">
-        <div className="flex items-center justify-end gap-6">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-end gap 2">
+            <ul className="my-2 self-center">
+              <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
+                onClick={() => {
+                }}>
+                <button className="flex inline-flex items-center px-4">
+                  Thêm Tài Khoản <BsFillPatchPlusFill size={15} className="inline ml-3" />
+                </button>
+              </li>
+              <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800"
+                onClick={() => {
+                }}>
+                <button>Xóa Tài Khoản <BsFillTrashFill size={15} className="ml-1 inline" /></button>
+              </li>
+            </ul>
+          </div>
           <div className="flex items-center gap-2">
             <label htmlFor="deleted">Lọc theo: </label>
             <select
@@ -108,9 +138,11 @@ const ManageUser = ({ dispatch }) => {
               id="roleName"
             >
               <option value="">Tất cả role</option>
-              <option value="ROLE_MANAGER">Manager</option>
-              <option value="ROLE_USER">Thành viên</option>
-              <option value="ROLE_ADMIN">Admin</option>
+              {roles.map((el) => (
+                <option key={el.name} value={el.name}>
+                  {el.description}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex items-center gap-2">
@@ -172,7 +204,7 @@ const ManageUser = ({ dispatch }) => {
                   <td className="p-2 text-center">{el.email}</td>
                   <td className="p-2 text-center">{el.address}</td>
                   <td className="p-2 text-center">
-                    {el.roleList?.map((el) => el.name)?.join(" / ")}
+                  {el.roleList?.map((el) => el.description)?.join(" / ")}
                   </td>
                   <td className="p-2 text-center">
                     {moment(el.dateOfBirth).format("DD/MM/YYYY")}
@@ -181,21 +213,6 @@ const ManageUser = ({ dispatch }) => {
                     {!el.active ? "Đang tạm khóa" : "Đang hoạt động"}
                   </td>
                   <td className="flex items-center justify-center gap-2 p-2">
-                    {/* <span
-                      onClick={() =>
-                        dispatch(
-                          modal({
-                            isShowModal: true,
-                            modalContent: (
-                              <UpdateUser render={render} editUser={el} />
-                            ),
-                          })
-                        )
-                      }
-                      className="text-lg text-main-red cursor-pointer px-1"
-                    >
-                      <AiOutlineEdit />
-                    </span> */}
                     <span
                       onClick={() => handleDeleteUser(el.userId)}
                       className="text-lg text-main-red cursor-pointer px-1"
