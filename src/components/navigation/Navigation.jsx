@@ -204,10 +204,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
                   )}
                   <span className="text-sm flex flex-col text-white">
                     <span className="font-bold">{current?.userName}</span>
-                    <span>{`TK chính: ${formatMoney(current?.balance / 1000)}${
-                      current?.balance ? "K" : ""
-                    } VNĐ`}</span>
-                  </span>
+                    <span>{`TK chính: ${formatMoney(
+                      +current?.balance
+                    )} VND`}</span>
+                    </span>
                   <img
                     src={current?.images || "/user.svg"}
                     alt="avatar"

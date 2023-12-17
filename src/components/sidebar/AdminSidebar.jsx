@@ -38,9 +38,7 @@ const AdminSidebar = ({ dispatch }) => {
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
           <span>{"ID: #" + current?.userId}</span>
-          <span>{`TK chính: ${formatMoney(
-            +current?.balance / 1000
-          )}K VNĐ`}</span>
+          <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
         </div>
       </div>
       <div>

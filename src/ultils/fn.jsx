@@ -10,7 +10,7 @@ export const generateRange = (start, end) => {
 
 export const formatMoney = (number = 0) => {
   if (!Number(number)) return 0
-  return Number(number?.toFixed(1)).toLocaleString() + "K"
+  return Number(number?.toFixed(1)).toLocaleString()
 }
 
 export const customMoney = (number) => {
