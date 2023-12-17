@@ -172,7 +172,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                           dispatch(
                             modal({
                               isShowModal: true,
-                              modalContent: <UpdatePost editPost={el} />,
+                              modalContent: <UpdatePost postId={el.id} />,
                             })
                           )
                         }

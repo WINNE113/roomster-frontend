@@ -11,11 +11,11 @@ const LayoutManager = () => {
   if (!current?.roleList?.some((el) => el.name === "ROLE_MANAGE"))
     return <Navigate to={`/${path.LOGIN}`} />
   return (
-    <div className="grid grid-cols-11 bg-gray-100 gap-3 overflow-hidden max-h-screen">
+    <div className="grid grid-cols-11 bg-gray-100 gap-3 h-full max-h-screen">
       <div className="col-span-2 bg-white max-h-full overflow-y-auto">
         <ManageSider />
       </div>
-      <div className="col-span-9 bg-white max-h-screen overflow-y-auto">
+      <div className="col-span-9 bg-white max-h-full w-full overflow-x-hidden overflow-y-auto">
         <Outlet />
       </div>
     </div>

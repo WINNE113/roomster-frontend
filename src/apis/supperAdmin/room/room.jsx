@@ -2,12 +2,12 @@ import instance from "@/axios"
 
 export const getListRoom = () =>
     instance({
-        url: "/api/vi/room-master/room",
+        url: "/api/v1/room-master/room",
         method: "get",
     })
 export const getRoomById = (id) =>
     instance({
-        url: `/api/vi/room-master/room/${id}`,
+        url: `/api/v1/room-master/room/${id}`,
         method: "get",
     })
 export const addRoom = (data) =>

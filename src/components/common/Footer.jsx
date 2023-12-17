@@ -8,7 +8,9 @@ const Footer = () => {
     <div className="bg-emerald-700 text-white p-6">
       <div className="w-main mx-auto grid grid-cols-5 gap-4">
         <div className="col-span-1 flex justify-center items-center">
-          <img src="/logo.svg" alt="" className="h-[130px] object-contain" />
+        <span className="text-3xl font-bold tracking-tight">
+            troyutin.com
+          </span>
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
           <h1 className="uppercase font-bold pb-2">về chúng tôi</h1>

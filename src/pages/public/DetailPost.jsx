@@ -336,7 +336,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
                   {post?.surroundings}
                 </span>
                 <span className="p-2  border-[0.5px] bg-gray-100">
-                  {post?.convenient}
+                {post?.convenient?.join(", ")}
                 </span>
               </div>
             </div>

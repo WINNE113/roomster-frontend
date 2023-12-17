@@ -2,7 +2,7 @@ import axios from "@/axios"
 
 export const getListHouse = () =>
   axios({
-    url: "/api/vi/room-master/house",
+    url: "/api/v1/room-master/house",
     method: "get",
   })
 export const getHouseById = (id) =>

@@ -166,7 +166,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                             Admin Workspace
                           </Link>
                         )}                    
-                      {current?.roleList?.some(
+                      {/* {current?.roleList?.some(
                         (el) => el.name === "ROLE_ADMIN"
                       ) && (
                           <Link
@@ -175,7 +175,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                           >
                             Super Admin Workspace
                           </Link>
-                        )}
+                        )} */}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_MANAGE"
                       ) && (

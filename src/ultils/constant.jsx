@@ -226,7 +226,7 @@ export const adminSidebar = [
   {
     id: 5,
     name: "Thống kê",
-    path: `${path.ADMIN}/${path.DASHBOARD}`,
+    path: `/${path.ADMIN}/${path.DASHBOARD}`,
     icon: <AiOutlineDashboard size={20} />,
     type: "SINGLE",
   },
@@ -235,12 +235,12 @@ export const adminSidebar = [
     name: "Quản lý tin đăng",
     icon: <BsPostcard size={20} />,
     type: "SINGLE",
-    path: `${path.ADMIN}/${path.MANAGE_POST_ALL}`,
+    path: `/${path.ADMIN}/${path.MANAGE_POST_ALL}`,
   },
   {
     id: 4,
     name: "Quản lý thành viên",
-    path: `${path.ADMIN}/${path.MANAGE_USER}`,
+    path: `/${path.ADMIN}/${path.MANAGE_USER}`,
     icon: <AiOutlineUser size={20} />,
     type: "SINGLE",
   },
