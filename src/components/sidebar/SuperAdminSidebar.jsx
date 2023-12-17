@@ -14,6 +14,7 @@ import { NavLink } from "react-router-dom"
 const SuperAdminSidebar = ({ dispatch }) => {
     const [tabs, setTabs] = useState([])
     const { current } = useSelector((state) => state.user)
+    console.log("SuperAdminSidebar ", current);
     const handleTabs = (tabId) => {
         if (tabs.some((el) => el === tabId))
             setTabs((prev) => prev.filter((el) => el !== tabId))
@@ -31,12 +32,12 @@ const SuperAdminSidebar = ({ dispatch }) => {
                 </small>
                 <div className="mt-4 flex flex-col items-center justify-center gap-1">
                     <img
-                        src={current?.avatar || "/user.svg"}
+                        src={current?.images || "/user.svg"}
                         alt="avatar"
                         className="w-24 h-24 rounded-full object-cover"
                     />
-                    <span className="text-main-red font-bold">{current?.name}</span>
-                    <span>{"ID: #" + current?.id}</span>
+                    <span className="text-main-red font-bold">{current?.userName}</span>
+                    <span>{"ID: #" + current?.userId}</span>
                 </div>
             </div>
             <div>
@@ -59,7 +60,10 @@ const SuperAdminSidebar = ({ dispatch }) => {
                     </Fragment>
                 ))}
                 <span
-                    onClick={() => dispatch(logout())}
+                    onClick={() => {
+                        dispatch(logout())
+
+                    }}
                     className={clsx(
                         "flex cursor-pointer hover:bg-blue-100 w-full p-3 items-center gap-2"
                     )}

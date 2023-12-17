@@ -30,11 +30,9 @@ const VerifyPhone = ({ navigate, dispatch }) => {
     })
     setIsLoading(false)
     if (response.status === "DELIVERED") {
-        dispatch(modal({ isShowModal: false, modalContent: null }))
-        navigate(`/${path.VERIFY_PHONE}`)
-      } else toast.error(response.message)
-
-    console.log(response)
+      dispatch(modal({ isShowModal: false, modalContent: null }))
+      navigate(`/${path.VERIFY_PHONE}`)
+    } else toast.error(response.message)
   }
   return (
     <div

@@ -1,19 +1,19 @@
 import { Title } from "@/components"
 import { useState, useEffect } from "react"
 import { Fragment } from "react"
-import axios from "axios"
-import { BsPencilSquare, BsFillPatchPlusFill, BsFillTrashFill } from "react-icons/bs"
+import { getListHouse } from "@/apis/supperAdmin/house/house"
+import { getRoomById } from "@/apis/supperAdmin/room/room"
+import { getOrderById, updateOrAddOrder } from "@/apis/supperAdmin/order/order"
+import { BsPencilSquare, BsFillPatchPlusFill } from "react-icons/bs"
+import { toast } from "react-toastify"
 
 const ManagerWater = () => {
-
   const [waterData, setWaterData] = useState([]);
   const [houseData, setHouseData] = useState([]);
-  const [currentHouseId, setCurrentHouseId] = useState(1);
-  const [currentRoomId, setCurrentRoomId] = useState(1);
-
+  const [currentHouseId, setCurrentHouseId] = useState(null);
+  const [currentRoomId, setCurrentRoomId] = useState(null);
   const [showModalOrder, setshowModalOrder] = useState(false);
   const [statusModalOrder, setstatusModalOrder] = useState(false);
-
   const [form, setform] = useState({
     "orderId": null,
     "roomId": null,
@@ -30,11 +30,13 @@ const ManagerWater = () => {
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/room-master/house`).then(response => {
+    getListHouse().then(response => {
       // Handle the response data here
-      setHouseData(response.data);
-      setCurrentRoomId(response.data[0].rooms[0].id);
-      getRoomDataById(currentRoomId)
+      console.log(response);
+      setHouseData(response);
+      setCurrentHouseId(currentHouseId ? currentHouseId : response[0].houseId)
+      setCurrentRoomId(currentRoomId ? currentRoomId : response[0].rooms[0].id);
+      getRoomDataById(currentRoomId ? currentRoomId : response[0].rooms[0].id)
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
@@ -43,10 +45,10 @@ const ManagerWater = () => {
   }, [callApi]);
 
   const getRoomDataById = (id) => {
-    axios.get("http://localhost:8080/room-master/room/" + id).then(response => {
+    getRoomById(id).then(response => {
       // Handle the response data here
-      console.log(response.data);
-      setWaterData(response.data);
+      console.log(response);
+      setWaterData(response);
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
@@ -59,15 +61,15 @@ const ManagerWater = () => {
 
   const validateOrder = () => {
     const newValidity = {
-        "roomId": form.roomId !== null && form.roomId != 0,
-        "water": form.water !== null && form.water != 0,
-        "electricity": form.electricity !== null && form.electricity != 0,
-      };
-      // Update the validity state for all fields
-      setFormOrderValidate(newValidity);
-  
-      // Return true if all fields are valid, false otherwise
-      return Object.values(newValidity).every((valid) => valid);
+      "roomId": form.roomId !== null && form.roomId != 0,
+      "water": form.water !== null && form.water != 0,
+      "electricity": form.electricity !== null && form.electricity != 0,
+    };
+    // Update the validity state for all fields
+    setFormOrderValidate(newValidity);
+
+    // Return true if all fields are valid, false otherwise
+    return Object.values(newValidity).every((valid) => valid);
   };
 
   const setDefalutFormOrder = () => {
@@ -95,9 +97,8 @@ const ManagerWater = () => {
   }
 
   const setDataFromById = (id) => {
-    console.log(id);
-    axios.get(`http://localhost:8080/room-master/order` + `/` + id).then(response => {
-      fillDataFrom(response.data)
+    getOrderById(id).then(response => {
+      fillDataFrom(response)
     }).catch(err => {
       console.error(err);
     })
@@ -125,38 +126,23 @@ const ManagerWater = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
-    if(validateOrder()){
-      if (form.orderId != null && form.orderId != '') {
-        // edit
-        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
-          // Handle the response data here
-          console.log(response);
-        }).catch(error => {
-          // Handle any errors that occurred during the request
-          console.error(error);
-        }).finally(()=>{
-          reLoad();
-          handleRoomChange(currentRoomId)
-          setDefalutFormOrder()
-        });
-      } else {
-        axios.post('http://localhost:8080/room-master/order' + `/` + form.orderId, form).then(response => {
-          // Handle the response data here
-          console.log(response);
-        }).catch(error => {
-          // Handle any errors that occurred during the request
-          console.error(error);
-        }).finally(()=>{
-          reLoad();
-          handleRoomChange(currentRoomId)
-          setDefalutFormOrder()
-        });
-      }
-      setshowModalOrder(!showModalOrder)
+    if (validateOrder()) {
+      updateOrAddOrder(form.orderId, form).then(response => {
+        // Handle the response data here
+        if (response.data) {
+          toast.error(response.data.message)
+        } else {
+          toast.success(response.message)
+        }
+      }).finally(() => {
+        reLoad();
+        handleRoomChange(currentRoomId)
+        setDefalutFormOrder()
+        setshowModalOrder(!showModalOrder)
+      });
     }
     else {
-      alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+      toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
     }
   };
 
@@ -171,8 +157,7 @@ const ManagerWater = () => {
     setFormOrderValidate((formOrderValidate) => ({
       ...formOrderValidate,
       [name]: value != 0 && value.trim() !== '',
-  }));
-
+    }));
   };
 
   return (
@@ -190,7 +175,7 @@ const ManagerWater = () => {
               </div>
               <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 onChange={(e) => handleHouseChange(e.target.value)}>
-                {houseData.map(house => (
+                {houseData && houseData.length > 0 && houseData.map(house => (
                   <Fragment key={house.houseId}>
                     <option className="text-start" value={house.houseId}>{house.houseName}</option>
                   </Fragment>
@@ -199,7 +184,7 @@ const ManagerWater = () => {
               <select className="self-center ml-4 bg-white border border-gray-300 text-black text-center text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 py-2 px-4 dark:border-gray-500 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 onChange={(e) => handleRoomChange(e.target.value)}
                 onClick={(e) => handleRoomChange(e.target.value)}>
-                {houseData.map((house) => (
+                {houseData && houseData.length > 0 && houseData.map((house) => (
                   <Fragment key={house.houseId}>
                     {house.houseId == currentHouseId && house.rooms.map((r) => (
                       <Fragment key={r.id}>
@@ -263,7 +248,7 @@ const ManagerWater = () => {
                       </td>
                       <td className="px-6 py-4">
                         {/*  */}
-                        <button className={order.statusPayment == 'Y' ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
+                        <button className={(order.statusPayment == 'Y' || order.statusPayment == 'P' || new Date().getMonth() + 1 != new Date(order.paymentDate).getMonth() + 1) ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
                           onClick={() => {
                             setDataFromById(order.orderId)
                             setshowModalOrder(true)
@@ -310,7 +295,7 @@ const ManagerWater = () => {
                         Số chỉ điện
                       </label>
                       <input type="number" name="electricity" id="electricity"
-                        className={`bg-white border ${!formOrderValidate.electricity ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        className={`bg-white border ${!formOrderValidate.electricity ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
                         placeholder="Nhập số chỉ điện"
                         required="" value={form.electricity}
                         onChange={handleInputChange}
@@ -324,7 +309,7 @@ const ManagerWater = () => {
                         Số chỉ nước
                       </label>
                       <input type="number" name="water" id="water"
-                        className={`bg-white border ${!formOrderValidate.water ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}   
+                        className={`bg-white border ${!formOrderValidate.water ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
                         placeholder="Nhập số chỉ nước"
                         required="" value={form.water}
                         onChange={handleInputChange}

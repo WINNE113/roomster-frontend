@@ -28,7 +28,7 @@ const Personal = ({ dispatch }) => {
     reset({
       userName: current?.userName,
       phoneNumber: current?.phoneNumber,
-      role: current?.roleList[0]?.name,
+      role: current?.roleList?.map((el) => el.description)?.join(" / "),
       active: !current?.active ? "Đang khóa" : "Đang hoạt động",
       email: current?.email,
       address: current?.address,
@@ -50,7 +50,6 @@ const Personal = ({ dispatch }) => {
   const onSubmit = async (data) => {
     const { images, address, dateOfBirth, userName, email } = data
     const profileRequest = { address, dateOfBirth, userName, email }
-
     if (current?.roleList?.some((el) => el.name === "ROLE_USER"))
       profileRequest.phoneNumber = data.phoneNumber
     const formData = new FormData()
@@ -163,7 +162,6 @@ const Personal = ({ dispatch }) => {
               Cập nhật số điện thoại mới
             </Link>
           )}
-
         </form>
         <div className="col-span-3 flex flex-col gap-4">
           <h3 className="font-medium" htmlFor="avatar">

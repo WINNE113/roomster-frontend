@@ -20,6 +20,7 @@ import { stars, statuses } from "@/ultils/constant"
 const ManagePost = ({ dispatch, navigate }) => {
   const { setValue, watch } = useForm()
   const { current } = useSelector((s) => s.user)
+  const { isShowModal } = useSelector((s) => s.app)
   const keyword = watch("keyword")
   const status = watch("status")
   const [posts, setPosts] = useState([])
@@ -42,8 +43,8 @@ const ManagePost = ({ dispatch, navigate }) => {
     else delete searchParamsObject.status
     formdata.append("json", JSON.stringify(searchParamsObject))
     formdata.append("size", 5)
-    fetchPosts(formdata)
-  }, [searchParams, update, debounceValue, status])
+    !isShowModal && fetchPosts(formdata)
+  }, [searchParams, update, debounceValue, status, isShowModal])
   const render = () => {
     setUpdate(!update)
   }
@@ -116,10 +117,10 @@ const ManagePost = ({ dispatch, navigate }) => {
                 <th className="p-2 border font-medium text-center">Tiêu đề</th>
                 <th className="p-2 border font-medium text-center">Giá</th>
                 <th className="p-2 border font-medium text-center">
-                  Ngày bắt đầu
+                  Ngày tạo mới
                 </th>
                 <th className="p-2 border font-medium text-center">
-                  Ngày hết hạn
+                  Ngày cập nhật
                 </th>
                 <th className="p-2 border font-medium text-center">
                   Trạng thái
@@ -150,17 +151,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                     {moment(el.createdDate).format("DD/MM/YYYY")}
                   </td>
                   <td className="p-2 text-center">
-                    <span
-                      className={clsx(
-                        moment(
-                          moment(el.expiredDate).format("MM/DD/YYYY")
-                        ).isBefore(moment())
-                          ? "text-main-red"
-                          : "text-green-500"
-                      )}
-                    >
-                      {moment(el.expiredDate).format("DD/MM/YYYY")}
-                    </span>
+                    {moment(el.modifiedDate).format("DD/MM/YYYY")}
                   </td>
                   <td className="p-2 text-center">
                     {statuses.find((n) => n.value === el.status)?.name}

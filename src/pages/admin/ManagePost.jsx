@@ -12,7 +12,12 @@ import Swal from "sweetalert2"
 import useDebounce from "@/hooks/useDebounce"
 import { useSelector } from "react-redux"
 import clsx from "clsx"
-import { apiDeletePost, apiGetPosts } from "@/apis/post"
+import {
+  apiDeletePost,
+  apiGetPosts,
+  apiUpdateApprovedPost,
+  apiUpdateRejectedPost,
+} from "@/apis/post"
 import path from "@/ultils/path"
 import { stars, statuses } from "@/ultils/constant"
 
@@ -21,9 +26,11 @@ const ManagePost = ({ dispatch, navigate }) => {
   const { current } = useSelector((s) => s.user)
   const keyword = watch("keyword")
   const status = watch("status")
+  const updateStatus = watch("updateStatus")
   const [posts, setPosts] = useState([])
   const [searchParams] = useSearchParams()
   const [update, setUpdate] = useState(false)
+  const [editPost, setEditPost] = useState()
   const fetchPosts = async (params) => {
     const response = await apiGetPosts(params)
     if (response) setPosts(response)
@@ -65,26 +72,51 @@ const ManagePost = ({ dispatch, navigate }) => {
       }
     })
   }
+  const handleChangeStatus = async () => {
+    if (updateStatus === "APPROVED") {
+      const response = await apiUpdateApprovedPost({ listPostId: editPost.id })
+      if (response.success) {
+        toast.success(response.message)
+        render()
+        setEditPost(null)
+      } else toast.error(response.message)
+    }
+    if (updateStatus === "REJECTED") {
+      const response = await apiUpdateRejectedPost({ listPostId: editPost.id })
+      if (response.success) {
+        toast.success(response.message)
+        setEditPost(null)
+        render()
+      } else toast.error(response.message)
+    }
+  }
   return (
     <section className="mb-[200px]">
       <Title title="Quản lý tin đăng">
-        <Button
-          onClick={() => navigate(`/${path.MANAGER}/${path.CREATE_POST}`)}
-        >
-          Đăng tin mới
-        </Button>
+        <div className="flex items-center gap-4">
+          {editPost && updateStatus && (
+            <Button
+              className="bg-blue-500"
+              onClick={() => handleChangeStatus()}
+            >
+              Cập nhật
+            </Button>
+          )}
+          {editPost && (
+            <Button className="bg-orange-500" onClick={() => setEditPost(null)}>
+              Hủy
+            </Button>
+          )}
+          <Button
+            onClick={() => navigate(`/${path.MANAGER}/${path.CREATE_POST}`)}
+          >
+            Đăng tin mới
+          </Button>
+        </div>
       </Title>
       <div className="p-4 mt-4">
         <div className="flex items-center gap-4 justify-between">
           <div className="flex items-center gap-4">
-            {/* <div className="flex items-center gap-2">
-              <span>Lọc theo:</span>
-              <SelectLib
-                placeholder="đánh giá"
-                className="py-2"
-                options={stars}
-              />
-            </div> */}
             <div className="flex items-center gap-2">
               <span>Lọc theo:</span>
               <SelectLib
@@ -104,20 +136,19 @@ const ManagePost = ({ dispatch, navigate }) => {
           />
         </div>
         <div className="mt-6 w-full">
-          <table className="table-auto w-full">
+          <table className="table-fixed w-full">
             <thead>
-            <tr>
+              <tr>
                 <th className="p-2 border font-medium text-center">Mã tin</th>
                 <th className="p-2 border font-medium text-center">
                   Ảnh đại diện
                 </th>
                 <th className="p-2 border font-medium text-center">Tiêu đề</th>
                 <th className="p-2 border font-medium text-center">Giá</th>
+
+                <th className="p-2 border font-medium text-center">Ngày tạo</th>
                 <th className="p-2 border font-medium text-center">
-                  Ngày bắt đầu
-                </th>
-                <th className="p-2 border font-medium text-center">
-                  Ngày hết hạn
+                  Ngày cập nhật
                 </th>
                 <th className="p-2 border font-medium text-center">
                   Trạng thái
@@ -128,11 +159,11 @@ const ManagePost = ({ dispatch, navigate }) => {
               </tr>
             </thead>
             <tbody className="text-sm">
-            {posts?.data?.map((el) => (
+              {posts?.data?.map((el) => (
                 <tr className="border" key={el.id}>
                   <td className="p-2 text-center">{el.id}</td>
                   <td className="p-2 text-center">
-                  <span className="flex items-center justify-center">
+                    <span className="flex items-center justify-center">
                       <img
                         src={el.image}
                         className="w-24 h-24 rounded-md border p-2 object-cover"
@@ -142,43 +173,47 @@ const ManagePost = ({ dispatch, navigate }) => {
                   </td>
                   <td className="p-2 text-center">{el.title}</td>
                   <td className="p-2 text-center">
-                  {formatMoney(el.price) + " VNĐ"}
+                    {formatMoney(el.price) + " VNĐ"}
                   </td>
                   <td className="p-2 text-center">
-                  {moment(el.createdDate).format("DD/MM/YYYY")}
+                    {moment(el.createdDate).format("DD/MM/YYYY")}
                   </td>
                   <td className="p-2 text-center">
-                    <span
-                      className={clsx(
-                        moment(
-                          moment(el.expiredDate).format("MM/DD/YYYY")
-                        ).isBefore(moment())
-                          ? "text-main-red"
-                          : "text-green-500"
-                      )}
-                    >
-                      {moment(el.expiredDate).format("DD/MM/YYYY")}
-                    </span>
-                    </td>
+                    {moment(el.modifiedDate).format("DD/MM/YYYY")}
+                  </td>
                   <td className="p-2 text-center">
-                    {statuses.find((n) => n.value === el.status)?.name}
+                    {editPost?.id === el.id ? (
+                      <select
+                        onChange={(e) =>
+                          setValue("updateStatus", e.target.value)
+                        }
+                        value={updateStatus}
+                        className="form-select rounded-md"
+                        id="updateStatus"
+                      >
+                        <option value="APPROVED">Thành công</option>
+                        <option value="REVIEW">Đang xử lý</option>
+                        <option value="REJECTED">Đã từ chối</option>
+                      </select>
+                    ) : (
+                      <span>
+                        {statuses.find((n) => n.value === el.status)?.name}
+                      </span>
+                    )}
                   </td>
                   <td className="p-2">
                     <span className="flex w-full justify-center text-emerald-700 items-center gap-2">
-                      {/* <span
-                        onClick={() =>
-                          dispatch(
-                            modal({
-                              isShowModal: true,
-                              modalContent: <UpdatePost editPost={el} />,
-                            })
-                          )
-                        }
+                      <span
+                        onClick={() => {
+                          setEditPost(el)
+                          setValue("updateStatus", el.status)
+                        }}
+
                         title="Chỉnh sửa"
                         className="text-lg text-main-blue cursor-pointer px-1"
                       >
                         <AiOutlineEdit size={22} />
-                      </span> */}
+                      </span>
                       <span
                         onClick={() => handleDeletePost(el.id)}
                         className="text-lg text-main-blue cursor-pointer px-1"
@@ -194,7 +229,7 @@ const ManagePost = ({ dispatch, navigate }) => {
           </table>
         </div>
         <div className="mt-6">
-        <Pagination totalCount={posts?.total || 1} />
+          <Pagination totalCount={posts?.total || 1} />
         </div>
       </div>
     </section>

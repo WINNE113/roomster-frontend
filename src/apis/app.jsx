@@ -30,9 +30,10 @@ export const apiGetPostTypes = () =>
     method: "get",
     url: `/api/v1/postType/getAll`,
   })
-  export const apiGetTopProvince = (params) =>
+export const apiGetTopProvince = (params) =>
   axiosConfig({
     method: "get",
     url: `/api/v1/guest/post/top-province`,
     params,
   })
+

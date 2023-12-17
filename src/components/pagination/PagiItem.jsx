@@ -28,7 +28,7 @@ const PagiItem = ({ children, location, navigate }) => {
           "w-10 h-10 border flex items-center justify-center",
           !Number(children) && "flex justify-center pb-2",
           Number(children) &&
-            "flex items-center bg-white justify-center rounded-md hover:bg-main-red hover:text-white",
+            "flex items-center bg-white justify-center rounded-md hover:bg-emerald-700 hover:text-white",
           +seachParams.get("page") === +children &&
             "rounded-md bg-emerald-800 text-white",
           !+seachParams.get("page") &&

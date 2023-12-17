@@ -27,21 +27,21 @@ const VerifyOtpUpgradeRole = ({ navigate, dispatch }) => {
     data.userName = current?.userName
     const response = await apiUpgradeRole(data)
     if (response.token) {
-        dispatch(login({ token: response.token }))
-        setTimeout(() => {
-          Swal.fire({
-            title: "Congrads!",
-            text: "Xác thực thành công. Bây giờ bạn có thể đăng tin rồi, đi tới đăng tin?",
-            icon: "success",
-            showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonText: "Đăng tin",
-          }).then((rs) => {
-            if (rs.isConfirmed) {
-              navigate(`/${path.MANAGER}/${path.CREATE_POST}`)
-            }
-          })
-        }, 500)
+      dispatch(login({ token: response.token }))
+      setTimeout(() => {
+        Swal.fire({
+          title: "Congrads!",
+          text: "Xác thực thành công. Bây giờ bạn có thể đăng tin rồi, đi tới đăng tin?",
+          icon: "success",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: "Đăng tin",
+        }).then((rs) => {
+          if (rs.isConfirmed) {
+            navigate(`/${path.MANAGER}/${path.CREATE_POST}`)
+          }
+        })
+      }, 500)
     } else toast.error(response.message)
   }
   useEffect(() => {

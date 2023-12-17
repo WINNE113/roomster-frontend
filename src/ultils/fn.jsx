@@ -8,8 +8,11 @@ export const generateRange = (start, end) => {
   return Array.from({ length }, (_, index) => start + index)
 }
 
-export const formatMoney = (number) =>
-  Number(number?.toFixed(1)).toLocaleString()
+export const formatMoney = (number = 0) => {
+  if (!Number(number)) return 0
+  return Number(number?.toFixed(1)).toLocaleString()
+}
+
 export const customMoney = (number) => {
   if (typeof number !== "number") return
   const unit = number >= 1000000 ? "triệu/tháng" : "đồng/tháng"

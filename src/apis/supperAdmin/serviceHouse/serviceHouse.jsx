@@ -22,8 +22,16 @@ export const updateServiceHouse = (id, data) =>
     url: `/api/v1/room-master/serviceHouse/${id}`,
     data,
   })
-export const deleteServiceHouse = (id) =>
+  export const updateServiceRoom = (id, data) =>
   instance({
-    url: `/api/v1/room-master/serviceHouse/${id}`,
+    method: "put",
+    url: `/api/v1/room-master/serviceHouse/room-service/${id}`,
+    data,
+  })
+  
+export const deleteServiceHouse = (datalist) =>
+  instance({
+    url: `/api/v1/room-master/serviceHouse`,
     method: "delete",
+    data: datalist,
 })

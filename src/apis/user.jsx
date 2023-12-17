@@ -46,7 +46,7 @@ export const apiRemoveWishlist = (id) =>
     url: "/api/v1/wishlist/delete/wishListItem/" + id,
     method: "delete",
   })
-  export const apiVerifyRole = (data) =>
+export const apiVerifyRole = (data) =>
   axios({
     url: "/api/v1/user/sendOTP",
     method: "post",
@@ -58,7 +58,7 @@ export const apiUpgradeRole = (data) =>
     method: "post",
     data,
   })
-  export const apiChangePhone = (data) =>
+export const apiChangePhone = (data) =>
   axios({
     url: "/api/v1/user/update-phonenumber",
     method: "post",
@@ -69,4 +69,33 @@ export const apiChangePassword = (data) =>
     url: "/api/v1/user/update-password",
     method: "patch",
     data,
+  })
+export const apiGetUsersByAdmin = (params) =>
+  axios({
+    url: "/api/v1/admin/user/getAll",
+    method: "get",
+    params,
+  })
+export const apiGetUsersDeletedByAdmin = (params) =>
+  axios({
+    url: "/api/v1/admin/user/getAllByDeleted",
+    method: "get",
+    params,
+  })
+export const apiGetUserByRole = (params) =>
+  axios({
+    url: "/api/v1/admin/user/by-role-name",
+    method: "get",
+    params,
+  })
+export const apiDeleteUser = (params) =>
+  axios({
+    url: "/api/v1/admin/user/delete",
+    method: "delete",
+    params,
+  })
+  export const apiGetRoleAdmin = () =>
+  axios({
+    url: "/api/v1/admin/role/getAll",
+    method: "get",
   })

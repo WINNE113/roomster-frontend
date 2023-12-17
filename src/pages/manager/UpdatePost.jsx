@@ -1,5 +1,5 @@
 import { apiGetPostTypes } from "@/apis/app"
-import { apiGetDetailPost } from "@/apis/post"
+import { apiCreateNewPost, apiGetDetailPost } from "@/apis/post"
 import {
   Button,
   Convenient,
@@ -9,18 +9,21 @@ import {
   SelectLib,
   TextField,
 } from "@/components"
+import { modal } from "@/redux/appSlice"
 import { targets } from "@/ultils/constant"
 import { getBase64 } from "@/ultils/fn"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { ImBin } from "react-icons/im"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { toast } from "react-toastify"
 
 const UpdatePost = ({ postId }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [detailPost, setDetailPost] = useState()
   const [postTypes, setPostTypes] = useState([])
   const [imagesBase64, setImagesBase64] = useState([])
+  const dispatch = useDispatch()
   const {
     formState: { errors },
     watch,
@@ -46,23 +49,27 @@ const UpdatePost = ({ postId }) => {
   }, [postId])
   const convenient = watch("convenient")
   useEffect(() => {
-    if (detailPost) {
+    if (detailPost && postTypes) {
       reset({
         address: detailPost?.postDetail?.address,
         surroundings: detailPost?.postDetail?.surroundings,
         title: detailPost?.postDetail?.title,
-        postType: detailPost?.postDetail?.postType,
+        post_type: postTypes.find(
+          (el) => el.name?.trim() === detailPost?.postDetail?.postType?.trim()
+        )?.code,
         price: detailPost?.postDetail?.price,
         acreage: detailPost?.postDetail?.acreage,
         electricityPrice: detailPost?.postDetail?.electricityPrice,
         stayMax: detailPost?.postDetail?.stayMax,
         waterPrice: detailPost?.postDetail?.waterPrice,
+        emptyRoom: detailPost?.postDetail?.emptyRoom,
+        numberRoom: detailPost?.postDetail?.numberRoom,
         object: detailPost?.postDetail?.object,
         description: detailPost?.postDetail?.description,
         convenient: detailPost?.postDetail?.convenient,
       })
     }
-  }, [detailPost])
+  }, [detailPost, postTypes])
   const convertFileToBase64 = async (file) => {
     const base64 = await getBase64(file)
     if (base64) setImagesBase64((prev) => [...prev, base64])
@@ -74,7 +81,7 @@ const UpdatePost = ({ postId }) => {
       for (let file of images) convertFileToBase64(file)
   }, [watch("images")])
 
-  const handleUpdate = (data) => {
+  const handleUpdate = async (data) => {
     const {
       numberRoom,
       emptyRoom,
@@ -83,6 +90,7 @@ const UpdatePost = ({ postId }) => {
       price,
       electricityPrice,
       waterPrice,
+      images,
       ...payload
     } = data
     payload.roomDto = {
@@ -93,10 +101,21 @@ const UpdatePost = ({ postId }) => {
       price,
       electricityPrice,
       waterPrice,
+      inforRoomId: detailPost?.postDetail?.inforRoomId,
     }
     payload.postId = postId
-    payload.convenient = convenient
-    console.log(payload)
+    payload.convenient = convenient?.join(", ")
+    const formdata = new FormData()
+    formdata.append("postDto", JSON.stringify(payload))
+    if (images instanceof FileList && images.length > 0)
+      for (let i of images) formdata.append("images", i)
+    setIsLoading(true)
+    const response = await apiCreateNewPost(formdata)
+    setIsLoading(false)
+    if (response.success) {
+      toast.success("Cập nhật thành công")
+      dispatch(modal({ isShowModal: false, modalContent: null }))
+    } else toast.error(response.message)
   }
   return (
     <section
@@ -104,25 +123,30 @@ const UpdatePost = ({ postId }) => {
       className="w-4/5 mx-auto max-h-screen overflow-y-auto relative bg-white p-4"
     >
       <div className="p-4 flex items-center justify-between border-b">
-      <h1 className="text-2xl font-bold tracking-tight">{`Cập nhật tin đăng #${postId}`}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{`Cập nhật tin đăng #${postId}`}</h1>
         <div className="flex items-center gap-4">
-        <Button onClick={validate(handleUpdate)} disabled={isLoading}>
+          <Button onClick={validate(handleUpdate)} disabled={isLoading}>
             Cập nhật
           </Button>
-          <Button className="bg-main-yellow">Cancel</Button>
+          <Button
+            onClick={() =>
+              dispatch(modal({ isShowModal: false, modalContent: null }))
+            }
+            className="bg-main-yellow"
+          >
+            Cancel
+          </Button>
         </div>
       </div>
       <form className="p-4 grid grid-cols-12 gap-6">
         <div className="col-span-12">
-          
-          
           <div className="mt-4">
             <InputForm
               label="Địa chỉ cho thuê"
               register={register}
               errors={errors}
               id="address"
-              fullWidth              
+              fullWidth
               validate={{ required: "Không được bỏ trống" }}
             />
           </div>
@@ -142,19 +166,19 @@ const UpdatePost = ({ postId }) => {
             </label>
             <select
               className="form-select border-gray-200 rounded-md"
-              {...register("postType", {
+              {...register("post_type", {
                 required: "Trường này không được bỏ trống.",
               })}
             >
               {postTypes?.map((el) => (
-                <option key={el.code} value={el.name}>
+                <option key={el.code} value={el.code}>
                   {el.name}
                 </option>
               ))}
             </select>
-            {errors["postType"] && (
+            {errors["post_type"] && (
               <small className="text-xs text-red-500">
-                {errors["postType"]?.message}
+                {errors["post_type"]?.message}
               </small>
             )}
           </div>
@@ -166,12 +190,11 @@ const UpdatePost = ({ postId }) => {
               id="title"
               validate={{ required: "Trường này không được bỏ trống." }}
               fullWidth
-              placeholder="Tựa đề tin đăng"
               inputClassName="border-gray-300"
             />
           </div>
           <div className="mt-4">
-          <MdEditor
+            <MdEditor
               id="description"
               errors={errors}
               validate={{ required: "Trường này không được bỏ trống." }}
@@ -301,7 +324,7 @@ const UpdatePost = ({ postId }) => {
               </small>
             )}
             <div className="grid grid-cols-4 gap-4">
-            {imagesBase64.length === 0 &&
+              {imagesBase64.length === 0 &&
                 detailPost?.images?.map((el, idx) => (
                   <div className="col-span-1 w-full relative" key={idx}>
                     <img

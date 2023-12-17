@@ -2,6 +2,7 @@ import withBaseTopping from "@/hocs/WithBaseTopping"
 import { logout } from "@/redux/userSlice"
 // import { logout } from "@/redux/userSlice"
 import { memberSidebar } from "@/ultils/constant"
+import { formatMoney } from "@/ultils/fn"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -31,6 +32,9 @@ const MemberSidebar = ({ dispatch }) => {
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
           <span>{"ID: #" + current?.userId}</span>
+          <span>{`TK chính: ${formatMoney(
+            current?.balance / 1000
+          )}K VNĐ`}</span>
         </div>
       </div>
       <div>

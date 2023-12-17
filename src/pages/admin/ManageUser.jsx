@@ -1,4 +1,4 @@
-import { Pagination, Title } from "@/components"
+import { Button, Pagination, Title } from "@/components"
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { modal } from "@/redux/appSlice"
 import React, { useEffect, useState } from "react"
@@ -9,22 +9,83 @@ import { toast } from "react-toastify"
 import Swal from "sweetalert2"
 import UpdateUser from "./UpdateUser"
 import useDebounce from "@/hooks/useDebounce"
+import {
+  apiDeleteUser,
+  apiGetRoleAdmin,
+  apiGetUserByRole,
+  apiGetUsersByAdmin,
+  apiGetUsersDeletedByAdmin,
+} from "@/apis/user"
+import moment from "moment"
+import {
+  BsPencilSquare,
+  BsFillTrashFill,
+  BsFillPatchPlusFill,
+} from "react-icons/bs"
 // import UpdatePost from './UpdatePost'
 
 const ManageUser = ({ dispatch }) => {
-  const { setValue, watch } = useForm()
+  const {
+    register,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm()
   const keyword = watch("keyword")
   const [users, setUsers] = useState([])
+  const [counts, setCounts] = useState(0)
   const [searchParams] = useSearchParams()
+  const [roles, setRoles] = useState([])
+  const deleted = watch("deleted")
+  const roleName = watch("roleName")
   const [update, setUpdate] = useState(false)
-  const fetchUsers = async (params) => {}
-  const debounceValue = useDebounce(keyword, 500)
+  const fetchUsers = async (params) => {
+    const response = await apiGetUsersByAdmin(params)
+    if (response.data) {
+      setUsers(response.data)
+      setCounts(response.count)
+    }
+  }
+  const fetchUsersDeleted = async (params) => {
+    const response = await apiGetUsersDeletedByAdmin(params)
+    if (response.data) {
+      setUsers(response.data)
+      setCounts(response.count)
+    }
+  }
   useEffect(() => {
-    const params = Object.fromEntries([...searchParams])
-    params.limit = import.meta.env.VITE_LIMIT
-    if (debounceValue) params.keyword = debounceValue
-    fetchUsers(params)
-  }, [searchParams, update, debounceValue])
+    fetchRoles()
+  }, [])
+  const fetchRoles = async (params) => {
+    const response = await apiGetRoleAdmin()
+    if (response) setRoles(response)
+  }
+  const fetchUsersByRolename = async (params) => {
+    const response = await apiGetUserByRole(params)
+    if (response.data) {
+      setUsers(response.data)
+      setCounts(response.count)
+    }
+  }
+  useEffect(() => {
+    const { page, ...searchParamsObject } = Object.fromEntries([
+      ...searchParams,
+    ])
+    if (page && Number(page)) searchParamsObject.page = Number(page) - 1
+    else searchParamsObject.page = 0
+    searchParamsObject.limit = 5
+    // if (roleName) {
+    //   setValue("deleted", false)
+    // }
+    if (deleted) {
+      fetchUsersDeleted(searchParamsObject)
+    } else if (roleName) {
+      searchParamsObject.roleName = roleName
+      fetchUsersByRolename(searchParamsObject)
+    } else {
+      fetchUsers(searchParamsObject)
+    }
+  }, [searchParams, update, deleted, roleName])
   const render = () => {
     setUpdate(!update)
   }
@@ -39,72 +100,121 @@ const ManageUser = ({ dispatch }) => {
       cancelButtonText: "Quay lại",
     }).then(async (rs) => {
       if (rs.isConfirmed) {
+        const response = await apiDeleteUser({ listId: uid })
+        if (response.success) {
+          toast.success(response.message)
+          render()
+        } else toast.error(response.message)
       }
     })
   }
-
+  console.log(roleName)
   return (
     <section className="mb-[200px]">
       <Title title="Quản lý thành viên"></Title>
       <div className="p-4">
-        <div className="flex items-center justify-end">
-          <input
-            type="text"
-            value={keyword}
-            onChange={(e) => setValue("keyword", e.target.value)}
-            className="max-w-[500px] w-full outline-none border p-2 placeholder:text-sm"
-            placeholder="Tìm kiếm theo tên, SĐT..."
-          />
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-end gap 2">
+            <ul className="my-2 self-center">
+              <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
+                onClick={() => {
+                }}>
+                <button className="flex inline-flex items-center px-4">
+                  Thêm Tài Khoản <BsFillPatchPlusFill size={15} className="inline ml-3" />
+                </button>
+              </li>
+              <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800"
+                onClick={() => {
+                }}>
+                <button>Xóa Tài Khoản <BsFillTrashFill size={15} className="ml-1 inline" /></button>
+              </li>
+            </ul>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="deleted">Lọc theo: </label>
+            <select
+              onChange={(e) => setValue("roleName", e.target.value)}
+              className="form-select rounded-md"
+              id="roleName"
+            >
+              <option value="">Tất cả role</option>
+              {roles.map((el) => (
+                <option key={el.name} value={el.name}>
+                  {el.description}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              onChange={(e) => setValue("deleted", e.target.checked)}
+              id="deleted"
+            />
+            <label htmlFor="deleted">Hiển thị tài khoản đã xóa</label>
+          </div>
         </div>
         <div className="mt-6 w-full">
           <table className="table-auto w-full">
             <thead>
-              <tr className="border bg-emerald-800 text-white">
-                <th className="p-2 font-medium text-center">Tên thành viên</th>
-                <th className="p-2 font-medium text-center">Số điện thoại</th>
-                <th className="p-2 font-medium text-center">Vai trò</th>
-                <th className="p-2 font-medium text-center">Trạng thái</th>
-                <th className="p-2 font-medium text-center">Số tin đăng</th>
-                <th className="p-2 font-medium text-center">Hành động</th>
+              <tr className="border">
+                <th className="p-2 border font-medium text-center">User ID</th>
+                <th className="p-2 border font-medium text-center">Aavatar</th>
+                <th className="p-2 border font-medium text-center">
+                  Tên thành viên
+                </th>
+                <th className="p-2 border font-medium text-center">
+                  Số điện thoại
+                </th>
+                <th className="p-2 border font-medium text-center">
+                  Đã xác minh điện thoại
+                </th>
+                <th className="p-2 border font-medium text-center">Email</th>
+                <th className="p-2 border font-medium text-center">Địa chỉ</th>
+                <th className="p-2 border font-medium text-center">Vai trò</th>
+                <th className="p-2 border font-medium text-center">
+                  Sinh nhật
+                </th>
+                <th className="p-2 border font-medium text-center">
+                  Trạng thái
+                </th>
+                <th className="p-2 border bg-emerald-700 text-white font-medium text-center">
+                  Hành động
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm">
-              {users?.rows?.map((el) => (
+              {users?.map((el) => (
                 <tr className="border" key={el.id}>
+                  <td className="p-2 text-center">{el.userId}</td>
                   <td className="p-2 text-center">
                     <span className="flex items-center gap-2">
                       <img
-                        src={el.avatar || "/user.svg"}
+                        src={el.images || "/user.svg"}
                         alt="avatar"
                         className="w-8 h-8 object-cover rounded-md"
                       />
-                      <span>{el.name}</span>
                     </span>
                   </td>
-                  <td className="p-2 text-center">{el.phone}</td>
-                  <td className="p-2 text-center">{el.roleData?.value}</td>
+                  <td className="p-2 text-center">{el.userName}</td>
+                  <td className="p-2 text-center">{el.phoneNumber}</td>
                   <td className="p-2 text-center">
-                    {el.isBlocked ? "Đang tạm khóa" : "Đang hoạt động"}
+                    {el.phoneNumberConfirmed ? "Đã xác minh" : "Chưa xác minh"}
                   </td>
-                  <td className="p-2 text-center">{el.author?.length || 0}</td>
+                  <td className="p-2 text-center">{el.email}</td>
+                  <td className="p-2 text-center">{el.address}</td>
+                  <td className="p-2 text-center">
+                  {el.roleList?.map((el) => el.description)?.join(" / ")}
+                  </td>
+                  <td className="p-2 text-center">
+                    {moment(el.dateOfBirth).format("DD/MM/YYYY")}
+                  </td>
+                  <td className="p-2 text-center">
+                    {!el.active ? "Đang tạm khóa" : "Đang hoạt động"}
+                  </td>
                   <td className="flex items-center justify-center gap-2 p-2">
                     <span
-                      onClick={() =>
-                        dispatch(
-                          modal({
-                            isShowModal: true,
-                            modalContent: (
-                              <UpdateUser render={render} editUser={el} />
-                            ),
-                          })
-                        )
-                      }
-                      className="text-lg text-main-red cursor-pointer px-1"
-                    >
-                      <AiOutlineEdit />
-                    </span>
-                    <span
-                      onClick={() => handleDeleteUser(el.id)}
+                      onClick={() => handleDeleteUser(el.userId)}
                       className="text-lg text-main-red cursor-pointer px-1"
                     >
                       <AiFillDelete />
@@ -116,7 +226,7 @@ const ManageUser = ({ dispatch }) => {
           </table>
         </div>
         <div className="mt-6">
-          <Pagination totalCount={users?.count || 10} />
+          <Pagination totalCount={counts} />
         </div>
       </div>
     </section>

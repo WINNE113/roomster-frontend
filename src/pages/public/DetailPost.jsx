@@ -78,7 +78,6 @@ const DetailPost = ({ navigate, location, dispatch }) => {
       getPosts(post?.address?.split(",")[post?.address?.split(",")?.length - 1])
     }
   }, [post])
-
   const handleAddWishlist = async () => {
     if (!current) return toast.warn("Bạn phải đăng nhập trước.")
     const response = await apiAddWishlist({ postId: pid, wishlistName: "POST" })
@@ -95,7 +94,6 @@ const DetailPost = ({ navigate, location, dispatch }) => {
       dispatch(getWishlist())
     } else toast.error(response.message)
   }
-
   return (
     <div className="w-main mt-6 m-auto pb-[200px]">
       <div className="grid grid-cols-4 h-[410px] relative grid-rows-2 gap-3">
@@ -273,7 +271,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
               Báo cáo tin đăng
             </Button>
           </div>
-          
+
           <div className="mt-6">
             <h2 className="text-lg my-3 font-bold">Đặc điểm tin đăng</h2>
             <div className="grid grid-cols-10">
@@ -291,7 +289,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
                 <span className="p-2  border-[0.5px]">
                   {`${post?.postType} ${post?.address?.split(",")[
                     post?.address?.split(",")?.length - 1
-                    ]
+                  ]
                     }`}
                 </span>
                 <span className="p-2  border-[0.5px] bg-gray-100">
@@ -336,7 +334,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
                   {post?.surroundings}
                 </span>
                 <span className="p-2  border-[0.5px] bg-gray-100">
-                {post?.convenient?.join(", ")}
+                  {post?.convenient?.join(", ")}
                 </span>
               </div>
             </div>
