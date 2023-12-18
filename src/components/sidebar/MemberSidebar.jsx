@@ -31,10 +31,8 @@ const MemberSidebar = ({ dispatch }) => {
             className="w-24 h-24 rounded-full object-cover"
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
-          <span>{"ID: #" + current?.userId}</span>
-          <span>{`TK chính: ${formatMoney(
-            current?.balance / 1000
-          )}K VNĐ`}</span>
+          <span>{"Mã thành viên: #" + current?.userId}</span>
+          <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
         </div>
       </div>
       <div>

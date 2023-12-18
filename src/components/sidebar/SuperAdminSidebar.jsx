@@ -1,6 +1,7 @@
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { logout } from "@/redux/userSlice"
 import { superAdminSidebar } from "@/ultils/constant"
+import { formatMoney } from "@/ultils/fn"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -14,7 +15,6 @@ import { NavLink } from "react-router-dom"
 const SuperAdminSidebar = ({ dispatch }) => {
     const [tabs, setTabs] = useState([])
     const { current } = useSelector((state) => state.user)
-    console.log("SuperAdminSidebar ", current);
     const handleTabs = (tabId) => {
         if (tabs.some((el) => el === tabId))
             setTabs((prev) => prev.filter((el) => el !== tabId))
@@ -28,7 +28,7 @@ const SuperAdminSidebar = ({ dispatch }) => {
                     Tromoi.com
                 </span>
                 <small className="text-sm font-medium text-red-500 ">
-                    Admin workspace
+                    Quản lý trọ
                 </small>
                 <div className="mt-4 flex flex-col items-center justify-center gap-1">
                     <img
@@ -37,7 +37,8 @@ const SuperAdminSidebar = ({ dispatch }) => {
                         className="w-24 h-24 rounded-full object-cover"
                     />
                     <span className="text-main-red font-bold">{current?.userName}</span>
-                    <span>{"ID: #" + current?.userId}</span>
+                    <span>{"Mã thành viên: #" + current?.userId}</span>
+                    <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
                 </div>
             </div>
             <div>

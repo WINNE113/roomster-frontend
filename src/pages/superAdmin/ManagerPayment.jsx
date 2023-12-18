@@ -9,23 +9,24 @@ import {
 } from "react-icons/bs"
 import { getOrder, getOrderById, updatePaymentOrder, sendbillOrder, downloadOrder } from "@/apis/supperAdmin/order/order"
 import { getListHouse } from "@/apis/supperAdmin/house/house"
-import axios from "axios"
 import { Fragment } from "react"
 import { useNavigate } from 'react-router-dom';
-import { NavLink } from "react-router-dom"
+import { toast } from "react-toastify"
 
 const ManagerService = () => {
   const [showModalOrder, setshowModalOrder] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(false);
   const [houseData, setHouseData] = useState([]);
-  const [currentHouseId, setCurrentHouseId] = useState(1);
+  const [currentHouseId, setCurrentHouseId] = useState(null);
   const [currentRoomId, setCurrentRoomId] = useState(null);
   const [orderHouseData, setOrderHouseData] = useState([]);
+  const [isSendMail, setIsSendMail] = useState(false);
   const navigate = useNavigate();
 
   const [form, setform] = useState({
     "totalPayment": 0,
     "total": 0,
+    "rest": 0,
   })
 
   const [formOrderValidate, setFormOrderValidate] = useState({
@@ -33,6 +34,18 @@ const ManagerService = () => {
     "totalPayment": true,
     "rest": true,
   })
+
+  const validatePayment = () => {
+    const newValidity = {
+      "total": true,
+      "stayMax": true,
+      "rest": form.rest <= form.total - form.totalPayment,
+    };
+    // Update the validity state for all fields
+    setFormOrderValidate(newValidity);
+    // Return true if all fields are valid, false otherwise
+    return Object.values(newValidity).every((valid) => valid);
+  };
 
   const fillDataFrom = (data) => {
     setform({
@@ -70,6 +83,7 @@ const ManagerService = () => {
   useEffect(() => {
     getListHouse().then((house) => {
       setHouseData(house);
+      setCurrentHouseId(currentHouseId ? currentHouseId : house[0].houseId)
       setCurrentRoomId(currentRoomId ? currentRoomId : house[0].rooms[0].id);
     })
 
@@ -114,43 +128,48 @@ const ManagerService = () => {
       "date": "",
       "billNumber": form.totalPayment + form.rest
     }
-    updatePaymentOrder(currentOrderId, data).then(response => {
-      alert(response.message)
-      reLoad()
-    }).catch(error => {
-      // Handle any errors that occurred during the request
-      alert(error.response.message);
-    }).finally(() => {
-      setshowModalOrder(false)
-      setDefalutFormOrder();
-    });
+
+    if (validatePayment()) {
+      updatePaymentOrder(currentOrderId, data).then(response => {
+        if (response.data) {
+          toast.error(response.data.message)
+        } else {
+          toast.success(response.message)
+        }
+        reLoad()
+      }).finally(() => {
+        setshowModalOrder(false)
+        setDefalutFormOrder();
+      });
+    } else {
+      toast.info("Vui lòng nhập đúng số tiền !")
+    }
   }
 
   const handleSendBill = () => {
+    toast.info("Đang gửi hãy chờ trong giây lát...");
     sendbillOrder(currentRoomId).then((response) => {
-      alert(response.message)
-    }).catch((error) => {
-      alert(error.response.message)
-    });
+      if (response.data) {
+        toast.error(response.data.message)
+      } else {
+        toast.success(response.message)
+      }
+    }).finally(() => {
+      setIsSendMail(false)
+    })
   }
 
   const handleDownLoad = () => {
-    downloadOrder("arraybuffer").then((response) => {
-      if (ArrayBuffer.isView(response.data)) {
-        // Convert ArrayBuffer to Blob
-        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-        // Create a link element and trigger a download
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = 'Thong_ke.xlsx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        console.error("Unexpected response format:", response);
-        // Handle error or display a message to the user
-      }
+    toast.info("Đang tải...");
+    downloadOrder("blob").then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'THONG_KE.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      toast.success("Tải thành công")
+      document.body.removeChild(link);
     });
   };
 
@@ -194,8 +213,9 @@ const ManagerService = () => {
 
             <div className="w-full flex justify-end self-center bg-white">
               <ul className="my-2">
-                <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
+                <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
                   onClick={() => {
+                    setIsSendMail(true)
                     handleSendBill()
                   }}>
                   <button className="flex inline-flex items-center px-4">
@@ -374,7 +394,7 @@ const ManagerService = () => {
                     </div>
                     <div className="grid grid-cols-5 gap-4">
                       <label htmlFor="total" className="block mb-2 text-sm font-medium text-black">
-                        Tổng số tiền phải trả
+                        Tổng số tiền
                       </label>
                       <input type="number" name="total" id="total"
                         className={`bg-white border focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400 pointer-events-none opacity-75`}

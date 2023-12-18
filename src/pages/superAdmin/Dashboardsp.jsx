@@ -2,7 +2,6 @@ import { Title } from "@/components"
 import { Fragment, useState, useEffect } from "react"
 import { PieChart } from 'react-minimal-pie-chart';
 import { Line } from 'react-chartjs-2';
-import axios from "axios"
 import { getHouseStatus, getRoomStatus, getRoomStatusPayment, getOrderStatus } from "@/apis/supperAdmin/dashboard/dashboard"
 import {
   Chart as ChartJS,

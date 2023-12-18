@@ -5,6 +5,7 @@ import { formatMoney } from "@/ultils/fn"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
+import { FaCheck } from 'react-icons/fa';
 
 const PricingItem = ({
   name,
@@ -70,13 +71,46 @@ const Pricing = () => {
   }, [])
   return (
     <div className="mx-auto w-main py-8">
-      <h1 className="text-2xl font-bold">Bảng giá dịch vụ</h1>
+      <header className="page-header category clearfix">
+        <h1 className="page-h1 text-2xl font-bold" style={{ float: 'none', marginTop: '50px', marginBottom: '30px', textAlign: 'center', fontSize: '2em' }}>
+          Giới thiệu trouytin.com
+        </h1>
+      </header>
+      <div className="container clearfix">
+        <section className="section" style={{ padding: '20px', border: 0, boxShadow: '0 0 30px 10px rgb(0 0 0 / 3%)' }}>
+          <div className="section-content">
+            <p style={{ lineHeight: '1.5' }}>
+              Chào mừng bạn đến với trang web tìm kiếm phòng trọ và quản lý trọ - Trouytin.com!
+            </p>
+            <p>ƯU ĐIỂM TROUYTIN:</p>
+            <p style={{ marginBottom: '10px', lineHeight: '1.5' }}>
+              <FaCheck style={{ display: 'inline-block', float: 'left', marginRight: '10px', color: 'green' }} />
+              <strong>Quản Lý Tài Khoản:</strong> Người dùng có thể đăng ký tài khoản để sử dụng tính năng quản lý trọ. Quản lý thông tin cá nhân, quản lý tin đăng, và theo dõi trạng thái các giao dịch.
+            </p>
+            <p style={{ marginBottom: '10px', lineHeight: '1.5' }}>
+              <FaCheck style={{ display: 'inline-block', float: 'left', marginRight: '10px', color: 'green' }} />
+              <strong>Đăng Tin Dễ Dàng:</strong> Chủ nhà và môi giới có thể đăng tin cho thuê phòng trọ một cách nhanh chóng và thuận tiện. Hệ thống sẽ tự động đưa tin đăng đến đối tượng khách hàng phù hợp.
+            </p>
+            <p style={{ marginBottom: '10px', lineHeight: '1.5' }}>
+              <FaCheck style={{ display: 'inline-block', float: 'left', marginRight: '10px', color: 'green' }} />
+              <strong>Quản Lý Phòng Trọ Hiệu Quả:</strong> Đăng ký quản lý trọ để trải nghiệm tính năng nhanh chóng và thuận lợi, giúp bạn quản lý phòng trọ một cách hiệu quả hơn.
+            </p>
+            <p style={{ lineHeight: '1.5' }}>
+              <FaCheck style={{ display: 'inline-block', float: 'left', marginRight: '10px', color: 'green' }} />
+              <strong>Thống Kê Hiệu Suất:</strong> Trouytin.com cung cấp thống kê hiệu suất chi tiết về lượng giao dịch thành công, tỷ lệ hiệu quả, và số lượng người dùng truy cập để chủ nhà có cái nhìn rõ ràng về hoạt động trọ của mình.
+            </p>
+          </div>
+        </section>
+      </div>
+      <h1 className="page-h1 text-2xl font-bold" style={{ float: 'none', marginTop: '50px', marginBottom: '30px', textAlign: 'center', fontSize: '2em' }}>
+        Bảng Giá Dịch Vụ
+      </h1>
       <div className="mt-4 grid grid-cols-4 gap-4">
         {pricings?.map((el) => (
           <PricingItem key={el.servicePackageId} {...el} />
         ))}
       </div>
-    </div>
+      </div>
   )
 }
 

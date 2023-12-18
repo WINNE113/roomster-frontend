@@ -54,21 +54,3 @@ export const apiUpdateRejectedPost = (params) =>
     method: "patch",
     params,
   })
-
-export const apiTransactionStatus = () =>
-  axios({
-    url: "/admin/transaction/status",
-    method: "get",
-  })
-
-export const apiPostStatus = () =>
-  axios({
-    url: "/admin/post/status",
-    method: "get",
-  })
-
-export const apiPaymentTransactionStatus = () =>
-  axios({
-    url: "/admin/payment/status",
-    method: "get",
-  })

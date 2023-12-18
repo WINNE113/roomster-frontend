@@ -27,7 +27,7 @@ const ManageSidebar = ({ dispatch }) => {
           Tromoi.com
         </span>
         <small className="text-sm font-medium text-blue-500 ">
-          My workspace
+          Không gian làm việc
         </small>
         <div className="mt-4 flex flex-col items-center justify-center gap-1">
           <img
@@ -36,7 +36,7 @@ const ManageSidebar = ({ dispatch }) => {
             className="w-24 h-24 rounded-full object-cover"
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
-          <span>{"ID: #" + current?.userId}</span>
+          <span>{"Mã thành viên: #" + current?.userId}</span>
           <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
         </div>
       </div>

@@ -13,8 +13,7 @@ import { getHouseBySearchCondition, getHouseById, addHouse, updateHouse, deleteH
 import { getRoomById, addRoom, updateRoom, deleteRoom } from "@/apis/supperAdmin/room/room"
 import { getTenantById, addTenant, updateTenant, getTenantByRoomId, moveTenant, deleteTenant } from "@/apis/supperAdmin/tenant/tenant"
 import { getCities, getWardesByDistrictId, getDistrictesByCityId } from "@/apis/common"
-//import { addRoom } from "@/apis/supperAdmin/room/room"
-import axios from "axios"
+import { toast } from "react-toastify"
 
 const ManagerHouse = () => {
     const [showModalHouse, setshowModalHouse] = useState(false);
@@ -39,7 +38,7 @@ const ManagerHouse = () => {
     });
 
     const [houseData, setHouseData] = useState([]);
-    const [currentHouseId, setCurrentHouseId] = useState(1);
+    const [currentHouseId, setCurrentHouseId] = useState(null);
     const [currentRoomId, setCurrentRoomId] = useState(1);
     const [RoomMoveId, setRoomMoveId] = useState(0);
     const [HouseMoveId, setHouseMoveId] = useState(0);
@@ -331,9 +330,12 @@ const ManagerHouse = () => {
 
         // Convert the object to query parameters
         const queryString = new URLSearchParams(queryParams).toString();
+        console.log(queryString);
         getHouseBySearchCondition(queryString).then(response => {
             // Handle the response data here
             setHouseData(response);
+            setCurrentHouseId(currentHouseId ? currentHouseId : response[0].houseId)
+            console.log(currentHouseId);
             handleHouseMoveChange(response[0].houseId)
         }).catch(error => {
             // Handle any errors that occurred during the request
@@ -400,13 +402,11 @@ const ManagerHouse = () => {
             if (formRoom.id != '') {
                 // edit
                 updateRoom(formRoom.id, formRoom).then(response => {
-                    // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
-                    console.log(response);
                 }).finally(() => {
                     reLoad()
                     setshowModalRoom(!showModalRoom)
@@ -416,9 +416,9 @@ const ManagerHouse = () => {
                 addRoom(formRoom).then(response => {
                     // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad()
@@ -429,22 +429,21 @@ const ManagerHouse = () => {
             setshowModalRoom(!showModalRoom)
         }
         else {
-            alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+            toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
         }
     };
 
     const handleSubmitHouse = (e) => {
         e.preventDefault();
-        console.log(formHouse);
         if (validateHouse()) {
             if (formHouse.houseId != '') {
                 // edit
                 updateHouse(formHouse.houseId, formHouse).then(response => {
                     // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad()
@@ -455,9 +454,9 @@ const ManagerHouse = () => {
                 addHouse(formHouse).then(response => {
                     // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad()
@@ -471,22 +470,21 @@ const ManagerHouse = () => {
         }
         else {
             // If validation fails, display an error message or alert
-            alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+            toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
         }
     };
 
     const handleSubmitTenant = (e) => {
         e.preventDefault();
-        console.log(formTenant);
         if (validateTenant()) {
             if (formTenant.id != '') {
                 // edit
                 updateTenant(formTenant.id, formTenant).then(response => {
                     // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad()
@@ -497,9 +495,9 @@ const ManagerHouse = () => {
                 addTenant(formTenant).then(response => {
                     // Handle the response data here
                     if (response.data) {
-                        alert(response.data.message)
+                        toast.error(response.data.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad()
@@ -510,7 +508,7 @@ const ManagerHouse = () => {
             setshowModalTenant(!showModalTenant)
         } else {
             // If validation fails, display an error message or alert
-            alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+            toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
         }
     };
 
@@ -580,8 +578,12 @@ const ManagerHouse = () => {
         }));
         houseData.forEach(house => {
             if (house.houseId == value) {
-                handleRoomChange(house.rooms[0].id)
-
+                if (house.rooms.length > 0) {
+                    handleRoomChange(house.rooms[0].id)
+                }
+                else {
+                    setCurrentRoomId(null)
+                }
             }
         })
     };
@@ -638,32 +640,39 @@ const ManagerHouse = () => {
     }
 
     const reloadTenant = (value) => {
-        getTenantByRoomId(value).then(response => {
-            // Handle the response data here
-            console.log(response)
-            setTenantData(response);
-            setCheckedMoveTenantIds([])
-        }).catch(error => {
-            // Handle any errors that occurred during the request
-            console.error(error);
-        });
+        if (value != null) {
+            getTenantByRoomId(value).then(response => {
+                // Handle the response data here
+                console.log(response)
+                setTenantData(response);
+                setCheckedMoveTenantIds([])
+            }).catch(error => {
+                // Handle any errors that occurred during the request
+                console.error(error);
+            });
+        }
+        else {
+            setTenantData([])
+        }
     }
 
     const HandleSubmitMoveTenant = () => {
-        console.log(checkedMoveTenantIds);
-        console.log('next room', RoomMoveId);
-        moveTenant(RoomMoveId, checkedMoveTenantIds).then(response => {
-            // Handle the response data here
-            if (response.data) {
-                alert(response.data.message)
-            } else {
-                alert(response.message)
-            }
-            reloadTenant(currentRoomId)
-            reLoad()
-            setShowModalMoveTenant(!showShowModalMoveTenant)
-            setCheckedMoveTenantIds([])
-        });
+        if (checkedMoveTenantIds && checkedMoveTenantIds.length > 0) {
+            moveTenant(RoomMoveId, checkedMoveTenantIds).then(response => {
+                // Handle the response data here
+                if (response.data) {
+                    toast.error(response.data.message)
+                } else {
+                    toast.success(response.message)
+                }
+                reloadTenant(currentRoomId)
+                reLoad()
+                setShowModalMoveTenant(!showShowModalMoveTenant)
+                setCheckedMoveTenantIds([])
+            });
+        } else {
+            toast.info("Chưa chọn khách nào !")
+        }
     }
 
     const confirmDelete = (status, type) => {
@@ -671,46 +680,59 @@ const ManagerHouse = () => {
             //delete room
             if (type.type == 'room') {
                 deleteRoom(type.id).then(response => {
-                    alert(response.message)
+                    if (response.data) {
+                        toast.error(response.data.message)
+                    } else {
+                        toast.success(response.message)
+                    }
+                }).finally(() => {
                     reLoad()
                     setshowModalDelete(false)
                     setTypeDelete({
                         type: "",
                         id: 0
                     })
-                }).catch(error => {
-                    alert(error.response.message);
                 })
             }
             else if (type.type == 'house') {
                 deleteHouse(type.id).then(response => {
-                    alert(response.message)
+                    if (response.data) {
+                        toast.error(response.data.message)
+                    } else {
+                        toast.success(response.message)
+                    }
+                }).finally(() => {
                     reLoad()
                     setshowModalDelete(false)
                     setTypeDelete({
                         type: "",
                         id: 0
                     })
-                }).catch(error => {
-                    alert(error.response.message);
+                    setCurrentHouseId(null)
                 })
             }
             else if (type.type == 'tenant') {
                 console.log(checkedMoveTenantIds);
-                deleteTenant(checkedMoveTenantIds).then(response => {
-                    alert(response.message)
-                    reloadTenant(currentRoomId)
-                    reLoad()
-                    setshowModalDelete(false)
-                    setTypeDelete({
-                        type: "",
-                        id: 0
+                if (checkedMoveTenantIds && checkedMoveTenantIds.length > 0) {
+                    deleteTenant(checkedMoveTenantIds).then(response => {
+                        if (response.data) {
+                            toast.error(response.data.message)
+                        } else {
+                            toast.success(response.message)
+                        }
+                    }).finally(() => {
+                        reloadTenant(currentRoomId)
+                        reLoad()
+                        setshowModalDelete(false)
+                        setTypeDelete({
+                            type: "",
+                            id: 0
+                        })
+                        setCheckedMoveTenantIds([])
                     })
-                    setCheckedMoveTenantIds([])
-                }).catch(error => {
-                    alert(error.response.message);
-                    setCheckedMoveTenantIds([])
-                })
+                } else {
+                    toast.info("Chưa chọn khách nào !")
+                }
             }
         }
         setshowModalDelete(false)
@@ -851,7 +873,9 @@ const ManagerHouse = () => {
                                     setmessageDelete("Xóa nhà này sẽ xóa tất cả thông tin liên quan đến nhà này bạn có muốn tiếp tục ?")
                                     setshowModalDelete(true)
                                 }}>
-                                <button className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800">Xóa nhà <BsFillTrashFill size={15} className="ml-1 inline" /></button>
+                                <button className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800">
+                                    Xóa nhà <BsFillTrashFill size={15} className="ml-1 inline" />
+                                </button>
                             </li>
                         </ul>
                     </div>
@@ -860,7 +884,7 @@ const ManagerHouse = () => {
                         <div className="grid grid-cols-2 md:grid-cols-5 2xl:grid-cols-5 gap-4">
                             {houseData && houseData.length > 0 && houseData.map((el) => (
                                 <Fragment key={el.houseId}>
-                                    {el.houseId === currentHouseId && (
+                                    {el.houseId == currentHouseId && (
                                         el.rooms.length > 0 ? (
                                             el.rooms.map((r) => (
                                                 <Fragment key={r.id}>
@@ -1208,19 +1232,19 @@ const ManagerHouse = () => {
                                                         onChange={(e) => handleRoomChange(e.target.value)}
                                                         value={currentRoomId}>
                                                         {houseData && houseData.length > 0 && houseData.map((house) => (
-                                                            <Fragment key={house.houseId}>
-                                                                {house.houseId == currentHouseId && house.rooms.map((r) => (
+                                                            house.houseId == currentHouseId && house.rooms && house.rooms.length > 0 && (
+                                                                house.rooms.map((r) => (
                                                                     <Fragment key={r.id}>
                                                                         <option className="text-start" value={r.id}>Phòng {r.numberRoom}</option>
                                                                     </Fragment>
-                                                                ))}
-                                                            </Fragment>
+                                                                ))
+                                                            )
                                                         ))}
                                                     </select>
                                                 </div>
                                                 {/* list buttons */}
                                                 <ul className="my-2 self-center">
-                                                    <li className="inline"
+                                                    <li className={currentRoomId ? "inline" : "inline pointer-events-none opacity-50"}
                                                         onClick={() => {
                                                             setstatusModalTenant(true)
                                                             setFormTenant((formTenant) => ({
@@ -1229,19 +1253,19 @@ const ManagerHouse = () => {
                                                             }));
                                                             setshowModalTenant(true)
                                                         }}>
-                                                        <button className="flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800">
+                                                        <button className={`flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}>
                                                             Thêm khách vào phòng <BsFillPatchPlusFill size={15} className="inline ml-3" />
                                                         </button>
                                                     </li>
-                                                    <li className="inline"
+                                                    <li className={currentRoomId && tenantData && tenantData.length > 0 ? "inline" : "inline pointer-events-none opacity-50"}
                                                         onClick={() => {
                                                             setShowModalMoveTenant(true)
                                                         }}>
-                                                        <button className="flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-900">
+                                                        <button className={`flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-900`}>
                                                             Di chuyển khách đến phòng<BsPencilSquare size={15} className="ml-1 inline" />
                                                         </button>
                                                     </li>
-                                                    <li className="inline"
+                                                    <li className={currentRoomId && tenantData && tenantData.length > 0 ? "inline" : "inline pointer-events-none opacity-50"}
                                                         onClick={() => {
                                                             setTypeDelete({
                                                                 type: "tenant",
@@ -1250,7 +1274,7 @@ const ManagerHouse = () => {
                                                             setmessageDelete("Bạn có chắc muốn xóa những khách đã chọn khỏi phòng này ?")
                                                             setshowModalDelete(true)
                                                         }}>
-                                                        <button className={true ? "font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800" : "font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] opacity-50 cursor-not-allowed"}>
+                                                        <button className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800">
                                                             Xóa khách khỏi phòng <BsFillTrashFill size={15} className="ml-1 inline" />
                                                         </button>
                                                     </li>
@@ -1294,7 +1318,13 @@ const ManagerHouse = () => {
                                             </thead>
                                             {/* table body */}
                                             <tbody className="text-base font-medium">
-                                                {tenantData != null && tenantData.length > 0 ? (
+                                                {currentRoomId == null ? (
+                                                    <tr>
+                                                        <td colSpan="8" className="px-6 py-4 text-center">
+                                                            Nhà này chưa có phòng nào !
+                                                        </td>
+                                                    </tr>
+                                                ) : (tenantData != null && tenantData.length > 0 ? (
                                                     tenantData.map((tenant) => (
                                                         <Fragment key={tenant.id}>
                                                             <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
@@ -1342,7 +1372,7 @@ const ManagerHouse = () => {
                                                             Phòng này chưa có khách nào cả
                                                         </td>
                                                     </tr>
-                                                )}
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>

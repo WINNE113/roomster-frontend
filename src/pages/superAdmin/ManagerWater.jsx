@@ -1,18 +1,17 @@
 import { Title } from "@/components"
 import { useState, useEffect } from "react"
 import { Fragment } from "react"
-import axios from "axios"
 import { getListHouse } from "@/apis/supperAdmin/house/house"
 import { getRoomById } from "@/apis/supperAdmin/room/room"
 import { getOrderById, updateOrAddOrder } from "@/apis/supperAdmin/order/order"
 import { BsPencilSquare, BsFillPatchPlusFill } from "react-icons/bs"
+import { toast } from "react-toastify"
 
 const ManagerWater = () => {
-
   const [waterData, setWaterData] = useState([]);
   const [houseData, setHouseData] = useState([]);
-  const [currentHouseId, setCurrentHouseId] = useState(1);
-  const [currentRoomId, setCurrentRoomId] = useState(1);
+  const [currentHouseId, setCurrentHouseId] = useState(null);
+  const [currentRoomId, setCurrentRoomId] = useState(null);
 
   const [showModalOrder, setshowModalOrder] = useState(false);
   const [statusModalOrder, setstatusModalOrder] = useState(false);
@@ -37,8 +36,9 @@ const ManagerWater = () => {
       // Handle the response data here
       console.log(response);
       setHouseData(response);
-      setCurrentRoomId(response[0].rooms[0].id);
-      getRoomDataById(response[0].rooms[0].id)
+      setCurrentHouseId(currentHouseId ? currentHouseId : response[0].houseId)
+      setCurrentRoomId(currentRoomId ? currentRoomId : response[0].rooms[0].id);
+      getRoomDataById(currentRoomId ? currentRoomId : response[0].rooms[0].id)
     }).catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
@@ -129,14 +129,14 @@ const ManagerWater = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
     if (validateOrder()) {
       updateOrAddOrder(form.orderId, form).then(response => {
         // Handle the response data here
-        console.log(response);
-      }).catch(error => {
-        // Handle any errors that occurred during the request
-        console.error(error);
+        if (response.data) {
+          toast.error(response.data.message)
+        } else {
+          toast.success(response.message)
+        }
       }).finally(() => {
         reLoad();
         handleRoomChange(currentRoomId)
@@ -145,7 +145,7 @@ const ManagerWater = () => {
       });
     }
     else {
-      alert("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+      toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
     }
   };
 
@@ -252,7 +252,7 @@ const ManagerWater = () => {
                       </td>
                       <td className="px-6 py-4">
                         {/*  */}
-                        <button className={order.statusPayment == 'Y' ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
+                        <button className={(order.statusPayment == 'Y' || order.statusPayment == 'P' || new Date().getMonth() + 1 != new Date(order.paymentDate).getMonth() + 1) ? "font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-none opacity-25" : "font-medium text-blue-600 dark:text-blue-500 hover:underline"}
                           onClick={() => {
                             setDataFromById(order.orderId)
                             setshowModalOrder(true)

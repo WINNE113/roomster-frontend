@@ -132,7 +132,6 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 >
                   Quản lý phòng
                 </Button>
-
                
                 {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
                  
@@ -181,7 +180,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                             to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
                             className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
                           >
-                            House Workspace
+                            Quản lý trọ
                           </Link>
                         )}
                       {current?.roleList?.some(
@@ -191,7 +190,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                           to={`/${path.MANAGER}/${path.CREATE_POST}`}
                           className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
                         >
-                          Manager
+                          Quản lý
                         </Link>
                       )}
                       <span
