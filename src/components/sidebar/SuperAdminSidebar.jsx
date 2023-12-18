@@ -1,6 +1,7 @@
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { logout } from "@/redux/userSlice"
 import { superAdminSidebar } from "@/ultils/constant"
+import path from "@/ultils/path"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -9,9 +10,10 @@ import {
     AiOutlineLogout,
 } from "react-icons/ai"
 import { useSelector } from "react-redux"
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 
 const SuperAdminSidebar = ({ dispatch }) => {
+    const navigate = useNavigate();
     const [tabs, setTabs] = useState([])
     const { current } = useSelector((state) => state.user)
     console.log("SuperAdminSidebar ", current);
@@ -57,12 +59,48 @@ const SuperAdminSidebar = ({ dispatch }) => {
                                 {el.name}
                             </NavLink>
                         )}
+                        {el.type === "PARENT" && (
+                            <div className="flex flex-col" to={el.path}>
+                                <div
+                                    onClick={() => handleTabs(el.id)}
+                                    className={clsx(
+                                        "flex justify-between p-3 cursor-pointer items-center",
+                                        tabs.some((t) => t === el.id) && "text-main-600 font-bold"
+                                    )}
+                                >
+                                    <span className="flex gap-2  items-center">
+                                        {el.icon}
+                                        {el.name}
+                                    </span>
+                                    {tabs.some((t) => t === el.id) ? (
+                                        <AiFillCaretDown />
+                                    ) : (
+                                        <AiFillCaretRight />
+                                    )}
+                                </div>
+                                {tabs.some((t) => t === el.id) &&
+                                    el.subs.map((item) => (
+                                        <NavLink
+                                            key={item.path}
+                                            className={({ isActive }) =>
+                                                clsx(
+                                                    "flex pl-8 hover:bg-blue-100 w-full  p-3 items-center gap-2",
+                                                    isActive && "text-main-blue font-bold bg-blue-100"
+                                                )
+                                            }
+                                            to={item.path}
+                                        >
+                                            {item.name}
+                                        </NavLink>
+                                    ))}
+                            </div>
+                        )}
                     </Fragment>
                 ))}
                 <span
                     onClick={() => {
                         dispatch(logout())
-
+                        navigate(`/${path.LOGIN}`)
                     }}
                     className={clsx(
                         "flex cursor-pointer hover:bg-blue-100 w-full p-3 items-center gap-2"

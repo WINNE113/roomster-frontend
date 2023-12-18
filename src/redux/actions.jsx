@@ -6,7 +6,10 @@ export const getCurrent = createAsyncThunk(
   "user/current",
   async (data, { rejectWithValue }) => {
     const response = await apiGetCurrent()
-    if (!response) return rejectWithValue(response)
+    if (response.status == 403) {
+      console.log(response);
+      return rejectWithValue(response)
+    }
     return response
   }
 )

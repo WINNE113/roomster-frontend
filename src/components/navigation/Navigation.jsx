@@ -63,7 +63,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
         <div className="flex justify-between items-center">
           <Link className="text-3xl text-white font-bold" to={"/"}>
             trouytin.com
-          </Link>
+          </Link>         
           <div className="flex items-center gap-4">
             <div className="flex gap-2 justify-center items-center">
               {!current && (
@@ -125,10 +125,10 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 <Button
                   onClick={() =>
                     handleClickCreatePost(
-                      `/${path.MANAGER}/${path.MANAGE_POST}`
+                      `/${path.SUPER_ADMIN}/${path.DASHBOARD}`
                     )
                   }
-                  className="rounded-md flex items-center gap-2 border text-white bg-transparent text-sm font-medium px-6 py-2"
+                  className="text-emerald-800-300 rounded-md flex items-center gap-2 border bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
                 >
                   Quản lý phòng
                 </Button>
@@ -138,7 +138,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                  
                   <Link
                     to={`/${path.MANAGER}/${path.DEPOSIT}`}
-                    className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
+                    className="rounded-md flex items-center gap-2 border bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
                   >
                     Nạp tiền
                   </Link>
@@ -170,7 +170,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                           to={`/${path.ADMIN}/${path.DASHBOARD}`}
                           className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
                         >
-                          Admin
+                          Admin quản lý
                         </Link>
                       )}
                       {current?.roleList?.some(
@@ -180,7 +180,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                             to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
                             className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
                           >
-                            House Workspace
+                            Quản lý nhà trọ
                           </Link>
                         )}
                       {current?.roleList?.some(
@@ -190,7 +190,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                           to={`/${path.MANAGER}/${path.CREATE_POST}`}
                           className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
                         >
-                          Manager
+                          Quản lý tin đăng
                         </Link>
                       )}
                       <span
