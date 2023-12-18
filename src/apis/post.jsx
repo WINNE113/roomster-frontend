@@ -36,9 +36,21 @@ export const apiGetRatings = (params) =>
     method: "get",
     params,
   })
-  export const apiDeletePost = (params) =>
+export const apiDeletePost = (params) =>
   axios({
     url: "/post/delete",
     method: "delete",
+    params,
+  })
+export const apiUpdateApprovedPost = (params) =>
+  axios({
+    url: "/admin/setIsApprovedPost",
+    method: "patch",
+    params,
+  })
+export const apiUpdateRejectedPost = (params) =>
+  axios({
+    url: "/admin/setIsRejectedPost",
+    method: "patch",
     params,
   })

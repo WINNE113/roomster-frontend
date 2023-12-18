@@ -82,4 +82,6 @@ const CustomSlider = ({
   )
 }
 
+
 export default memo(CustomSlider)
+

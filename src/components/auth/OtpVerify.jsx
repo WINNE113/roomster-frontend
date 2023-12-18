@@ -24,7 +24,7 @@ const OtpVerify = ({ dispatch, setVariant }) => {
         title: "Congrats!",
       }).then(() => {
         dispatch(modal({ isShowModal: false, modalContent: null }))
-        setVariant("LOGIN")
+        setVariant && setVariant("LOGIN")
       })
     } else toast.error(response.message)
   }
@@ -46,7 +46,7 @@ const OtpVerify = ({ dispatch, setVariant }) => {
           </span>
         }
       />
-      <Button onClick={handleSendOTP}>Gửi OTP</Button>
+      <Button onClick={handleSendOTP}>Xác minh OTP</Button>
     </div>
   )
 }

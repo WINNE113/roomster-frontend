@@ -1,19 +1,31 @@
-import { BsFilePerson, BsPostcard } from "react-icons/bs"
+import { BsFilePerson, BsPostcard,
+  BsFillPieChartFill,
+  BsFillHouseGearFill,
+  BsDropletHalf,
+  BsCashCoin,
+  BsStack, } from "react-icons/bs"
 import {
   AiFillDashboard,
+  AiFillDollarCircle,
+  AiFillMoneyCollect,
   AiOutlineDashboard,
   AiOutlineHeart,
   AiOutlineUser,
 } from "react-icons/ai"
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
-import { MdOutlineAttachMoney } from "react-icons/md"
-import { RiFileEditLine, RiShareForwardFill } from "react-icons/ri"
+import { MdOutlineAttachMoney, MdOutlinePriceCheck } from "react-icons/md"
+import {
+  RiFileEditLine,
+  RiShareForwardFill,
+  RiPriceTag2Line,
+} from "react-icons/ri"
 
 export const menu = [
   {
     path: "/danh-sach/?type=" + path.PHONGTRO,
     name: "PHÒNG TRỌ",
+    subname: "Phòng trọ",
     id: "phongtro",
     type: path.PHONGTRO,
   },
@@ -22,25 +34,36 @@ export const menu = [
     name: "NHÀ, CĂN HỘ CHO THUÊ",
     id: "nhacanhochothue",
     type: path.CANHO,
+    subname: "Nhà, Căn hộ cho thuê",
   },
   {
     path: "/danh-sach/?type=" + path.TIMOGHEP,
     name: "TÌM Ở GHÉP",
     id: "timoghep",
     type: path.TIMOGHEP,
+    subname: "Tìm ở ghép",
   },
-  {
-    path: "/" + path.BLOG,
-    name: "BLOG",
-    id: "blog",
-    type: path.BLOG,
-  },
-  {
-    path: "/" + path.GUIDE,
-    name: "HƯỚNG DẪN",
-    id: "huongdan",
-    type: path.GUIDE,
-  },
+  // {
+  //   path: "/" + path.BLOG,
+  //   name: "BLOG",
+  //   id: "blog",
+  //   type: path.BLOG,
+  //   subname: "Blogs",
+  // },
+  // {
+  //   path: "/" + path.GUIDE,
+  //   name: "HƯỚNG DẪN",
+  //   id: "huongdan",
+  //   type: path.GUIDE,
+  //   subname: "Hướng dẫn",
+  // },
+    {
+      path: "/" + path.PRICING,
+      name: "BẢNG GIÁ DỊCH VỤ",
+      id: "banggiadichvu",
+      type: path.PRICING,
+      subname: "Bảng giá dịch vụ",
+    },
 ]
 export const distances = [
   {
@@ -175,20 +198,7 @@ export const targets = [
   },
 ]
 export const managerSidebar = [
-  {
-    id: 1,
-    name: "Thông tin cá nhân",
-    path: `/${path.MANAGER}/${path.PERSONAL}`,
-    icon: <BsFilePerson size={20} />,
-    type: "SINGLE",
-  },
-  {
-    id: 123,
-    name: "Đăng tin mới",
-    path: `/${path.MANAGER}/${path.CREATE_POST}`,
-    icon: <RiFileEditLine size={20} />,
-    type: "SINGLE",
-  },
+
   {
     id: 1234,
     name: "Quản lý tin đăng",
@@ -197,14 +207,21 @@ export const managerSidebar = [
     type: "SINGLE",
   },
   {
-    id: 3000,
-    name: "Danh sánh yêu thích",
-    path: `/${path.MANAGER}/${path.WISHLIST}`,
-    icon: <AiOutlineHeart size={20} />,
+    id: 578,
+    name: "Nạp tiền",
+    path: `/${path.MANAGER}/${path.DEPOSIT}`,
+    icon: <AiFillDollarCircle size={20} />,
     type: "SINGLE",
   },
   {
-    id: 2,
+    id: 5738,
+    name: "Lịch sử nạp tiền",
+    path: `/${path.MANAGER}/${path.MANAGE_DEPOSIT}`,
+    icon: <MdOutlineAttachMoney size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 24242,
     name: "Tới Homepage",
     path: `/`,
     icon: <RiShareForwardFill size={20} />,
@@ -215,7 +232,7 @@ export const adminSidebar = [
   {
     id: 5,
     name: "Thống kê",
-    path: `${path.ADMIN}/${path.DASHBOARD}`,
+    path: `/${path.ADMIN}/${path.DASHBOARD}`,
     icon: <AiOutlineDashboard size={20} />,
     type: "SINGLE",
   },
@@ -224,22 +241,22 @@ export const adminSidebar = [
     name: "Quản lý tin đăng",
     icon: <BsPostcard size={20} />,
     type: "SINGLE",
-    path: `${path.ADMIN}/${path.MANAGE_POST_ALL}`,
+    path: `/${path.ADMIN}/${path.MANAGE_POST_ALL}`,
   },
   {
     id: 4,
     name: "Quản lý thành viên",
-    path: `${path.ADMIN}/${path.MANAGE_USER}`,
+    path: `/${path.ADMIN}/${path.MANAGE_USER}`,
     icon: <AiOutlineUser size={20} />,
     type: "SINGLE",
   },
-  // {
-  //   id: 8,
-  //   name: "Quản lý gia hạn",
-  //   path: `${path.ADMIN}/${path.MANAGE_EXPIRED}`,
-  //   icon: <MdOutlineAttachMoney size={20} />,
-  //   type: "SINGLE",
-  // },
+  {
+    id: 573238,
+    name: "Quản lý giá dịch vụ",
+    path: `/${path.ADMIN}/${path.MANAGE_PRICING}`,
+    icon: <RiPriceTag2Line size={20} />,
+    type: "SINGLE",
+  },
   {
     id: 2,
     name: "Tới Homepage",
@@ -263,6 +280,7 @@ export const memberSidebar = [
     icon: <AiOutlineHeart size={20} />,
     type: "SINGLE",
   },
+
   {
     id: 2,
     name: "Tới Homepage",
@@ -431,5 +449,49 @@ export const statuses = [
     name: "Từ chối",
     label: "Từ chối",
     value: "REJECTED",
+  },
+]
+export const superAdminSidebar = [
+  {
+    id: 1,
+    name: "Thống kê",
+    path: `${path.DASHBOARD}`,
+    icon: <BsFillPieChartFill size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 2,
+    name: "Quản lý Nhà",
+    icon: <BsFillHouseGearFill size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_HOUSE}`,
+  },
+  {
+    id: 3,
+    name: "Quản lý dịch vụ phòng",
+    icon: <BsStack size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_SERVICE}`,
+  },
+  {
+    id: 4,
+    name: "Quản lý điện & nước",
+    icon: <BsDropletHalf size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_ELECTRIC_WATER}`,
+  },
+  {
+    id: 5,
+    name: "Quản lý tiền phòng",
+    icon: <BsCashCoin size={20} />,
+    type: "SINGLE",
+    path: `${path.MANAGER_PAYMENT}`,
+  },
+  {
+    id: 6,
+    name: "Tới Homepage",
+    path: `/`,
+    icon: <RiShareForwardFill size={20} />,
+    type: "SINGLE",
   },
 ]

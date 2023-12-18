@@ -19,7 +19,6 @@ const Comments = ({ dispatch }) => {
       setComments(response)
       setUpdate(!update)
     }
-    if (response) setComments(response)
   }
   useEffect(() => {
     fetchComments()
@@ -40,7 +39,7 @@ const Comments = ({ dispatch }) => {
     <div className="flex flex-col gap-4">
       {comments?.map((el, _, self) => (
         <Fragment key={el.commentPostId}>
-            {!el.parentComment && (
+          {!el.parentComment && (
             <Comment
               parents={self.filter(
                 (cmt) => +cmt.parentComment === +el.commentPostId

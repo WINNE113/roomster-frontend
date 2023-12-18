@@ -1,6 +1,7 @@
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { logout } from "@/redux/userSlice"
 import { adminSidebar } from "@/ultils/constant"
+import { formatMoney } from "@/ultils/fn"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -24,7 +25,7 @@ const AdminSidebar = ({ dispatch }) => {
       <div className="py-12 pb-6 flex flex-col gap-1 justify-center items-center w-full">
         {/* <img src="/logo.png" alt="" className="w-3/5 object-contain" /> */}
         <span className="text-3xl text-emerald-600 tracking-tight font-bold">
-          Tromoi.com
+          Trouytin.com
         </span>
         <small className="text-sm font-medium text-red-500 ">
           Admin workspace
@@ -36,7 +37,8 @@ const AdminSidebar = ({ dispatch }) => {
             className="w-24 h-24 rounded-full object-cover"
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
-          <span>{"ID: #" + current?.id}</span>
+          <span>{"ID: #" + current?.userId}</span>
+          <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
         </div>
       </div>
       <div>

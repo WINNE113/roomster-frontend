@@ -2,13 +2,15 @@ import { apiCreateNewComment, apiUpdateComment } from "@/apis/comment"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { render } from "@/redux/commentSlice"
 import { setCarat } from "@/ultils/fn"
-import { useRef } from "react"
+
+import path from "@/ultils/path"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { AiOutlineClose, AiOutlineSend } from "react-icons/ai"
-import Swal from "sweetalert2"
+import { createSearchParams, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
-import path from "@/ultils/path" 
+import Swal from "sweetalert2"
+
 
 const TypeBox = ({
   parentCommentId,
@@ -45,7 +47,7 @@ const TypeBox = ({
       typeBoxRef.current.innerText = ""
       dispatch(render())
       if (handleReplies) handleReplies(parentComment)
-    }else {
+    } else {
       Swal.fire("Oops!", "Bạn phải đang nhập trước", "info").then(() => {
         navigate({
           pathname: `/${path.LOGIN}`,
@@ -71,7 +73,9 @@ const TypeBox = ({
   return (
     <div className={clsx("grid grid-cols-12 rounded-md", !isEdit && "mb-6")}>
       <div
-         data-text={"Để lại bình luận của bạn ở đây..."}
+
+        data-text={"Để lại bình luận của bạn ở đây..."}
+
         contentEditable
         className="col-span-10 outline-none p-4 bg-gray-50 rounded-md"
         ref={typeBoxRef}
@@ -87,7 +91,18 @@ const TypeBox = ({
         >
           <AiOutlineSend />
         </button>
-        
+
+        {isEdit && (
+          <button
+            type="button"
+            title="Gửi"
+            className="w-12 h-12 text-emerald-700 border-emerald-700 rounded-full border flex items-center justify-center"
+            onClick={() => setIsEdit(false)}
+          >
+            <AiOutlineClose />
+          </button>
+        )}
+
       </div>
     </div>
   )

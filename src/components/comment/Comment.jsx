@@ -29,16 +29,20 @@ const Comment = ({
     if (!isShowMore) setFinalParents(() => parents.filter((_, idx) => idx < 1))
     else setFinalParents(parents)
   }, [isShowMore, update])
-   return (
+  return (
     <div className="flex gap-3">
       <img
-         src={partUser?.images || "/user.svg"}
+
+        src={partUser?.images || "/user.svg"}
+
         alt="user"
         className="w-12 h-12 flex-none object-cover border rounded-full"
       />
       <div className="col-span-11 flex flex-col gap-2 relative flex-auto">
         <div className="w-full bg-gray-100 px-4 py-3 rounded-md relative">
-        {!isEdit && (
+
+          {!isEdit && (
+
             <span
               onClick={() => handleReplies(commentPostId)}
               title="Trả lời"
@@ -47,10 +51,12 @@ const Comment = ({
               <ImReply size={22} />
             </span>
           )}
-          <span className="flex items-center mb-2 justify-between">
+
+          <span className="flex relative mb-2 justify-between">
             <span className="text-main-blue font-medium">
-            {partUser?.userName}
-            <span className="font-normal text-xs italic text-gray-500">
+              {partUser?.userName}
+              <span className="font-normal text-xs italic text-gray-500">
+
                 ({moment(createdDate).fromNow()})
               </span>
             </span>

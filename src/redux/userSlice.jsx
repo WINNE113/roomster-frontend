@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getCurrent } from "./actions"
+import { getCurrent, getWishlist } from "./actions"
 
 export const userSlice = createSlice({
   name: "user",
@@ -9,6 +9,7 @@ export const userSlice = createSlice({
     mes: "",
     selectedRole: "",
     selectedUserName: "",
+    wishlist: [],
   },
   reducers: {
     login: (state, action) => {
@@ -34,6 +35,10 @@ export const userSlice = createSlice({
     builder.addCase(getCurrent.rejected, (state, action) => {
       state.current = null
       state.token = null
+      state.wishlist = []
+    })
+    builder.addCase(getWishlist.fulfilled, (state, action) => {
+      state.wishlist = action.payload
     })
   },
 })

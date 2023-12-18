@@ -1,6 +1,7 @@
 import withBaseTopping from "@/hocs/WithBaseTopping"
 import { logout } from "@/redux/userSlice"
 import { managerSidebar } from "@/ultils/constant"
+import { formatMoney } from "@/ultils/fn"
 import clsx from "clsx"
 import React, { Fragment, useState } from "react"
 import {
@@ -26,7 +27,7 @@ const ManageSidebar = ({ dispatch }) => {
           Tromoi.com
         </span>
         <small className="text-sm font-medium text-blue-500 ">
-          My workspace
+          Không gian làm việc
         </small>
         <div className="mt-4 flex flex-col items-center justify-center gap-1">
           <img
@@ -35,7 +36,8 @@ const ManageSidebar = ({ dispatch }) => {
             className="w-24 h-24 rounded-full object-cover"
           />
           <span className="text-main-red font-bold">{current?.userName}</span>
-          <span>{"ID: #" + "98546"}</span>
+          <span>{"Mã thành viên: #" + current?.userId}</span>
+          <span>{`TK chính: ${formatMoney(+current?.balance)} VND`}</span>
         </div>
       </div>
       <div>
@@ -94,7 +96,9 @@ const ManageSidebar = ({ dispatch }) => {
           </Fragment>
         ))}
         <span
-             onClick={() => dispatch(logout())}
+
+          onClick={() => dispatch(logout())}
+
           className={clsx(
             "flex cursor-pointer hover:bg-blue-100 w-full p-3 items-center gap-2"
           )}

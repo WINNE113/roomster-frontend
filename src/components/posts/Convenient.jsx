@@ -19,6 +19,7 @@ const Convenient = ({ convenient = [], onChange }) => {
               type="checkbox"
               name="convenient"
               id={el.id}
+              checked={convenient?.some((n) => n.trim() === el.name?.trim())}
             />
             <label htmlFor={el.id}>{el.name}</label>
           </div>

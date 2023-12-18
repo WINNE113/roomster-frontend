@@ -1,19 +1,26 @@
 import { apiGetPosts, apiGetPostsByRating } from "@/apis/post"
+import { apiGetWishlist } from "@/apis/user"
 import {
   BoxFilter,
   Card,
   Header,
   LongCard,
+  ProvinceItem,
   Search,
   Section,
 } from "@/components"
+import { getTopProvince } from "@/redux/actions"
 import { cities, menu } from "@/ultils/constant"
 import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { NavLink } from "react-router-dom"
 
 const Home = () => {
+  const dispatch = useDispatch()
   const [posts, setPosts] = useState()
   const [ratings, setRatings] = useState()
+  const { wishlist } = useSelector((s) => s.user)
+  const { topProvinces } = useSelector((s) => s.app)
   const fetchHomeData = async () => {
     const formdata = new FormData()
     formdata.append("json", JSON.stringify({ status: "APPROVED" }))
@@ -29,39 +36,32 @@ const Home = () => {
   useEffect(() => {
     fetchHomeRatings()
     fetchHomeData()
+    dispatch(getTopProvince())
   }, [])
   return (
     <section className="pb-16">
       <Header />
       <Search />
       <Section
+        className="w-main mt-12 mx-auto"
+        title="TỈNH / THÀNH PHỐ NỔI BẬT"
+        contentClassName="grid grid-cols-4 gap-4"
+      >
+        {topProvinces.map((el, idx) => (
+          <ProvinceItem key={idx} {...el} />
+        ))}
+      </Section>
+      <Section
         className="w-main mx-auto"
         title="LỰA CHỌN NỔI BẬT"
         contentClassName="grid grid-cols-4 gap-4"
       >
         {ratings?.map((el) => (
-          <Card {...el} key={el.id} />
-        ))}
-      </Section>
-      <Section
-        className="w-main mt-12 mx-auto"
-        title="TỈNH / THÀNH PHỐ NỔI BẬT"
-        contentClassName="grid grid-cols-4 gap-4"
-      >
-        {cities.map((el) => (
-          <div key={el.name} className="col-span-1 w-full h-fit relative">
-            <img
-              src={el.image}
-              alt=""
-              className="w-full h-[375px] object-cover rounded-md"
-            />
-            <div className="absolute inset-0 flex items-end">
-              <div className="w-full h-1/2 bg-gradient-to-t flex flex-col justify-end p-4 text-white from-[rgba(0,0,0,0.7)] to-transparent">
-                <h3 className="font-semibold text-xl">{el.name}</h3>
-                <span>{el.postCounter + " tin đăng"}</span>
-              </div>
-            </div>
-          </div>
+          <Card
+            isLike={wishlist?.some((n) => n.id === el.id)}
+            {...el}
+            key={el.id}
+          />
         ))}
       </Section>
       <Section
