@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [paymentTransactionData, setPaymentTransactionData] = useState([]);
 
 
-
+  
   const dataCircleChart = [
     { value: postStatusPercent[0], color: '#3cb371' }, // Approved color
     { value: postStatusPercent[1], color: '#ff0000' }, // Rejected color
@@ -52,7 +52,7 @@ const Dashboard = () => {
     { value: userStatusPercent[3], color: '#0000ff' }, // percentManage
     // { value: userStatusPercent[4], color: '#ee82ee' }, //  totalManage
     { value: userStatusPercent[5], color: '#6a5acd' }, // percentUltiManage
-    // { value: userStatusPercent[5], color: '#0096889c' }, // totalUltimange
+    // { value: userStatusPercent[6], color: '#0096889c' }, // totalUltimange
     { value: 100 - userStatusPercent[1] - userStatusPercent[3] - userStatusPercent[5], color: '#5858580f' }, // Background color
   ];
 
@@ -174,20 +174,20 @@ const Dashboard = () => {
               animate
             />
             <div className="flex flex-col pt-5">
-              <span className="text-sm font-semibold text-[white] rounded-full bg-[#3cb371] px-3 py-2 mb-2 text-center min-w-[6rem]">% Thành viên</span>
-              <span className="text-sm font-semibold text-[black] border rounded-full bg-[#0000ff] px-3 py-2 mb-2 text-center min-w-[6rem]">% Quản lý tin</span>
-              <span className="text-sm font-semibold text-[black] border rounded-full bg-[#6a5acd] px-3 py-2 mb-2 text-center min-w-[6rem]">% Quản lý trọ</span>
+              <span className="text-sm font-semibold text-[white] rounded-full bg-[#3cb371] px-3 py-2 mb-2 text-center min-w-[6rem]">Thành viên</span>
+              <span className="text-sm font-semibold text-[black] border rounded-full bg-[#0000ff] px-3 py-2 mb-2 text-center min-w-[6rem]">Quản lý tin</span>
+              <span className="text-sm font-semibold text-[black] border rounded-full bg-[#6a5acd] px-3 py-2 mb-2 text-center min-w-[6rem]">Quản lý trọ</span>
             </div>
           </div>
           <div className="flex space-x-2 ml-7">
             <div className="flex-1 border border-[#E6E9ED] rounded-full bg-[#3cb371] flex items-center justify-center">
-              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[1]}%</span>
+              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[2]} account</span>
             </div>
             <div className="flex-1 border border-[#E6E9ED] rounded-full bg-[#0000ff] flex items-center flex items-center justify-center">
-              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[3]}%</span>
+              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[4]} account</span>
             </div>
             <div className="flex-1 border border-[#E6E9ED] rounded-full bg-[#6a5acd] flex items-center flex items-center justify-center">
-              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[5]}%</span>
+              <span className="py-2 text-center text-[white] text-sm font-semibold">{userStatusPercent[6]} account</span>
             </div>
           </div>
         </div>
