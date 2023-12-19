@@ -271,6 +271,13 @@ export const adminSidebar = [
     type: "SINGLE",
   },
   {
+    id: 576538,
+    name: "Quản lý thanh toán",
+    path: `/${path.ADMIN}/${path.MANAGER_PAYMENT}`,
+    icon: <RiPriceTag2Line size={20} />,
+    type: "SINGLE",
+  },
+  {
     id: 5733238,
     name: "Quản lý báo cáo vi phạm",
     path: `/${path.ADMIN}/${path.MANAGE_REPORT}`,

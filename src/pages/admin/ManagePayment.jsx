@@ -1,4 +1,4 @@
-import { apiGetTransationUser } from "@/apis/payment"
+import { apiGetTransationAdmin } from "@/apis/payment"
 import { Pagination, Title } from "@/components"
 import { formatMoney } from "@/ultils/fn"
 import moment from "moment"
@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { useSearchParams } from "react-router-dom"
 
-const HistoriesPayment = () => {
+const ManagePayment = () => {
   const { setValue, watch } = useForm()
   const { current } = useSelector((s) => s.user)
   const { isShowModal } = useSelector((s) => s.app)
@@ -18,7 +18,7 @@ const HistoriesPayment = () => {
   const [transactions, setTransactions] = useState([])
   const [count, setCount] = useState(0)
   const fetchHistoriesPayment = async (params) => {
-    const response = await apiGetTransationUser(params)
+    const response = await apiGetTransationAdmin(params)
     if (response.data) {
       setTransactions(response.data)
       setCount(response.count)
@@ -41,27 +41,22 @@ const HistoriesPayment = () => {
           <table className="table-auto w-full">
             <thead>
               <tr>
+                <th className="p-2 border font-medium text-center">Mã Giao Dịch</th>
                 <th className="p-2 border font-medium text-center">
-                  Mã Giao Dịch
+                  SDT Người Mua
                 </th>
                 <th className="p-2 border font-medium text-center">
-                  Gói dịch vụ
+                  Gói Dịch Vụ
+                </th>
+                <th className="p-2 border font-medium text-center">Số tiền</th>
+                <th className="p-2 border font-medium text-center">
+                  Ngày Thanh Toán
                 </th>
                 <th className="p-2 border font-medium text-center">
-                  Số tiền
+                  Ngày Hết Hạn
                 </th>
                 <th className="p-2 border font-medium text-center">
-                  Ngày thanh toán
-                </th>
-                <th className="p-2 border font-medium text-center">
-                  Ngày hết hạn
-                </th>
-
-                <th className="p-2 border font-medium text-center">
-                  Số ngày gia hạn
-                </th>
-                <th className="p-2 border font-medium text-center">
-                  Trạng thái
+                  Trạng Thái
                 </th>
               </tr>
             </thead>
@@ -69,27 +64,20 @@ const HistoriesPayment = () => {
               {transactions?.map((el) => (
                 <tr className="border" key={el.transactionId}>
                   <td className="p-2 text-center">{el.transactionId}</td>
+                  <td className="p-2 text-center">{el.partUser?.phoneNumber}</td>
 
                   <td className="p-2 text-center">
                     {el.partServicePackage?.servicePackageName}
                   </td>
-
                   <td className="p-2 text-center">
                     {`${formatMoney(el.partServicePackage?.price)} đ`}
                   </td>
-
                   <td className="p-2 text-center">
                     {moment(el.purchaseDate).format("DD/MM/YYYY")}
                   </td>
-
                   <td className="p-2 text-center">
                     {moment(el.expirationDate).format("DD/MM/YYYY")}
                   </td>
-
-                  <td className="p-2 text-center">
-                    {el.extensionDays + " ngày"}
-                  </td>
-
                   <td className="p-2 text-center">
                     {!el.expired ? "Hoạt động" : "Hết hạn"}
                   </td>
@@ -106,4 +94,4 @@ const HistoriesPayment = () => {
   )
 }
 
-export default HistoriesPayment
+export default ManagePayment

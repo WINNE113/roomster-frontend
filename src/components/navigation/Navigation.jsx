@@ -131,14 +131,15 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 </div>
                 <Button
                   onClick={() =>
-                    handleClickCreatePost(
-                      `/${path.MANAGER}/${path.MANAGE_POST}`
+                    handleCheckUltilManager(
+                      `/${path.SUPER_ADMIN}/${path.DASHBOARD}`
                     )
                   }
                   className="rounded-md flex items-center gap-2 border text-white bg-transparent text-sm font-medium px-6 py-2"
                 >
                   Quản lý phòng
                 </Button>
+
 
                 {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
                   <Link

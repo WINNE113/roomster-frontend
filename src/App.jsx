@@ -18,6 +18,7 @@ import {
   ManagePosts,
   CreatePricing,
   ManagePricing,
+  ManagePayment,
 } from "./pages/admin"
 import {
   LayoutSuperAdmin,
@@ -102,6 +103,7 @@ function App() {
           <Route path={path.CREATE_PRICING} element={<CreatePricing />} />
           <Route path={path.MANAGE_PRICING} element={<ManagePricing />} />
           <Route path={path.MANAGE_REPORT} element={<ManageReport />} />
+          <Route path={path.MANAGER_PAYMENT} element={<ManagePayment />} />
           <Route path={path.MANAGE_DEPOSIT} element={<ManageDeposit />} />
         </Route>
         {/* Super Admin routes */}

@@ -12,3 +12,9 @@ export const apiGetReports = (params) =>
     method: "get",
     params,
   })
+export const apiDeleteReport = (params) =>
+  axios({
+    url: "/admin/report/delete",
+    method: "delete",
+    params,
+  })
