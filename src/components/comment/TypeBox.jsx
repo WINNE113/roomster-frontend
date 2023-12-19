@@ -2,6 +2,7 @@ import { apiCreateNewComment, apiUpdateComment } from "@/apis/comment"
 import WithBaseTopping from "@/hocs/WithBaseTopping"
 import { render } from "@/redux/commentSlice"
 import { setCarat } from "@/ultils/fn"
+
 import path from "@/ultils/path"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
@@ -9,6 +10,7 @@ import { AiOutlineClose, AiOutlineSend } from "react-icons/ai"
 import { createSearchParams, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
 import Swal from "sweetalert2"
+
 
 const TypeBox = ({
   parentCommentId,
@@ -96,7 +98,7 @@ const TypeBox = ({
           >
             <AiOutlineClose />
           </button>
-        )}
+        )} 
       </div>
     </div>
   )

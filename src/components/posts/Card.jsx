@@ -64,6 +64,7 @@ const Card = ({
       </div>
       <div className="p-3 flex flex-col gap-1">
         <span className="text-sm text-gray-500">
+
           {address?.split(",")[address?.split(",")?.length - 1]}
         </span>
         <Link

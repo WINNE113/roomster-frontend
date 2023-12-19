@@ -52,6 +52,7 @@ const Report = ({ dispatch, id }) => {
             errors={errors}
             placeholder="Tên của bạn"
             validate={{ required: "Không thể bỏ trống." }}
+
           />
           <InputForm
             register={register}
@@ -59,6 +60,7 @@ const Report = ({ dispatch, id }) => {
             errors={errors}
             placeholder="Phone number"
             validate={{ required: "Không thể bỏ trống." }}
+
           />
         </div>
         <div className="flex gap-4 items-center justify-end">
@@ -76,5 +78,4 @@ const Report = ({ dispatch, id }) => {
     </div>
   )
 }
-
 export default WithBaseTopping(Report)

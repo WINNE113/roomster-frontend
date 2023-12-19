@@ -39,7 +39,9 @@ const DetailPost = ({ navigate, location, dispatch }) => {
   const [rating, setRating] = useState({})
   const [center, setCenter] = useState([])
   const [posts, setPosts] = useState([])
+
   const { current, wishlist } = useSelector((s) => s.user)
+
   const fetchDetailPost = async () => {
     const response = await apiGetDetailPost({ postId: pid })
     if (response) setPost({ ...response?.postDetail, images: response?.images })
@@ -407,6 +409,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
           <div className="w-full flex flex-col gap-2 items-center justify-center rounded-md bg-emerald-800 text-white p-4">
             <img
               src={post?.createdBy?.images || "/user.svg"}
+
               alt="user"
               className="rounded-full w-24 h-24 object-cover border border-main-yellow"
             />
@@ -492,5 +495,4 @@ const DetailPost = ({ navigate, location, dispatch }) => {
     </div>
   )
 }
-
 export default WithBaseTopping(DetailPost)

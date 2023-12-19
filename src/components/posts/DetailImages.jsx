@@ -25,6 +25,7 @@ const DetailImages = ({ dispatch, images = [], currentImage }) => {
       <div className="w-full p-4 grid h-full pb-12 grid-rows-6">
         <div className="row-span-6 flex items-center pb-24 px-8">
           <CustomSlider
+
             currentImage={currentImage}
             setIndex={setIndex}
             slides={images}
@@ -44,5 +45,5 @@ const DetailImages = ({ dispatch, images = [], currentImage }) => {
     </div>
   )
 }
-
 export default WithBaseTopping(DetailImages)
+

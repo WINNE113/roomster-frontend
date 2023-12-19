@@ -81,5 +81,4 @@ const CustomSlider = ({
     </div>
   )
 }
-
 export default memo(CustomSlider)

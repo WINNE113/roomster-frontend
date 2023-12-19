@@ -35,3 +35,4 @@ export { default as SuperAdminSidebar } from "./sidebar/superAdminSidebar"
 export { default as TableHeader } from "./table/TableHeader"
 export { default as TableBody } from "./table/TableBody"
 export { default as DeleteConfirm } from "./modal/DeleteConfirm"
+

@@ -36,6 +36,7 @@ const LongCard = ({
         )}
       >
         <span className="text-sm text-gray-500">
+
           {address?.split(",")[address?.split(",")?.length - 1]}
         </span>
         <Link
