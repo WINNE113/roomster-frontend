@@ -35,36 +35,38 @@ const Footer = () => {
           ))}
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
-          <h1 className="uppercase font-bold pb-2">liên kết dịch vụ</h1>
+          <h1 className="uppercase font-bold pb-2">Tính năng nổi bật</h1>
           <Link to={"/"} className="hover:underline">
-            Phòng khám tốt
+            Tìm kiếm phòng nhanh chóng
           </Link>
           <Link to={"/"} className="hover:underline">
-            Mặt bằng mới
-          </Link>
-          <Link to={"/"} className="hover:underline">
-            Nhà, đất, căn hộ chung cư
+            Quản lý phòng hiệu quả
           </Link>
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
           <h1 className="uppercase font-bold pb-2">kết nối cới chúng tôi</h1>
           <span className="hover:underline">
-            Hotline: <a href="tel:0123456789">0123456789</a>
+            Hotline: <a href="tel:0332101032">0332101032</a>
           </span>
           <span className="hover:underline">
-            Email: <a href="mailto:info@tromoi.com">info@tromoi.com</a>
+            Email: <a href="mailto:trouytin@gmail.com">trouytin@gmail.com</a>
           </span>
           <span className="flex items-center gap-2 my-2">
-            <img
-              src="/fb.svg"
-              alt=""
-              className="w-10 h-10 object-cover border rounded-full"
-            />
-            <img
-              src="/yt.svg"
-              alt=""
-              className="w-10 h-10 object-cover border rounded-full"
-            />
+            <a href="https://www.facebook.com/profile.php?id=61553932246952">
+              <img
+                src="/fb.svg"
+                alt=""
+                className="w-10 h-10 object-cover border rounded-full"
+              />
+            </a>
+            <a href="https://www.youtube.com/channel/UCCn5_b5vF5WhE3ACdxz4PLQ">
+              <img
+                src="/yt.svg"
+                alt=""
+                className="w-10 h-10 object-cover border rounded-full"
+              />
+            </a>
+
           </span>
         </div>
       </div>

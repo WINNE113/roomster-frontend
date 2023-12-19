@@ -170,7 +170,15 @@ const ManagePost = ({ dispatch, navigate }) => {
                       />
                     </span>
                   </td>
-                  <td className="p-2 text-center">{el.title}</td>
+                  <td className="p-2 text-center">
+                    <a
+                      href={`/${path.DETAIL_POST}/${el.id}/${el.title}`}
+                      target="_blank"
+                      className="hover:underline text-blue-500"
+                    >
+                      {el.title}
+                    </a>
+                  </td>
                   <td className="p-2 text-center">
                     {formatMoney(el.price) + " VNĐ"}
                   </td>

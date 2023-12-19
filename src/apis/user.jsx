@@ -102,5 +102,5 @@ export const apiGetRoleAdmin = () =>
 export const apiValidManager = () =>
   axios({
     url: "/user/service/valid-ulti-manager",
-    method: "post",
+    method: "get",
   })

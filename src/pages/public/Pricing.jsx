@@ -8,6 +8,8 @@ import { toast } from "react-toastify"
 import { FaCheck } from "react-icons/fa"
 import { MdOutlineCheckCircle } from "react-icons/md"
 import clsx from "clsx"
+import { getCurrent } from "@/redux/actions"
+import Swal from "sweetalert2"
 
 const PricingItem = ({
   name,
@@ -19,14 +21,27 @@ const PricingItem = ({
   const dispatch = useDispatch()
   const { current } = useSelector((s) => s.user)
   const handleSubcribe = async () => {
-    if (current?.phoneNumberConfirmed) {
-      const response = await apiSubcribePricing({ servicePackageId })
-      if (response.success) {
-        toast.success(response.message)
-      } else toast.error(response.message)
-    } else {
-      dispatch(modal({ isShowModal: true, modalContent: <VerifyPhone /> }))
-    }
+    Swal.fire({
+      icon: "info",
+      title: "Xác nhận thao tác",
+      text: `Bạn có chắc muốn đăng ký gói dịch vụ ${name} không?`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: "Đăng ký",
+      cancelButtonText: "Quay lại",
+    }).then(async (rs) => {
+      if (rs.isConfirmed) {
+        if (current?.phoneNumberConfirmed) {
+          const response = await apiSubcribePricing({ servicePackageId })
+          if (response.success) {
+            toast.success(response.message)
+            dispatch(getCurrent())
+          } else toast.error(response.message)
+        } else {
+          dispatch(modal({ isShowModal: true, modalContent: <VerifyPhone /> }))
+        }
+      }
+    })
   }
   return (
     <div className={clsx("col-span-1 h-full mb-[150px]")}>

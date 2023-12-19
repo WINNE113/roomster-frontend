@@ -59,9 +59,9 @@ const Navigation = ({ dispatch, location, navigate }) => {
       })
     }
   }
-  const handleCheckManager = async () => {
+  const handleCheckUltilManager = async () => {
     const response = await apiValidManager()
-    if (response.success) navigate(`/${path.MANAGER}/${path.MANAGE_POST}`)
+    if (response.success) navigate(`/${path.SUPER_ADMIN}/${path.DASHBOARD}`)
     else toast.error(response.message)
   }
   return (
@@ -184,7 +184,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
                           <span
                             onClick={(e) => {
                               e.stopPropagation()
-                              handleCheckManager()
+                              handleCheckUltilManager()
                             }}
                             className="p-3 hover:bg-gray-100 cursor-pointer hover:text-emerald-600 font-medium whitespace-nowrap"
                           >
