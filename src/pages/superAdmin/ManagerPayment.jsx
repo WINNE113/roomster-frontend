@@ -131,11 +131,11 @@ const ManagerService = () => {
 
     if (validatePayment()) {
       updatePaymentOrder(currentOrderId, data).then(response => {
-        if (response.data) {
-          toast.error(response.data.message)
-        } else {
+        if (!response.success) {
+          toast.error(response.message)
+      } else {
           toast.success(response.message)
-        }
+      }
         reLoad()
       }).finally(() => {
         setshowModalOrder(false)
@@ -149,11 +149,11 @@ const ManagerService = () => {
   const handleSendBill = () => {
     toast.info("Đang gửi hãy chờ trong giây lát...");
     sendbillOrder(currentRoomId).then((response) => {
-      if (response.data) {
-        toast.error(response.data.message)
-      } else {
+      if (!response.success) {
+        toast.error(response.message)
+    } else {
         toast.success(response.message)
-      }
+    }
     }).finally(() => {
       setIsSendMail(false)
     })

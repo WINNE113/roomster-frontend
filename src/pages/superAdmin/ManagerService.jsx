@@ -9,6 +9,7 @@ import { getServiceHouse, getServiceHouseById, addServiceHouse, updateServiceHou
 import { getListHouse } from "@/apis/supperAdmin/house/house"
 import { getServiceRoomById } from "@/apis/supperAdmin/room/room"
 import axios from "axios"
+import { toast } from "react-toastify"
 import { Fragment } from "react"
 const ManagerService = () => {
     const [showModalService, setshowModalService] = useState(false);
@@ -186,10 +187,10 @@ const ManagerService = () => {
                 // edit
                 updateServiceHouse(form.serviceId, form).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        alert(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad();
@@ -198,10 +199,10 @@ const ManagerService = () => {
             } else {
                 addServiceHouse(form).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        alert(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
-                        alert(response.message)
+                        toast.success(response.message)
                     }
                 }).finally(() => {
                     reLoad();
@@ -251,7 +252,11 @@ const ManagerService = () => {
         updateServiceRoom(currentRoomId, checkedEditRoomServiceIds).then(response => {
             // Handle the response data here
             reLoad()
-            alert(response.message)
+            if (!response.success) {
+                toast.error(response.message)
+            } else {
+                toast.success(response.message)
+            }
             setCheckedEditRoomServiceIds([])
             setshowModalServiceRoom(!showModalServiceRoom)
         }).catch(error => {
@@ -266,7 +271,11 @@ const ManagerService = () => {
             console.log(checkedServiceIds);
             deleteServiceHouse(checkedServiceIds).then(response => {
                 // Handle the response data here
-                alert(response.message)
+                if (!response.success) {
+                    toast.error(response.message)
+                } else {
+                    toast.success(response.message)
+                }
                 reLoad()
                 setCheckedServiceIds([])
             }).catch(error => {

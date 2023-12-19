@@ -132,11 +132,11 @@ const ManagerWater = () => {
     if (validateOrder()) {
       updateOrAddOrder(form.orderId, form).then(response => {
         // Handle the response data here
-        if (response.data) {
-          toast.error(response.data.message)
-        } else {
+        if (!response.success) {
+          toast.error(response.message)
+      } else {
           toast.success(response.message)
-        }
+      }
       }).finally(() => {
         reLoad();
         handleRoomChange(currentRoomId)

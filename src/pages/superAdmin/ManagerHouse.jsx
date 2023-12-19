@@ -402,8 +402,8 @@ const ManagerHouse = () => {
             if (formRoom.id != '') {
                 // edit
                 updateRoom(formRoom.id, formRoom).then(response => {
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -415,8 +415,8 @@ const ManagerHouse = () => {
             } else {
                 addRoom(formRoom).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -440,8 +440,9 @@ const ManagerHouse = () => {
                 // edit
                 updateHouse(formHouse.houseId, formHouse).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    console.log(response);
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -453,8 +454,8 @@ const ManagerHouse = () => {
             } else {
                 addHouse(formHouse).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -481,8 +482,8 @@ const ManagerHouse = () => {
                 // edit
                 updateTenant(formTenant.id, formTenant).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -494,8 +495,8 @@ const ManagerHouse = () => {
             } else {
                 addTenant(formTenant).then(response => {
                     // Handle the response data here
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -660,8 +661,8 @@ const ManagerHouse = () => {
         if (checkedMoveTenantIds && checkedMoveTenantIds.length > 0) {
             moveTenant(RoomMoveId, checkedMoveTenantIds).then(response => {
                 // Handle the response data here
-                if (response.data) {
-                    toast.error(response.data.message)
+                if (!response.success) {
+                    toast.error(response.message)
                 } else {
                     toast.success(response.message)
                 }
@@ -680,8 +681,8 @@ const ManagerHouse = () => {
             //delete room
             if (type.type == 'room') {
                 deleteRoom(type.id).then(response => {
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -696,8 +697,8 @@ const ManagerHouse = () => {
             }
             else if (type.type == 'house') {
                 deleteHouse(type.id).then(response => {
-                    if (response.data) {
-                        toast.error(response.data.message)
+                    if (!response.success) {
+                        toast.error(response.message)
                     } else {
                         toast.success(response.message)
                     }
@@ -715,8 +716,8 @@ const ManagerHouse = () => {
                 console.log(checkedMoveTenantIds);
                 if (checkedMoveTenantIds && checkedMoveTenantIds.length > 0) {
                     deleteTenant(checkedMoveTenantIds).then(response => {
-                        if (response.data) {
-                            toast.error(response.data.message)
+                        if (!response.success) {
+                            toast.error(response.message)
                         } else {
                             toast.success(response.message)
                         }
