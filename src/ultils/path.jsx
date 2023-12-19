@@ -30,7 +30,7 @@ const path = {
   MANAGER_HOUSE: "house",
   MANAGER_ELECTRIC_WATER: "electric-water",
   MANAGER_SERVICE: "service",
-  
+
   CHANGE_PHONE: "cập-nhat-so-dien-thoai",
   CHANGE_PASSWORD: "doi-mat-khau",
   TOP_PROVINCE__NAME: "tinh-thanh/:name",
@@ -41,8 +41,9 @@ const path = {
   PRICING: "bang-gia-dich-vu",
   CREATE_PRICING: "tao-moi-bang-gia-dich-vu",
   MANAGE_PRICING: "quan-ly-bang-gia-dich-vu",
-  MANAGER_PAYMENT: "payment"
-
+  MANAGER_PAYMENT: "payment",
+  HISTORIES_PAYMENT: "lich-su-thanh-toan",
+  MANAGE_REPORT: "bao-cao-vi-pham",
 }
 
 export default path

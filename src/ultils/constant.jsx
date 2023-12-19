@@ -1,9 +1,12 @@
-import { BsFilePerson, BsPostcard,
+import {
+  BsFilePerson,
+  BsPostcard,
   BsFillPieChartFill,
   BsFillHouseGearFill,
   BsDropletHalf,
   BsCashCoin,
-  BsStack, } from "react-icons/bs"
+  BsStack,
+} from "react-icons/bs"
 import {
   AiFillDashboard,
   AiFillDollarCircle,
@@ -14,7 +17,11 @@ import {
 } from "react-icons/ai"
 import path from "./path"
 import { FcUpRight } from "react-icons/fc"
-import { MdOutlineAttachMoney, MdOutlinePriceCheck } from "react-icons/md"
+import {
+  MdOutlineAttachMoney,
+  MdHistory,
+  MdReportGmailerrorred,
+} from "react-icons/md"
 import {
   RiFileEditLine,
   RiShareForwardFill,
@@ -57,13 +64,13 @@ export const menu = [
   //   type: path.GUIDE,
   //   subname: "Hướng dẫn",
   // },
-    {
-      path: "/" + path.PRICING,
-      name: "BẢNG GIÁ DỊCH VỤ",
-      id: "banggiadichvu",
-      type: path.PRICING,
-      subname: "Bảng giá dịch vụ",
-    },
+  {
+    path: "/" + path.PRICING,
+    name: "BẢNG GIÁ DỊCH VỤ",
+    id: "banggiadichvu",
+    type: path.PRICING,
+    subname: "Bảng giá dịch vụ",
+  },
 ]
 export const distances = [
   {
@@ -198,7 +205,6 @@ export const targets = [
   },
 ]
 export const managerSidebar = [
-
   {
     id: 1234,
     name: "Quản lý tin đăng",
@@ -218,6 +224,13 @@ export const managerSidebar = [
     name: "Lịch sử nạp tiền",
     path: `/${path.MANAGER}/${path.MANAGE_DEPOSIT}`,
     icon: <MdOutlineAttachMoney size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 57438,
+    name: "Lịch sử thanh toán",
+    path: `/${path.MANAGER}/${path.HISTORIES_PAYMENT}`,
+    icon: <MdHistory size={20} />,
     type: "SINGLE",
   },
   {
@@ -255,6 +268,13 @@ export const adminSidebar = [
     name: "Quản lý giá dịch vụ",
     path: `/${path.ADMIN}/${path.MANAGE_PRICING}`,
     icon: <RiPriceTag2Line size={20} />,
+    type: "SINGLE",
+  },
+  {
+    id: 5733238,
+    name: "Quản lý báo cáo vi phạm",
+    path: `/${path.ADMIN}/${path.MANAGE_REPORT}`,
+    icon: <MdReportGmailerrorred size={20} />,
     type: "SINGLE",
   },
   {
