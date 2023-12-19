@@ -1,6 +1,6 @@
 import axios from "axios"
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: "https://nhatro-spring-app-20231220005522.azuremicroservices.io/api/v1"
 })
 instance.interceptors.request.use(
   function (config) {
