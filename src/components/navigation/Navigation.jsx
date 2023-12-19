@@ -12,6 +12,8 @@ import { AiOutlineHeart } from "react-icons/ai"
 import { Button, VerifyPhone } from ".."
 import Swal from "sweetalert2"
 import { formatMoney } from "@/ultils/fn"
+import { apiValidManager } from "@/apis/user"
+import { toast } from "react-toastify"
 
 const activedStyle =
   "text-sm flex gap-2 items-center px-4 py-3 rounded-l-full rounded-r-full border border-white"
@@ -56,6 +58,11 @@ const Navigation = ({ dispatch, location, navigate }) => {
         }
       })
     }
+  }
+  const handleCheckManager = async () => {
+    const response = await apiValidManager()
+    if (response.success) navigate(`/${path.MANAGER}/${path.MANAGE_POST}`)
+    else toast.error(response.message)
   }
   return (
     <div className="flex bg-emerald-800 py-6 justify-center">
@@ -132,7 +139,6 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 >
                   Quản lý phòng
                 </Button>
-
                
                 {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
                  
@@ -186,12 +192,15 @@ const Navigation = ({ dispatch, location, navigate }) => {
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_MANAGE"
                       ) && (
-                        <Link
-                          to={`/${path.MANAGER}/${path.CREATE_POST}`}
-                          className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap"
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleCheckManager()
+                          }}
+                          className="p-3 hover:bg-gray-100 cursor-pointer hover:text-emerald-600 font-medium whitespace-nowrap"
                         >
                           Quản lý tin đăng
-                        </Link>
+                          </span>
                       )}
                       <span
                         onClick={() => dispatch(logout())}

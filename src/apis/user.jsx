@@ -94,8 +94,13 @@ export const apiDeleteUser = (params) =>
     method: "delete",
     params,
   })
-  export const apiGetRoleAdmin = () =>
+export const apiGetRoleAdmin = () =>
   axios({
     url: "/api/v1/admin/role/getAll",
     method: "get",
+  })
+export const apiValidManager = () =>
+  axios({
+    url: "/api/v1/user/service/valid-ulti-manager",
+    method: "post",
   })

@@ -12,6 +12,7 @@ import { getListHouse } from "@/apis/supperAdmin/house/house"
 import { Fragment } from "react"
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify"
+
 const ManagerService = () => {
   const [showModalOrder, setshowModalOrder] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(false);
@@ -211,7 +212,7 @@ const ManagerService = () => {
 
             <div className="w-full flex justify-end self-center bg-white">
               <ul className="my-2">
-              <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
+                <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
                   onClick={() => {
                     setIsSendMail(true)
                     handleSendBill()

@@ -6,7 +6,7 @@ import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { AiFillDelete, AiFillStar, AiOutlineEdit } from "react-icons/ai"
-import { useSearchParams } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 import Swal from "sweetalert2"
 import UpdatePost from "./UpdatePost"
@@ -143,7 +143,15 @@ const ManagePost = ({ dispatch, navigate }) => {
                       />
                     </span>
                   </td>
-                  <td className="p-2 text-center">{el.title}</td>
+                  <td className="p-2 text-center"> {el.title}
+                    {/* <a
+                      href={`/${path.DETAIL_POST}/${el.id}/${el.title}`}
+                      target="_blank"
+                      className="hover:underline text-blue-500"
+                    >
+                      {el.title}
+                    </a> */}
+                  </td>
                   <td className="p-2 text-center">
                     {formatMoney(el.price) + " VNĐ"}
                   </td>

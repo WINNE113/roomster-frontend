@@ -400,13 +400,11 @@ const ManagerHouse = () => {
             if (formRoom.id != '') {
                 // edit
                 updateRoom(formRoom.id, formRoom).then(response => {
-                    // Handle the response data here
                     if (response.data) {
                         toast.error(response.data.message)
                     } else {
                         toast.success(response.message)
                     }
-                    console.log(response);
                 }).finally(() => {
                     reLoad()
                     setshowModalRoom(!showModalRoom)
@@ -435,7 +433,6 @@ const ManagerHouse = () => {
 
     const handleSubmitHouse = (e) => {
         e.preventDefault();
-        console.log(formHouse);
         if (validateHouse()) {
             if (formHouse.houseId != '') {
                 // edit
@@ -477,7 +474,6 @@ const ManagerHouse = () => {
 
     const handleSubmitTenant = (e) => {
         e.preventDefault();
-        console.log(formTenant);
         if (validateTenant()) {
             if (formTenant.id != '') {
                 // edit
@@ -730,7 +726,6 @@ const ManagerHouse = () => {
                             id: 0
                         })
                         setCheckedMoveTenantIds([])
-                    
                     })
                 } else {
                     toast.info("Chưa chọn khách nào !")
@@ -1246,7 +1241,7 @@ const ManagerHouse = () => {
                                                 </div>
                                                 {/* list buttons */}
                                                 <ul className="my-2 self-center">
-                                                <li className={currentRoomId ? "inline" : "inline pointer-events-none opacity-50"}
+                                                    <li className={currentRoomId ? "inline" : "inline pointer-events-none opacity-50"}
                                                         onClick={() => {
                                                             setstatusModalTenant(true)
                                                             setFormTenant((formTenant) => ({
@@ -1320,7 +1315,7 @@ const ManagerHouse = () => {
                                             </thead>
                                             {/* table body */}
                                             <tbody className="text-base font-medium">
-                                            {currentRoomId == null ? (
+                                                {currentRoomId == null ? (
                                                     <tr>
                                                         <td colSpan="8" className="px-6 py-4 text-center">
                                                             Nhà này chưa có phòng nào !

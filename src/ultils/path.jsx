@@ -41,7 +41,9 @@ const path = {
   PRICING: "bang-gia-dich-vu",
   CREATE_PRICING: "tao-moi-bang-gia-dich-vu",
   MANAGE_PRICING: "quan-ly-bang-gia-dich-vu",
-  MANAGER_PAYMENT: "payment"
+  MANAGER_PAYMENT: "payment",
+  HISTORIES_PAYMENT: "lich-su-thanh-toan",
+  MANAGE_REPORT: "bao-cao-vi-pham",
 
 }
 

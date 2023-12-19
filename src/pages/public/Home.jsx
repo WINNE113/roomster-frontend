@@ -9,6 +9,7 @@ import {
   Search,
   Section,
 } from "@/components"
+import CustomSlider from "@/components/common/CustomSlider"
 import { getTopProvince } from "@/redux/actions"
 import { cities, menu } from "@/ultils/constant"
 import React, { useEffect, useState } from "react"
@@ -46,11 +47,12 @@ const Home = () => {
       <Section
         className="w-main mt-12 mx-auto"
         title="TỈNH / THÀNH PHỐ NỔI BẬT"
-        contentClassName="grid grid-cols-4 gap-4"
       >
-        {topProvinces.map((el, idx) => (
-          <ProvinceItem key={idx} {...el} />
-        ))}
+        <CustomSlider count={4}>
+          {topProvinces.map((el, idx) => (
+            <ProvinceItem key={idx} {...el} />
+          ))}
+        </CustomSlider>
       </Section>
       <Section
         className="w-main mx-auto"

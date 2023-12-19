@@ -46,6 +46,7 @@ const VerifyPhone = ({ navigate, dispatch }) => {
         id="phoneNumber"
         placeholder="Nhập SĐT của bạn"
         wrapClassanme="mt-4"
+        readOnly
       />
       <Button
         disabled={isLoading}

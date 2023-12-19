@@ -263,7 +263,12 @@ const DetailPost = ({ navigate, location, dispatch }) => {
           <div>
             <Button
               onClick={() =>
-                dispatch(modal({ isShowModal: true, modalContent: <Report /> }))
+                dispatch(
+                  modal({
+                    isShowModal: true,
+                    modalContent: <Report id={pid} />,
+                  })
+                )
               }
               className="bg-orange-500"
             >

@@ -7,8 +7,10 @@ const PaymentResult = () => {
   const [searchParams] = useSearchParams()
   return (
     <div className="w-screen h-screen overflow-hidden flex justify-center flex-col gap-2 items-center">
-      {searchParams.get("status") && <Confetti width={width} height={height} />}
-      {searchParams.get("status") ? (
+      {searchParams.get("success") && (
+        <Confetti width={width} height={height} />
+      )}
+      {searchParams.get("success") ? (
         <img src="/dolar.gif" alt="" className="w-80 h-80 object-cover" />
       ) : (
         <img src="/404.svg" alt="" className="w-80 h-80 object-cover" />

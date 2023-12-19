@@ -122,12 +122,7 @@ const ManageUser = ({ dispatch }) => {
                 <button className="flex inline-flex items-center px-4">
                   Thêm Tài Khoản <BsFillPatchPlusFill size={15} className="inline ml-3" />
                 </button>
-              </li>
-              <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[red] hover:bg-red-800"
-                onClick={() => {
-                }}>
-                <button>Xóa Tài Khoản <BsFillTrashFill size={15} className="ml-1 inline" /></button>
-              </li>
+              </li>           
             </ul>
           </div>
           <div className="flex items-center gap-2">

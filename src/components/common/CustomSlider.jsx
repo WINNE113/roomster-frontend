@@ -8,7 +8,7 @@ const CustomSlider = ({
   children,
   className,
   setIndex,
-  slides,
+  slides = [],
   currentImage = 0,
 }) => {
   return (
@@ -57,7 +57,7 @@ const CustomSlider = ({
         renderBottomCenterControls={({ currentSlide, goToSlide }) => (
           <div className="absolute left-0 right-0 h-[100px] bottom-[-250px] flex justify-center items-center">
             <div className="flex justify-center items-center h-full gap-[2px]">
-              {slides.map((el, idx) => (
+              {slides?.map((el, idx) => (
                 <img
                   onClick={() => goToSlide(idx)}
                   key={el?.image}

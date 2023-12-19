@@ -47,12 +47,12 @@ const Footer = () => {
           </Link>
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
-          <h1 className="uppercase font-bold pb-2">kết nối cới chúng tôi</h1>
+          <h1 className="uppercase font-bold pb-2">kết nối với chúng tôi</h1>
           <span className="hover:underline">
             Hotline: <a href="tel:0123456789">0123456789</a>
           </span>
           <span className="hover:underline">
-            Email: <a href="mailto:info@tromoi.com">info@tromoi.com</a>
+            Email: <a href="mailto:info@tromoi.com">trouytin@gmail.com</a>
           </span>
           <span className="flex items-center gap-2 my-2">
             <img

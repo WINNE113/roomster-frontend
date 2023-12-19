@@ -1,9 +1,11 @@
 import { apiPayment } from "@/apis/payment"
 import { Button, InputForm, Title } from "@/components"
+import path from "@/ultils/path"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { AiOutlineArrowRight } from "react-icons/ai"
 import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 
 const Card = ({ logo, text, setTitle, setMethod, id }) => {
@@ -112,15 +114,24 @@ const Deposit = () => {
                 VNĐ
               </span>
             </div>
-            <button className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md">
+            <Link
+              to={`/${path.MANAGER}/${path.MANAGE_DEPOSIT}`}
+              className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md"
+            >
               Lịch sử nạp tiền <AiOutlineArrowRight />
-            </button>
-            <button className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md">
+            </Link>
+            <Link
+              to={`/${path.MANAGER}/${path.HISTORIES_PAYMENT}`}
+              className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md"
+            >
               Lịch sử thanh toán <AiOutlineArrowRight />
-            </button>
-            <button className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md">
+            </Link>
+            <Link
+              to={`/${path.PRICING}`}
+              className="text-sm text-white bg-gray-600 mt-2 w-full py-2 flex items-center gap-2 justify-center rounded-md"
+            >
               Bảng giá dịch vụ <AiOutlineArrowRight />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

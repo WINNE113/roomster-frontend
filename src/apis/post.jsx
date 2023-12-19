@@ -44,13 +44,13 @@ export const apiDeletePost = (params) =>
   })
 export const apiUpdateApprovedPost = (params) =>
   axios({
-    url: "/admin/setIsApprovedPost",
+    url: "/api/v1/admin/setIsApprovedPost",
     method: "patch",
     params,
   })
 export const apiUpdateRejectedPost = (params) =>
   axios({
-    url: "/admin/setIsRejectedPost",
+    url: "/api/v1/admin/setIsRejectedPost",
     method: "patch",
     params,
   })
