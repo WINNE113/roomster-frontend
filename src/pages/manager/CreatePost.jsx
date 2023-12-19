@@ -55,14 +55,14 @@ const CreatePost = ({ navigate }) => {
   const object = watch("object")
   const description = watch("description")
   const convenient = watch("convenient")
-  // const fetLngLat = async (payload) => {
-  //   const response = await apiGetLngLatFromAddress(payload)
-  //   if (response.status === 200)
-  //     setCenter([
-  //       response.data?.features[0]?.properties?.lat,
-  //       response.data?.features[0]?.properties?.lon,
-  //     ])
-  // }
+  const fetLngLat = async (payload) => {
+    const response = await apiGetLngLatFromAddress(payload)
+    if (response.status === 200)
+      setCenter([
+        response.data?.features[0]?.properties?.lat,
+        response.data?.features[0]?.properties?.lon,
+      ])
+  }
   const convertFileToBase64 = async (file) => {
     const base64 = await getBase64(file)
     if (base64) setImagesBase64((prev) => [...prev, base64])
@@ -128,11 +128,11 @@ const CreatePost = ({ navigate }) => {
       ?.map((el) => el.trim())
       ?.join(", ")
     setValue("address", textModified)
-    // if (textModified)
-    //   fetLngLat({
-    //     text: textModified,
-    //     apiKey: import.meta.env.VITE_MAP_API_KEY,
-    //   })
+    if (textModified)
+      fetLngLat({
+        text: textModified,
+        apiKey: import.meta.env.VITE_MAP_API_KEY,
+      })
   }, [province, district, ward, debounceValue])
   const removeFileFromFileList = (index, filesId) => {
     const dt = new DataTransfer()
@@ -328,30 +328,6 @@ const CreatePost = ({ navigate }) => {
               value={description}
             />
           </div>
-          {/* <div className="mt-6 flex items-center gap-4">
-            <InputForm
-              label="Thông tin liên hệ"
-              register={register}
-              errors={errors}
-              id="username"
-              validate={{ required: "Trường này không được bỏ trống." }}
-              fullWidth
-              inputClassName="border-gray-300 bg-gray-200 focus:outline-none focus:ring-transparent focus:ring-offset-0 focus:border-transparent focus: ring-0 cursor-default"
-              readOnly={true}
-              value={current?.name}
-            />
-            <InputForm
-              label="Số điện thoại liên hệ"
-              register={register}
-              errors={errors}
-              id="phone"
-              validate={{ required: "Trường này không được bỏ trống." }}
-              fullWidth
-              inputClassName="border-gray-300 bg-gray-200 focus:outline-none focus:ring-transparent focus:ring-offset-0 focus:border-transparent focus: ring-0 cursor-default"
-              readOnly={true}
-              value={current?.phone}
-            />
-          </div> */}
           <div className="mt-6 grid grid-cols-3 gap-4">
             <InputForm
               label="Giá cho thuê (đồng/tháng)"

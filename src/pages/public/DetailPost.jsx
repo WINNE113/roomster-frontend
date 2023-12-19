@@ -59,7 +59,7 @@ const DetailPost = ({ navigate, location, dispatch }) => {
   }
   const fetLngLat = async (payload) => {
     const response = await apiGetLngLatFromAddress(payload)
-    if (response.status === 200)
+    if (response.status === 200 && response.data?.features?.length > 0)
       setCenter([
         response.data?.features[0]?.properties?.lat,
         response.data?.features[0]?.properties?.lon,

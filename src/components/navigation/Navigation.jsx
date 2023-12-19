@@ -161,46 +161,45 @@ const Navigation = ({ dispatch, location, navigate }) => {
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_USER"
                       ) && (
-                        <Link
-                          to={`/${path.MEMBER}/${path.PERSONAL}`}
-                          className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
-                        >
-                          Thông tin cá nhân
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.MEMBER}/${path.PERSONAL}`}
+                            className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
+                          >
+                            Thông tin cá nhân
+                          </Link>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_ADMIN"
                       ) && (
-                        <Link
-                          to={`/${path.ADMIN}/${path.DASHBOARD}`}
-                          className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
-                        >
-                          Admin
-                        </Link>
-                      )}
+                          <Link
+                            to={`/${path.ADMIN}/${path.DASHBOARD}`}
+                            className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
+                          >
+                            Admin
+                          </Link>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_ULTI_MANAGER"
                       ) && (
-                        <Link
-                          to={`/${path.SUPER_ADMIN}/${path.DASHBOARD}`}
-                          className="p-3 hover:bg-gray-100 whitespace-nowrap hover:text-emerald-600 font-medium"
-                        >
-                          Quản lý trọ
-                        </Link>
-                      )}
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleCheckManager()
+                            }}
+                            className="p-3 hover:bg-gray-100 cursor-pointer hover:text-emerald-600 font-medium whitespace-nowrap"
+                          >
+                            Quản lý trọ
+                          </span>
+                        )}
                       {current?.roleList?.some(
                         (el) => el.name === "ROLE_MANAGE"
                       ) && (
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleCheckManager()
-                          }}
-                          className="p-3 hover:bg-gray-100 cursor-pointer hover:text-emerald-600 font-medium whitespace-nowrap"
-                        >
-                          Quản lý
-                        </span>
-                      )}
+                          <Link
+                            to={`/${path.MANAGER}/${path.CREATE_POST}`}
+                            className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium whitespace-nowrap">
+                            Quản lý tin
+                          </Link>
+                        )}
                       <span
                         onClick={() => dispatch(logout())}
                         className="p-3 hover:bg-gray-100 hover:text-emerald-600 font-medium"
