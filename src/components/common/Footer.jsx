@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="w-main mx-auto grid grid-cols-5 gap-4">
         <div className="col-span-1 flex justify-center items-center">
           <span className="text-3xl font-bold tracking-tight">
-            troyutin.com
+            trouytin.online
           </span>
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
@@ -44,7 +44,7 @@ const Footer = () => {
           </Link>
         </div>
         <div className="col-span-1 py-6 flex flex-col gap-1">
-          <h1 className="uppercase font-bold pb-2">kết nối cới chúng tôi</h1>
+          <h1 className="uppercase font-bold pb-2">kết nối với chúng tôi</h1>
           <span className="hover:underline">
             Hotline: <a href="tel:0332101032">0332101032</a>
           </span>

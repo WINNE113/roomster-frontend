@@ -69,7 +69,7 @@ const Navigation = ({ dispatch, location, navigate }) => {
       <div className="w-main flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <Link className="text-3xl text-white font-bold" to={"/"}>
-            trouytin.com
+            trouytin.online
           </Link>
           <div className="flex items-center gap-4">
             <div className="flex gap-2 justify-center items-center">
@@ -144,8 +144,8 @@ const Navigation = ({ dispatch, location, navigate }) => {
                 {current?.roleList?.some((el) => el.name === "ROLE_MANAGE") && (
                   <Link
                     to={`/${path.MANAGER}/${path.DEPOSIT}`}
-                    className="rounded-md flex items-center gap-2 border text-white text-sm font-medium px-6 py-2"
-                  >
+                    className="text-emerald-800-300 rounded-md flex items-center gap-2 border  bg-gradient-to-r to-main-yellow from-main-orange text-sm font-medium px-6 py-2"
+                    >
                     Nạp tiền
                   </Link>
                 )}

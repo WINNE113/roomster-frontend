@@ -31,7 +31,7 @@ const Home = () => {
   }
   const fetchHomeRatings = async () => {
     const formdata = new FormData()
-    const response = await apiGetPostsByRating({ size: 10 })
+    const response = await apiGetPostsByRating({ size: 12 })
     if (response) setRatings(response)
   }
   useEffect(() => {
