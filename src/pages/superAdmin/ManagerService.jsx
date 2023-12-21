@@ -28,7 +28,7 @@ const ManagerService = () => {
     const [serviceHouseData, setServiceHouseData] = useState([]);
     const [serviceRoomData, setServiceRoomData] = useState([]);
     const [houseData, setHouseData] = useState([]);
-    const [currentHouseId, setCurrentHouseId] = useState(1);
+    const [currentHouseId, setCurrentHouseId] = useState(null);
     const [currentRoomId, setCurrentRoomId] = useState(null);
 
     // handle check for room service
@@ -146,9 +146,12 @@ const ManagerService = () => {
 
         getListHouse().then(house => {
             // Handle the response data here
-            setHouseData(house);
-            setCurrentRoomId(currentRoomId ? currentRoomId : house[0].rooms[0].id)
-            reloadRoomService(currentRoomId ? currentRoomId : house[0].rooms[0].id)
+            if(house && house.length > 0){
+                setHouseData(house);
+                setCurrentHouseId(currentHouseId ? currentHouseId : house[0].houseId)
+                setCurrentRoomId(currentRoomId ? currentRoomId : house[0].rooms[0].id)
+                reloadRoomService(currentRoomId ? currentRoomId : house[0].rooms[0].id)
+            }
         }).catch(error => {
             // Handle any errors that occurred during the request
             console.error(error);

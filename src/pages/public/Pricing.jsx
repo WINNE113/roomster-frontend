@@ -117,7 +117,7 @@ const Pricing = () => {
             fontSize: "2em",
           }}
         >
-          Giới thiệu trouytin.com
+          Giới thiệu trouytin.online
         </h1>
       </header>
       <div className="container clearfix">
@@ -132,7 +132,7 @@ const Pricing = () => {
           <div className="section-content">
             <p style={{ lineHeight: "1.5" }}>
               Chào mừng bạn đến với trang web tìm kiếm phòng trọ và quản lý trọ
-              - Trouytin.com!
+              - trouytin.online!
             </p>
             <p>ƯU ĐIỂM TROUYTIN:</p>
             <p style={{ marginBottom: "10px", lineHeight: "1.5" }}>
@@ -183,7 +183,7 @@ const Pricing = () => {
                   color: "green",
                 }}
               />
-              <strong>Thống Kê Hiệu Suất:</strong> Trouytin.com cung cấp thống
+              <strong>Thống Kê Hiệu Suất:</strong> trouytin.online cung cấp thống
               kê hiệu suất chi tiết về lượng giao dịch thành công, tỷ lệ hiệu
               quả, và số lượng người dùng truy cập để chủ nhà có cái nhìn rõ
               ràng về hoạt động trọ của mình.

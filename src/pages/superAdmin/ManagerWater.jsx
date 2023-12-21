@@ -224,7 +224,7 @@ const ManagerWater = () => {
                   Số chỉ điện sử dụng
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Số lit nước sử dụng
+                  Số chỉ nước sử dụng
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Tháng
@@ -243,7 +243,7 @@ const ManagerWater = () => {
                         {order.electricity} <span>chỉ</span>
                       </td>
                       <td className="px-6 py-4">
-                        {order.water} <span>lít</span>
+                        {order.water} <span>chỉ</span>
                       </td>
                       <td className="px-6 py-4">
                         {new Date(order.paymentDate).toLocaleString('en-US', {

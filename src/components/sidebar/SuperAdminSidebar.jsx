@@ -25,7 +25,7 @@ const SuperAdminSidebar = ({ dispatch }) => {
             <div className="py-12 pb-6 flex flex-col gap-1 justify-center items-center w-full">
                 {/* <img src="/logo.png" alt="" className="w-3/5 object-contain" /> */}
                 <span className="text-3xl text-emerald-600 tracking-tight font-bold">
-                    Tromoi.com
+                    trouytin.online
                 </span>
                 <small className="text-sm font-medium text-red-500 ">
                     Quản lý trọ

@@ -51,6 +51,9 @@ const ManagerHouse = () => {
     const [currentDistrictId, setCurrentDistrictId] = useState(1);
 
 
+    // handle loading
+    const [isLoadingHouseAPI, setIsLoadingHouseAPI] = useState(false);
+
     const handleCityChange = (value) => {
         setCurrentCityId(value)
         getDistrictesByCityId(value).then(response => {
@@ -438,6 +441,7 @@ const ManagerHouse = () => {
         if (validateHouse()) {
             if (formHouse.houseId != '') {
                 // edit
+                setIsLoadingHouseAPI(true)
                 updateHouse(formHouse.houseId, formHouse).then(response => {
                     // Handle the response data here
                     console.log(response);
@@ -450,8 +454,10 @@ const ManagerHouse = () => {
                     reLoad()
                     setshowModalHouse(!showModalHouse)
                     setDefalutFormHouse()
+                    setIsLoadingHouseAPI(false)
                 });
             } else {
+                setIsLoadingHouseAPI(true)
                 addHouse(formHouse).then(response => {
                     // Handle the response data here
                     if (!response.success) {
@@ -463,11 +469,10 @@ const ManagerHouse = () => {
                     reLoad()
                     setshowModalHouse(!showModalHouse)
                     setDefalutFormHouse()
+                    setIsLoadingHouseAPI(false)
                 });
             }
-
             setshowModalHouse(!showModalHouse)
-
         }
         else {
             // If validation fails, display an error message or alert
@@ -851,7 +856,7 @@ const ManagerHouse = () => {
                                     setshowModalHouse(true)
                                     setstatusModalHouse(true)
                                 }}>
-                                <button className="flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-blue-500 hover:bg-blue-800">
+                                <button className={`${isLoadingHouseAPI ? "pointer-events-none opacity-50" : "" } flex inline-flex items-center px-4 font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-blue-500 hover:bg-blue-800`}>
                                     Thêm nhà <BsFillHouseAddFill size={15} className="inline ml-3" />
                                 </button>
                             </li>

@@ -1,17 +1,20 @@
-import { Title } from "@/components"
+import { Title, DeleteConfirm } from "@/components"
 import { useState, useEffect } from "react"
 import path from "@/ultils/path"
 import {
   BsFillEyeFill,
   BsPencilSquare,
   BsEnvelopeAtFill,
+  BsFillTrashFill,
   BsDownload,
+  BsFillPatchPlusFill,
 } from "react-icons/bs"
 import { getOrder, getOrderById, updatePaymentOrder, sendbillOrder, downloadOrder } from "@/apis/supperAdmin/order/order"
 import { getListHouse } from "@/apis/supperAdmin/house/house"
 import { Fragment } from "react"
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify"
+import { apiGetBankMethod, apiDeleteBankMethod, apiUpdateBankMethod, apiAddBankMethod, apiGetBankMethodById } from "@/apis/payment"
 
 const ManagerService = () => {
   const [showModalOrder, setshowModalOrder] = useState(false);
@@ -21,7 +24,49 @@ const ManagerService = () => {
   const [currentRoomId, setCurrentRoomId] = useState(null);
   const [orderHouseData, setOrderHouseData] = useState([]);
   const [isSendMail, setIsSendMail] = useState(false);
+  const [showBankMethod, setShowBankMethod] = useState(false);
+  const [showUpdateBankMethod, setShowUpdateBankMethod] = useState(false);
+  const [statusBankMethod, setstatusBankMethod] = useState(false);
+  const [bankMethodData, setBankMethodData] = useState([]);
+  const [showModalDelete, setshowModalDelete] = useState(false);
+  const [currentBankId, setCurrentBankId] = useState(false);
+
+  const [messageDelete, setmessageDelete] = useState("");
+  const [typeDelete, setTypeDelete] = useState({
+    type: "",
+    id: 0
+  });
   const navigate = useNavigate();
+
+  // handle check for room service
+  const [checkedBankMethodIds, setCheckedEditBankMethodIds] = useState([]);
+
+  const handleCheckboxEditBankMethodChange = (event) => {
+    const checkboxId = event.target.id;
+
+    // Check if the checkbox is checked or unchecked
+    if (event.target.checked) {
+      // Add the ID to the list
+      setCheckedEditBankMethodIds((prevIds) => prevIds.filter((id) => id != checkboxId));
+      setCheckedEditBankMethodIds((prevIds) => [...prevIds, Number(checkboxId)]);
+    } else {
+      // Remove the ID from the list
+      setCheckedEditBankMethodIds((prevIds) => prevIds.filter((id) => id != checkboxId));
+    }
+  };
+
+  const handleCheckboxBankMethodCheckAll = (event) => {
+    if (event.target.checked) {
+        bankMethodData.forEach(src => {
+          setCheckedEditBankMethodIds((prevIds) => prevIds.filter((id) => id != src.bankMethodId));
+          setCheckedEditBankMethodIds((prevIds) => [...prevIds, src.bankMethodId]);
+        })
+    }
+    else {
+      setCheckedEditBankMethodIds([])
+    }
+
+}
 
   const [form, setform] = useState({
     "totalPayment": 0,
@@ -34,6 +79,8 @@ const ManagerService = () => {
     "totalPayment": true,
     "rest": true,
   })
+
+ 
 
   const validatePayment = () => {
     const newValidity = {
@@ -54,6 +101,63 @@ const ManagerService = () => {
       "rest": data.total - data.totalPayment
     })
   }
+
+  const [formBank, setformBank] = useState({
+    "bankMethodId": null,
+    "bankName": "",
+    "bankAccount": null,
+  })
+
+  const fillDataFromBank = (data) => {
+    setformBank({
+        "bankMethodId": data.bankMethodId,
+        "bankName": data.bankName,
+        "bankAccount": data.bankAccount,
+    })
+}
+
+  const [formBankValidate, setFormBankValidate] = useState({
+    "bankName": true,
+    "bankAccount": true,
+  })
+
+  const handleInputBankChange = (e) => {
+    const { name, value } = e.target;
+    // Update the corresponding property in the person state
+    setformBank((formBank) => ({
+      ...formBank,
+      [name]: value,
+    }));
+    setFormBankValidate((formBankValidate) => ({
+      ...formBankValidate,
+      [name]: value != null,
+    }));
+  };
+
+  const validateBankMethod = () => {
+    const newValidity = {
+        "bankName": formBank.bankName && formBank.bankName.trim() !== '',
+        "bankAccount": formBank.bankAccount && formBank.bankAccount !== 0,
+    };
+    // Update the validity state for all fields
+    setFormBankValidate(newValidity);
+
+    // Return true if all fields are valid, false otherwise
+    return Object.values(newValidity).every((valid) => valid);
+};
+
+  const setDefaultFormBank = () => {
+    setformBank({
+      "bankMethodId": null,
+      "bankName": "",
+      "bankAccount": null,
+    })
+
+    setFormBankValidate({
+      "bankName": true,
+      "bankAccount": true,
+    })
+  } 
 
   const setDefalutFormOrder = () => {
     setform({
@@ -78,9 +182,79 @@ const ManagerService = () => {
   };
 
 
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formBank);
+    if (validateBankMethod()) {
+      if (formBank.bankMethodId) {
+        // edit
+        apiUpdateBankMethod(formBank.bankMethodId, formBank).then(response => {
+          // Handle the response data here
+          if (!response.success) {
+            toast.error(response.message)
+          } else {
+            toast.success(response.message)
+          }
+        }).finally(() => {
+          reLoad();
+          setDefaultFormBank();
+        });
+      } else {
+        apiAddBankMethod(formBank).then(response => {
+          // Handle the response data here
+          if (!response.success) {
+            toast.error(response.message)
+          } else {
+            toast.success(response.message)
+          }
+        }).finally(() => {
+          reLoad();
+          setDefaultFormBank();
+        });
+      }
+      setShowUpdateBankMethod(!showUpdateBankMethod)
+    }
+    else {
+      // If validation fails, display an error message or alert
+      toast.info("Vui lòng nhập đầy đủ thông tin trước khi gửi !");
+    }
+  };
+
+  const confirmDelete = (status, type) => {
+    if (status) {
+      console.log(checkedBankMethodIds);
+      if(checkedBankMethodIds.length > 0){
+        apiDeleteBankMethod(checkedBankMethodIds).then(response => {
+                // Handle the response data here
+                if (!response.success) {
+                  toast.error(response.message)
+                } else {
+                  toast.success(response.message)
+                }
+                reLoad()
+                setCheckedEditBankMethodIds([])
+              });
+      }
+      else{
+        toast.info("Bạn chưa chọn phương thức thanh toán nào !")
+      }
+      
+      
+    }
+    setshowModalDelete(false)
+  }
+
   var [callApi, setcallApi] = useState(true);
 
   useEffect(() => {
+    apiGetBankMethod().then(response => {
+      setBankMethodData(response);
+    }).catch(error => {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    });
+
     getListHouse().then((house) => {
       setHouseData(house);
       setCurrentHouseId(currentHouseId ? currentHouseId : house[0].houseId)
@@ -122,6 +296,18 @@ const ManagerService = () => {
     })
   }
 
+  const setDataFromByBankId = (id) => {
+    setCurrentBankId(id)
+    console.log(id);
+    apiGetBankMethodById(id).then(response => {
+      console.log(response);
+      
+      fillDataFromBank(response)
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
   const handleSubmitPayment = (e) => {
     e.preventDefault();
     const data = {
@@ -133,9 +319,9 @@ const ManagerService = () => {
       updatePaymentOrder(currentOrderId, data).then(response => {
         if (!response.success) {
           toast.error(response.message)
-      } else {
+        } else {
           toast.success(response.message)
-      }
+        }
         reLoad()
       }).finally(() => {
         setshowModalOrder(false)
@@ -151,9 +337,9 @@ const ManagerService = () => {
     sendbillOrder(currentRoomId).then((response) => {
       if (!response.success) {
         toast.error(response.message)
-    } else {
+      } else {
         toast.success(response.message)
-    }
+      }
     }).finally(() => {
       setIsSendMail(false)
     })
@@ -213,7 +399,16 @@ const ManagerService = () => {
 
             <div className="w-full flex justify-end self-center bg-white">
               <ul className="my-2">
-                <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
+                <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-3 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
+                  onClick={() => {
+                    setShowBankMethod(true)
+                  }}>
+                  <button className="flex inline-flex items-center px-4">
+                    Ngân hàng <BsEnvelopeAtFill size={15} className="inline ml-3" />
+                  </button>
+                </li>
+
+                <li className={`${isSendMail ? "pointer-events-none opacity-50" : ""}  font-bold cursor-pointer px-3 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800`}
                   onClick={() => {
                     setIsSendMail(true)
                     handleSendBill()
@@ -222,7 +417,7 @@ const ManagerService = () => {
                     Gửi bill phòng <BsEnvelopeAtFill size={15} className="inline ml-3" />
                   </button>
                 </li>
-                <li className="font-bold cursor-pointer px-5 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
+                <li className="font-bold cursor-pointer px-3 mx-2 py-3 inline text-sm font-medium text-center text-white rounded-lg bg-[#26B99A] hover:bg-green-800"
                   onClick={() => {
                     handleDownLoad()
                   }}>
@@ -426,6 +621,182 @@ const ManagerService = () => {
         </>
       ) : null
       }
+      {/* MODEL SERVICE ROOM */}
+      {
+        showBankMethod ? (
+          <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+              <div className="relative p-10 " style={{ width: '1000px' }}>
+                <div className="relative bg-white rounded-lg shadow shadow-black">
+                  <div className="flex items-center justify-between py-5 mx-4 border-b border-[#0000002e] rounded-t">
+                    <h3 className="text-xl font-semibold text-black">
+                      Danh sách ngân hàng thanh toán
+                    </h3>
+                    <button onClick={() => {
+                      setShowBankMethod(false)
+                    }} type="button" className="text-black bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                      <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="px-10 py-4 flex ">
+                    <table className="w-full text-sm text-[black] font-mono">
+                      <thead className="text-base text-[white] uppercase bg-[#059669] ">
+                        <tr className="">
+                          <th scope="col" className="p-4">
+                            <div className="flex items-center">
+                              <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                              onClick={handleCheckboxBankMethodCheckAll}
+                              onChange={handleCheckboxBankMethodCheckAll}
+                              defaultChecked={false}
+                              checked={checkedBankMethodIds.length == bankMethodData.length} />
+                              <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                            </div>
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-start">
+                            Tên Tài Khoản
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-start">
+                            Số Tài Khoản
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-start">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-base font-medium text-start">
+                        {bankMethodData && bankMethodData.length > 0 && bankMethodData.map((bank) =>
+                          <Fragment key={bank.bankMethodId}>
+                            <tr className="bg-white hover:bg-[#0000000d] border-b border-gray-400">
+                              <td className="w-4 p-4">
+                                <div className="flex items-center">
+                                  <input id={bank.bankMethodId} type="checkbox"
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                    onClick={handleCheckboxEditBankMethodChange}
+                                    onChange={handleCheckboxEditBankMethodChange}
+                                    defaultChecked={false}
+                                    checked={checkedBankMethodIds.includes(Number(bank.bankMethodId))}
+                                  />
+                                  <label htmlFor="checkbox-table-3" className="sr-only">checkbox</label>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                {bank.bankName}
+                              </td>
+                              <td className="px-6 py-4">
+                                {bank.bankAccount}
+                              </td>
+                              <td className="px-6 py-4">
+                                <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => {
+                                  setDataFromByBankId(bank.bankMethodId)
+                                  setShowUpdateBankMethod(true)
+                                  setstatusBankMethod(false)
+                                }}>Edit</button>
+                              </td>
+                            </tr>
+                          </Fragment>)}
+                      </tbody>
+                    </table>
+                  </div>
+                  <button onClick={() => {
+                                setShowUpdateBankMethod(true)
+                                setstatusBankMethod(true)
+                            }} 
+                            type="submit" 
+                            className="m-4 mt-10 text-white inline-flex items-center bg-[#26B99A] hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                        Thêm ngân hàng <BsFillPatchPlusFill size={15} className="ml-1 inline" />
+                  </button> 
+                  <button onClick={() => {
+                            setmessageDelete("Bạn có chắc chắn muốn xóa những phương thức thanh toán đã chọn hay không ?")
+                            setshowModalDelete(true)
+                        }}
+                            type="submit" 
+                            className="m-2 mt-10 text-white inline-flex items-center bg-[red] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                        Xóa ngân hàng <BsFillTrashFill size={15} className="ml-1 inline" />
+                  </button>                         
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null
+      }
+
+      {/* MODEL SERVICE HOUSE*/}
+      {
+        showUpdateBankMethod ? (
+          <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+              <div className="relative p-10 " style={{ width: '1000px' }}>
+                <div className="relative bg-white rounded-lg shadow shadow-black">
+                  <div className="flex items-center justify-between py-5 mx-4 border-b border-[#0000002e] rounded-t">
+                    <h3 className="text-xl font-semibold text-black">
+                      {!statusBankMethod ? "Sửa phương thức thanh toán" : "Thêm phương thức thanh toán"}
+                    </h3>
+                    <button onClick={() => {
+                      setShowUpdateBankMethod(false)
+                      setDefaultFormBank()
+                    }} type="button" className="text-black bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                      <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                      </svg>
+                    </button>
+                  </div>
+                  <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                    <div className="grid grid-rows- gap-4">
+                      <div className="grid grid-cols-5 gap-4">
+                        <label htmlFor="bankName" className="block mb-2 text-sm font-medium text-black">
+                          Tên ngân hàng
+                        </label>
+                        <input type="text" name="bankName" id="bankName"
+                          className={`bg-white border ${!formBankValidate.bankName ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
+                          placeholder="Nhập tên ngân hàng"
+                          required="" value={formBank.bankName}
+                          onChange={handleInputBankChange}
+                          onClick={handleInputBankChange}
+                        />
+
+                      </div>
+
+                      <div className="grid grid-cols-5 gap-4">
+                        <label htmlFor="bankAccount" className="block mb-2 text-sm font-medium text-black">
+                          Số tài khoản
+                        </label>
+                        <input type="number" name="bankAccount" id="bankAccount"
+                          className={`bg-white border ${!formBankValidate.bankAccount ? 'border-red-500' : 'border-gray-300'} focus:border-black text-black text-sm rounded-lg  block w-full p-2.5 dark:placeholder-gray-400`}
+                          placeholder="Nhập số tài khoản"
+                          required="" value={formBank.bankAccount}
+                          onChange={handleInputBankChange}
+                          onClick={handleInputBankChange}
+                        />
+
+                      </div>
+
+                    </div>
+                    {statusBankMethod ? (
+                      <button type="submit" className="mt-10 text-white inline-flex items-center bg-[#26B99A] hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                        <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                        Thêm phương thức thanh toán
+                      </button>
+                    ) : (
+                      <button type="submit" className="mt-10 text-white inline-flex items-center bg-[#26B99A] hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">
+                        <BsPencilSquare size={15} className="mr-2 inline" /> Cập nhật phương thức thanh toán
+                      </button>
+                    )}
+                  </form>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null
+      }
+
+      {/* delete modal */}
+      {showModalDelete ? (
+        <DeleteConfirm message={messageDelete} onRegister={confirmDelete} type={typeDelete} />
+      ) : null
+      }
+
     </>
   )
 }
