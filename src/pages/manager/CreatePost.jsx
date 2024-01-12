@@ -45,6 +45,8 @@ const CreatePost = ({ navigate }) => {
   const [imagesBase64, setImagesBase64] = useState([])
   const [imageHover, setImageHover] = useState()
 
+  const [rotation, setRotation] = useState();
+
   const province = watch("province")
   const district = watch("district")
   const ward = watch("ward")
@@ -62,6 +64,10 @@ const CreatePost = ({ navigate }) => {
         response.data?.features[0]?.properties?.lat,
         response.data?.features[0]?.properties?.lon,
       ])
+      setRotation(response.data?.features[0]?.properties?.lat + "," + response.data?.features[0]?.properties?.lon);
+      console.log("Lat center: ",  response.data?.features[0]?.properties?.lat);
+      console.log("lon center: ",  response.data?.features[0]?.properties?.lon);
+
   }
   const convertFileToBase64 = async (file) => {
     const base64 = await getBase64(file)
@@ -179,12 +185,14 @@ const CreatePost = ({ navigate }) => {
       roomDto,
       post_type: post_type?.code,
       object: object?.name,
+      rotation: rotation,
       ...dto,
       convenient: convenient?.join(","),
     }
     // setIsLoading(true)
     const formData = new FormData()
     formData.append("postDto", JSON.stringify(payload))
+    console.log("Rotation payload: " ,payload.rotation);
     if (images && images instanceof FileList) {
       for (let image of images) formData.append("images", image)
     }

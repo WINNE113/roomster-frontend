@@ -1,5 +1,27 @@
 import axios from "@/axios"
 
+
+export const apiGetPostRecent = (latitude, longitude) =>
+  axios({
+    url: "/guest/post/location",
+    method: "get",
+    params: { latitude, longitude },
+  })
+
+export const apiGetPostOrderByPriceDesc = (params) =>
+  axios({
+    url: "/guest/post/sorted/price",
+    method: "get",
+    params,
+  })
+
+export const apiGetPostOrderByAcreageDesc = (params) =>
+  axios({
+    url: "/guest/post/sorted/acreage",
+    method: "get",
+    params,
+  })  
+
 export const apiCreateNewPost = (data) =>
   axios({
     url: "/post/new",
@@ -18,6 +40,7 @@ export const apiGetPostsByRating = (params) =>
     method: "get",
     params,
   })
+
 export const apiGetDetailPost = (params) =>
   axios({
     url: "/guest/postDetail",

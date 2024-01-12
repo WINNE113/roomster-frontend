@@ -37,8 +37,13 @@ const ManagePost = ({ dispatch, navigate }) => {
     else setPosts([])
   }
   const debounceValue = useDebounce(keyword, 500)
+
+  // Sử dụng useEffect để thực hiện các hành động sau khi component được render hoặc khi các dependencies thay đổi.
   useEffect(() => {
+    // Tạo một đối tượng FormData để đóng gói dữ liệu form.
     const formdata = new FormData()
+
+    // Lấy ra tất cả các thuộc tính từ mảng searchParams và chuyển thành đối tượng.
     const { page, ...searchParamsObject } = Object.fromEntries([
       ...searchParams,
     ])
@@ -47,8 +52,12 @@ const ManagePost = ({ dispatch, navigate }) => {
     else delete searchParamsObject.status
     formdata.append("json", JSON.stringify(searchParamsObject))
     formdata.append("size", 5)
+
+    // Gọi hàm fetchPosts để thực hiện việc lấy dữ liệu từ server với dữ liệu đã được đóng gói trong formdata.
     fetchPosts(formdata)
   }, [searchParams, update, debounceValue, status])
+
+  // Định nghĩa hàm render, được gọi khi cần cập nhật trạng thái (update).
   const render = () => {
     setUpdate(!update)
   }

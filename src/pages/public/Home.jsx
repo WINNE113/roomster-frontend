@@ -1,4 +1,4 @@
-import { apiGetPosts, apiGetPostsByRating } from "@/apis/post"
+import { apiGetPosts, apiGetPostsByRating, apiGetPostOrderByPriceDesc, apiGetPostOrderByAcreageDesc, apiGetPostRecent } from "@/apis/post"
 import { apiGetWishlist } from "@/apis/user"
 import {
   BoxFilter,
@@ -15,13 +15,22 @@ import { cities, menu } from "@/ultils/constant"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { NavLink } from "react-router-dom"
+import { toast } from "react-toastify"
 
 const Home = () => {
   const dispatch = useDispatch()
   const [posts, setPosts] = useState()
   const [ratings, setRatings] = useState()
+  const [prices, setPrices] = useState([]);
+  const [acreage, setAcreage] = useState([]);
   const { wishlist } = useSelector((s) => s.user)
   const { topProvinces } = useSelector((s) => s.app)
+  //get location from user
+  const [location, setLocation] = useState(null);
+  const [postsLocation, setPostLocation] = useState(null);
+
+
+  
   const fetchHomeData = async () => {
     const formdata = new FormData()
     formdata.append("json", JSON.stringify({ status: "APPROVED" }))
@@ -34,8 +43,61 @@ const Home = () => {
     const response = await apiGetPostsByRating({ size: 12 })
     if (response) setRatings(response)
   }
+  const fetchHomePostPrice = async () => {
+    try {
+      const formdata = new FormData();
+      const response = await apiGetPostOrderByPriceDesc({ size: 12 });
+      
+      if (response && response.data) {
+        setPrices(response.data);
+      } else {
+        console.error("No data or invalid response format for prices");
+      }
+    } catch (error) { 
+      console.error("Error fetching prices:", error);
+    }
+  }
+  const fetchHomePostAcreage = async () => {
+    try {
+      const formdata = new FormData();
+      const response = await apiGetPostOrderByAcreageDesc({ size: 12 });
+      
+      if (response && response.data) {
+        setAcreage(response.data);
+      } else {
+        console.error("No data or invalid response format for acreage");
+      }
+    } catch (error) { 
+      console.error("Error fetching acreage:", error);
+    }
+  }
+
+  const fetchCurrentLocation = async () => {
+    if (navigator.geolocation) {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+  
+        const { latitude, longitude } = position.coords;
+        setLocation({ latitude, longitude });
+  
+        // Gửi tọa độ về server và nhận kết quả từ API
+        const response = await apiGetPostRecent(latitude, longitude);
+        setPostLocation(response);
+      } catch (error) {
+        toast.error("Lỗi lấy tạo độ người dùng")
+      }
+    } else {
+      toast.error("Geolocation không hỗ trợ browser.")
+    }
+  };
+
   useEffect(() => {
     fetchHomeRatings()
+    fetchHomePostPrice()
+    fetchCurrentLocation()
+    fetchHomePostAcreage()
     fetchHomeData()
     dispatch(getTopProvince())
   }, [])
@@ -66,13 +128,39 @@ const Home = () => {
           />
         ))}
       </Section>
+    <Section
+      className="w-main mt-12 mx-auto"
+      title="LỰA CHỌN THEO GIÁ"
+      contentClassName="grid grid-cols-4 gap-4"
+    >
+      {prices?.map((el) => (
+        <Card
+          isLike={wishlist?.some((n) => n.id === el.id)}
+          {...el}
+          key={el.id}
+        />
+      ))}
+    </Section>
+    <Section
+      className="w-main mt-12 mx-auto"
+      title="LỰA CHỌN THEO DIỆN TÍCH"
+      contentClassName="grid grid-cols-4 gap-4"
+    >
+      {acreage?.map((el) => (
+        <Card
+          isLike={wishlist?.some((n) => n.id === el.id)}
+          {...el}
+          key={el.id}
+        />
+      ))}
+    </Section>
       <Section
         className="w-main mt-12 mx-auto"
-        title="LỰA CHỌN HOT"
+        title="TÌM KIẾM QUANH ĐÂY"
         contentClassName="grid grid-cols-10 gap-4"
       >
         <div className="col-span-7 flex flex-col gap-4">
-          {posts?.map((el) => (
+          {postsLocation?.map((el) => (
             <LongCard key={el.id} {...el} />
           ))}
         </div>
